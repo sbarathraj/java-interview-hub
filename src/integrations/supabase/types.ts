@@ -14,7 +14,51 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      ai_questions: {
+        Row: {
+          answer: string
+          code_snippet: string | null
+          created_at: string
+          difficulty: string
+          id: string
+          model: string | null
+          pro_tip: string | null
+          question: string
+          resume_link: string | null
+          tags: string[]
+          topic: string
+          topic_label: string
+        }
+        Insert: {
+          answer: string
+          code_snippet?: string | null
+          created_at?: string
+          difficulty: string
+          id?: string
+          model?: string | null
+          pro_tip?: string | null
+          question: string
+          resume_link?: string | null
+          tags?: string[]
+          topic: string
+          topic_label: string
+        }
+        Update: {
+          answer?: string
+          code_snippet?: string | null
+          created_at?: string
+          difficulty?: string
+          id?: string
+          model?: string | null
+          pro_tip?: string | null
+          question?: string
+          resume_link?: string | null
+          tags?: string[]
+          topic?: string
+          topic_label?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
