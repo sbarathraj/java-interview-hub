@@ -45,7 +45,7 @@ Deno.serve(async (req: Request) => {
     const topicLabel: string = body.topicLabel ?? "Core Java";
     const count: number = Math.min(Math.max(Number(body.count) || 10, 1), 20);
     const model: string =
-      body.model || "deepseek/deepseek-chat-v3.1:free";
+      body.model || "deepseek/deepseek-chat-v3.1";
 
     const userPrompt = `Generate ${count} fresh, NON-DUPLICATE interview questions for the topic: "${topicLabel}".
 Mix difficulties. Each question must be production-grade and tied (when relevant) to Barath's resume projects.
