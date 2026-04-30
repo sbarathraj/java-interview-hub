@@ -24,7 +24,7 @@ export const Navbar = () => {
           <span className="inline-flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-primary text-primary-foreground shadow-elegant">
             <Coffee className="h-5 w-5" />
           </span>
-          <span className="hidden sm:inline">Java Refresh</span>
+          <span className="hidden sm:inline">Barath's Refresh Portal</span>
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">

@@ -3,7 +3,7 @@ import { Question } from "@/data/questions";
 import { DifficultyBadge } from "./DifficultyBadge";
 import { BookmarkButton } from "./BookmarkButton";
 import { useApp } from "@/context/AppContext";
-import { ChevronDown, CheckCircle2, Circle, Lightbulb } from "lucide-react";
+import { ChevronDown, CheckCircle2, Circle, Lightbulb, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
@@ -100,6 +100,16 @@ export const QuestionCard = ({ question, defaultOpen = false, showTopic }: Props
               <div>
                 <div className="text-xs font-semibold uppercase tracking-wider text-primary">Pro Tip</div>
                 <p className="mt-1 text-sm text-foreground/85">{question.proTip}</p>
+              </div>
+            </div>
+          )}
+
+          {question.resumeLink && (
+            <div className="mt-4 flex gap-3 rounded-lg border border-accent/30 bg-accent/5 p-3">
+              <FileText className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+              <div>
+                <div className="text-xs font-semibold uppercase tracking-wider text-accent">Resume Link</div>
+                <p className="mt-1 text-sm text-foreground/85">{question.resumeLink}</p>
               </div>
             </div>
           )}

@@ -16,13 +16,13 @@ const Home = () => {
         <div className="absolute -bottom-16 -left-10 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
         <div className="relative max-w-3xl">
           <span className="inline-flex items-center gap-1.5 rounded-full bg-white/15 px-3 py-1 text-xs font-medium backdrop-blur">
-            <Sparkles className="h-3.5 w-3.5" /> 80+ curated questions · 9 topics · interview-ready
+            <Sparkles className="h-3.5 w-3.5" /> {questions.length}+ questions · {topics.length} topics · mapped to my resume
           </span>
           <h1 className="mt-4 font-display text-4xl font-bold leading-tight sm:text-5xl md:text-6xl">
-            Java Interview <br className="hidden sm:block" />Refresh Portal
+            Barath's Interview <br className="hidden sm:block" />Refresh Portal
           </h1>
           <p className="mt-4 max-w-2xl text-base text-white/90 sm:text-lg">
-            Sharpen your Java skills with deep answers, pro tips, and runnable code snippets — built for engineers preparing for senior Software Developer interviews.
+            A personalized prep app built around my resume — Java, Spring Boot, Microservices, AWS, React, and real project stories from KUWY, BarathAI Chat, and AI English Tutor.
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
