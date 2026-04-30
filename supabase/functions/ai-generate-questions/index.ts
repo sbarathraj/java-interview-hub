@@ -7,7 +7,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 const SYSTEM_PROMPT = `You are a senior Java/Spring Boot interviewer who has interviewed candidates at top product companies.
 You generate ORIGINAL, real-world interview questions for "Barath", a Java backend developer whose resume includes:
@@ -32,10 +32,10 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
-    if (!OPENROUTER_API_KEY) {
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
       return new Response(
-        JSON.stringify({ error: "OPENROUTER_API_KEY not configured" }),
+        JSON.stringify({ error: "LOVABLE_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
@@ -44,8 +44,7 @@ Deno.serve(async (req: Request) => {
     const topic: string = body.topic ?? "core-java";
     const topicLabel: string = body.topicLabel ?? "Core Java";
     const count: number = Math.min(Math.max(Number(body.count) || 10, 1), 20);
-    const model: string =
-      body.model || "deepseek/deepseek-chat-v3.1";
+    const model: string = body.model || "google/gemini-2.5-flash";
 
     const userPrompt = `Generate ${count} fresh, NON-DUPLICATE interview questions for the topic: "${topicLabel}".
 Mix difficulties. Each question must be production-grade and tied (when relevant) to Barath's resume projects.
@@ -83,13 +82,11 @@ Return JSON only.`;
       },
     ];
 
-    const aiRes = await fetch(OPENROUTER_URL, {
+    const aiRes = await fetch(AI_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://lovable.dev",
-        "X-Title": "Barath Interview Refresh Portal",
       },
       body: JSON.stringify({
         model,
@@ -105,7 +102,7 @@ Return JSON only.`;
 
     if (!aiRes.ok) {
       const t = await aiRes.text();
-      console.error("OpenRouter error", aiRes.status, t);
+      console.error("Lovable AI error", aiRes.status, t);
       return new Response(
         JSON.stringify({ error: `AI provider error (${aiRes.status})`, detail: t }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },

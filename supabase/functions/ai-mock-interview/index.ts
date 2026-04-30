@@ -5,7 +5,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 const SYSTEM = `You are a SENIOR TECHNICAL INTERVIEWER conducting a real interview with "Barath", a Java backend developer.
 His resume highlights: Core Java 8/11, Spring Boot, Spring Core, Microservices, REST APIs, JPA/Hibernate, AWS (EC2/S3/RDS), Docker, React, WebSockets, and personal projects KUWY (banking APIs), BarathAI Chat, AI English Tutor (Web Speech API + IndexedDB).
@@ -22,22 +22,20 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
-    if (!OPENROUTER_API_KEY) {
-      return new Response(JSON.stringify({ error: "OPENROUTER_API_KEY not configured" }), {
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { messages = [], model = "deepseek/deepseek-chat-v3.1" } = await req.json();
+    const { messages = [], model = "google/gemini-2.5-flash" } = await req.json();
 
-    const aiRes = await fetch(OPENROUTER_URL, {
+    const aiRes = await fetch(AI_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://lovable.dev",
-        "X-Title": "Barath Interview Refresh Portal",
       },
       body: JSON.stringify({
         model,
