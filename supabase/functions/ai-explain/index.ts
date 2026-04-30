@@ -5,7 +5,7 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const OPENROUTER_URL = "https://openrouter.ai/api/v1/chat/completions";
+const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -13,14 +13,14 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
-    if (!OPENROUTER_API_KEY) {
-      return new Response(JSON.stringify({ error: "OPENROUTER_API_KEY not configured" }), {
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    if (!LOVABLE_API_KEY) {
+      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { question, mode = "explain", model = "deepseek/deepseek-chat-v3.1" } =
+    const { question, mode = "explain", model = "google/gemini-2.5-flash" } =
       await req.json();
 
     if (!question || typeof question !== "string") {
@@ -35,13 +35,11 @@ Deno.serve(async (req: Request) => {
       review: "You are a strict interviewer. The user will paste their answer. Score it /10 and give specific, actionable feedback in markdown.",
     };
 
-    const aiRes = await fetch(OPENROUTER_URL, {
+    const aiRes = await fetch(AI_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
-        "HTTP-Referer": "https://lovable.dev",
-        "X-Title": "Barath Interview Refresh Portal",
       },
       body: JSON.stringify({
         model,
