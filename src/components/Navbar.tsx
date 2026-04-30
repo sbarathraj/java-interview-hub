@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Coffee, BookmarkCheck, BarChart3, Brain, Menu, X, ChevronDown } from "lucide-react";
+import { Coffee, BookmarkCheck, BarChart3, Brain, Menu, X, ChevronDown, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useApp } from "@/context/AppContext";
@@ -53,6 +53,7 @@ export const Navbar = () => {
             )}
           </div>
 
+          <NavLink to="/ai" className={linkClass}><span className="inline-flex items-center gap-1.5"><Sparkles className="h-4 w-4" />AI Studio</span></NavLink>
           <NavLink to="/quiz" className={linkClass}><span className="inline-flex items-center gap-1.5"><Brain className="h-4 w-4" />Quiz</span></NavLink>
           <NavLink to="/bookmarks" className={linkClass}><span className="inline-flex items-center gap-1.5"><BookmarkCheck className="h-4 w-4" />Bookmarks</span></NavLink>
           <NavLink to="/progress" className={linkClass}><span className="inline-flex items-center gap-1.5"><BarChart3 className="h-4 w-4" />Progress</span></NavLink>
@@ -74,6 +75,7 @@ export const Navbar = () => {
         <div className="animate-accordion-down border-t border-border bg-background md:hidden">
           <div className="container flex flex-col gap-1 py-3">
             <NavLink to="/" end onClick={() => setMobileOpen(false)} className={linkClass}>Home</NavLink>
+            <NavLink to="/ai" onClick={() => setMobileOpen(false)} className={linkClass}>AI Studio</NavLink>
             <NavLink to="/quiz" onClick={() => setMobileOpen(false)} className={linkClass}>Quiz</NavLink>
             <NavLink to="/bookmarks" onClick={() => setMobileOpen(false)} className={linkClass}>Bookmarks</NavLink>
             <NavLink to="/progress" onClick={() => setMobileOpen(false)} className={linkClass}>Progress</NavLink>

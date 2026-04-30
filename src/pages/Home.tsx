@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { ArrowRight, Brain, Sparkles } from "lucide-react";
+import { ArrowRight, Brain, Sparkles, Wand2 } from "lucide-react";
 import { useApp } from "@/context/AppContext";
 import { TopicCard } from "@/components/TopicCard";
 import { ProgressBar } from "@/components/ProgressBar";
@@ -26,8 +26,14 @@ const Home = () => {
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link
-              to="/quiz"
+              to="/ai"
               className="inline-flex items-center gap-2 rounded-full bg-background px-5 py-2.5 font-semibold text-foreground shadow-md transition-transform hover:-translate-y-0.5"
+            >
+              <Wand2 className="h-4 w-4" /> Open AI Studio
+            </Link>
+            <Link
+              to="/quiz"
+              className="inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-5 py-2.5 font-semibold backdrop-blur transition-colors hover:bg-white/20"
             >
               <Brain className="h-4 w-4" /> Start Quiz
             </Link>

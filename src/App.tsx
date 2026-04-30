@@ -10,6 +10,7 @@ import TopicPage from "./pages/TopicPage";
 import Bookmarks from "./pages/Bookmarks";
 import Quiz from "./pages/Quiz";
 import ProgressDashboard from "./pages/ProgressDashboard";
+import AIStudio from "./pages/AIStudio";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
                 <Route path="/bookmarks" element={<Bookmarks />} />
                 <Route path="/quiz" element={<Quiz />} />
                 <Route path="/progress" element={<ProgressDashboard />} />
+                <Route path="/ai" element={<AIStudio />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
