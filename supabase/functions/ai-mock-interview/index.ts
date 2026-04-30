@@ -29,7 +29,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const { messages = [], model = "deepseek/deepseek-chat-v3.1:free" } = await req.json();
+    const { messages = [], model = "deepseek/deepseek-chat-v3.1" } = await req.json();
 
     const aiRes = await fetch(OPENROUTER_URL, {
       method: "POST",

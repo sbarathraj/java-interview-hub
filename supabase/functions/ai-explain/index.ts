@@ -20,7 +20,7 @@ Deno.serve(async (req: Request) => {
       });
     }
 
-    const { question, mode = "explain", model = "deepseek/deepseek-chat-v3.1:free" } =
+    const { question, mode = "explain", model = "deepseek/deepseek-chat-v3.1" } =
       await req.json();
 
     if (!question || typeof question !== "string") {
