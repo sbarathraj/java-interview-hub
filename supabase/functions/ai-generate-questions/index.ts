@@ -26,10 +26,6 @@ Rules:
 - tags = 2-5 lowercase keywords.
 - Return ONLY valid JSON matching the requested tool schema. No prose.`;
 
-serve(Deno.serve);
-
-function serve(handler: (req: Request) => Promise<Response>) {}
-
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
