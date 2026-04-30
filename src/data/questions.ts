@@ -11,1226 +11,1132 @@ export interface Question {
   proTip: string;
   codeSnippet?: string;
   tags: string[];
+  resumeLink?: string;
 }
 
 export interface Topic {
   id: string;
   label: string;
   description: string;
-  icon: string; // lucide icon name
-  accent: string; // tailwind color class
+  icon: string;
+  accent: string;
 }
 
 export const topics: Topic[] = [
-  { id: "core-java", label: "Core Java Fundamentals", description: "OOP, memory, strings, equality, modifiers", icon: "Coffee", accent: "from-orange-500 to-amber-500" },
-  { id: "data-structures", label: "Data Structures in Java", description: "Arrays, lists, trees, graphs, heaps, tries", icon: "Network", accent: "from-blue-500 to-cyan-500" },
-  { id: "collections", label: "Collections Framework", description: "ArrayList, HashMap, ConcurrentHashMap, iterators", icon: "Layers", accent: "from-emerald-500 to-teal-500" },
-  { id: "concurrency", label: "Multithreading & Concurrency", description: "Threads, locks, executors, futures, deadlocks", icon: "Cpu", accent: "from-rose-500 to-pink-500" },
-  { id: "java8", label: "Java 8+ Features", description: "Lambdas, streams, Optional, method references", icon: "Sparkles", accent: "from-violet-500 to-purple-500" },
-  { id: "exceptions-jvm", label: "Exception Handling & JVM", description: "Checked/unchecked, JVM internals, class loading", icon: "ShieldAlert", accent: "from-yellow-500 to-orange-500" },
-  { id: "design-patterns", label: "Design Patterns & SOLID", description: "Singleton, Factory, Builder, SOLID principles", icon: "Boxes", accent: "from-indigo-500 to-blue-500" },
-  { id: "spring", label: "Spring Framework", description: "Spring Boot, DI, AOP, REST, Security", icon: "Leaf", accent: "from-green-500 to-lime-500" },
-  { id: "coding-challenges", label: "Coding Challenges", description: "Reverse list, LRU cache, min stack, traversals", icon: "Code2", accent: "from-fuchsia-500 to-pink-500" },
+  { id: "core-java", label: "Core Java 8/11", description: "OOP, Streams, Lambdas, Memory, Threads", icon: "Coffee", accent: "from-orange-500 to-amber-500" },
+  { id: "spring", label: "Spring Boot & Spring Core", description: "DI, AOP, REST, Profiles, Banking APIs", icon: "Leaf", accent: "from-green-500 to-emerald-500" },
+  { id: "microservices", label: "Microservices Architecture", description: "Discovery, Gateway, Circuit Breaker, Caching", icon: "Network", accent: "from-blue-500 to-cyan-500" },
+  { id: "rest-api", label: "REST API Design", description: "HTTP, Versioning, Validation, Swagger", icon: "Globe", accent: "from-sky-500 to-blue-500" },
+  { id: "hibernate-jpa", label: "Hibernate / JPA", description: "Mappings, Lazy/Eager, JPQL, Transactions", icon: "Database", accent: "from-teal-500 to-cyan-500" },
+  { id: "dsa", label: "Data Structures & Algorithms", description: "Arrays, Trees, Graphs, DP, Heaps", icon: "Binary", accent: "from-fuchsia-500 to-pink-500" },
+  { id: "sql-db", label: "SQL & Databases", description: "MySQL, PostgreSQL, MongoDB, Indexing", icon: "Server", accent: "from-indigo-500 to-violet-500" },
+  { id: "react", label: "React.js & Frontend", description: "Hooks, Virtual DOM, Redux, Performance", icon: "Atom", accent: "from-cyan-500 to-blue-500" },
+  { id: "aws", label: "AWS & Cloud Deployment", description: "EC2, ALB, Auto Scaling, CI/CD", icon: "Cloud", accent: "from-amber-500 to-yellow-500" },
+  { id: "websocket", label: "WebSocket & Real-Time", description: "STOMP, Scaling, BarathAI Chat", icon: "Radio", accent: "from-rose-500 to-red-500" },
+  { id: "auth-security", label: "Authentication & Security", description: "JWT, bcrypt, Spring Security, OAuth", icon: "ShieldCheck", accent: "from-red-500 to-orange-500" },
+  { id: "design-patterns", label: "Design Patterns & System Design", description: "SOLID, Singleton, Factory, System Design", icon: "Boxes", accent: "from-purple-500 to-indigo-500" },
+  { id: "devops", label: "Git, CI/CD & DevOps", description: "Git flows, GitHub Actions, Maven, Gradle", icon: "GitBranch", accent: "from-slate-500 to-gray-600" },
+  { id: "coding-challenges", label: "Coding Challenges", description: "LRU, Reverse list, Two Sum, Merge intervals", icon: "Code2", accent: "from-pink-500 to-rose-500" },
+  { id: "projects", label: "My Projects (Resume)", description: "KUWY, BarathAI Chat, AI English Tutor", icon: "Briefcase", accent: "from-violet-500 to-purple-500" },
 ];
 
+const Q = (q: Question): Question => q;
+let _id = 0;
+const next = () => ++_id;
+
 export const questions: Question[] = [
-  // ============ CORE JAVA (10) ============
-  {
-    id: 1, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "OOP Concepts", difficulty: "easy",
-    question: "What is the difference between abstraction and encapsulation?",
-    answer: "Abstraction hides *implementation complexity* and exposes only essential behavior — achieved via abstract classes and interfaces. Encapsulation wraps data and the methods that operate on it into a single unit (a class) and restricts direct access using access modifiers (private, protected, public). Abstraction answers 'what an object does'; encapsulation answers 'how its state is protected'.",
-    proTip: "A common follow-up: 'Can you have abstraction without encapsulation?' Technically yes, but in practice they complement each other — abstraction relies on encapsulation to hide internal state.",
-    codeSnippet: `// Abstraction
-abstract class Payment {
-    abstract void pay(double amount); // what to do
+  // ============ CORE JAVA 8/11 (12) ============
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "OOP", difficulty: "easy",
+    question: "Explain the four pillars of OOP with real Java examples.",
+    answer: "**Encapsulation** — bundle state with behavior, expose via methods (private fields + getters/setters). **Inheritance** — `extends` reuses behavior; e.g. `class SavingsAccount extends Account`. **Polymorphism** — same interface, different behavior; compile-time (overloading) and runtime (overriding via dynamic dispatch). **Abstraction** — hide implementation behind abstract classes/interfaces; e.g. `PaymentGateway` interface with `Razorpay`/`Stripe` implementations.",
+    proTip: "Follow-up trap: 'Difference between abstract class and interface in Java 8+?' — interfaces now allow `default` and `static` methods, but only abstract classes can have constructors and instance state.",
+    codeSnippet: `interface PaymentGateway { void pay(double amt); }
+class Razorpay implements PaymentGateway {
+    public void pay(double amt) { /* call API */ }
 }
+PaymentGateway pg = new Razorpay(); // polymorphism
+pg.pay(1000);`,
+    tags: ["oop", "polymorphism"], resumeLink: "Java backend at KUWY" }),
 
-// Encapsulation
-class Account {
-    private double balance;            // hidden state
-    public void deposit(double amt) {  // controlled access
-        if (amt > 0) balance += amt;
-    }
-    public double getBalance() { return balance; }
-}`,
-    tags: ["oop", "abstraction", "encapsulation"]
-  },
-  {
-    id: 2, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "OOP Concepts", difficulty: "medium",
-    question: "Explain the four pillars of OOP with Java examples.",
-    answer: "1) **Encapsulation** — bundling data and behavior, restricting access via modifiers. 2) **Inheritance** — a subclass acquires fields/methods of a superclass using `extends`, enabling code reuse. 3) **Polymorphism** — same interface, different behavior; compile-time (overloading) and runtime (overriding via dynamic dispatch). 4) **Abstraction** — exposing only essential features through abstract classes/interfaces.",
-    proTip: "Interviewers often ask 'difference between overloading and overriding' as a follow-up — overloading is resolved at compile time by signature; overriding is resolved at runtime by the actual object type.",
-    codeSnippet: `class Animal {
-    void sound() { System.out.println("generic sound"); }
-}
-class Dog extends Animal {           // Inheritance
-    @Override void sound() { System.out.println("Woof"); } // Polymorphism
-}
-Animal a = new Dog();
-a.sound(); // "Woof" — runtime dispatch`,
-    tags: ["oop", "inheritance", "polymorphism"]
-  },
-  {
-    id: 3, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "Memory Model", difficulty: "medium",
-    question: "What is the difference between stack and heap memory in Java?",
-    answer: "**Stack** stores method frames, local variables, and references — it is thread-local, LIFO-ordered, and small/fast. Each thread has its own stack. **Heap** stores all objects and class instances — it is shared across threads, larger, and managed by the garbage collector. References live on the stack; objects live on the heap. A `StackOverflowError` indicates stack exhaustion (often deep recursion); `OutOfMemoryError: Java heap space` indicates heap exhaustion.",
-    proTip: "Mention escape analysis — the JIT can sometimes allocate short-lived objects on the stack to avoid GC pressure. This impresses interviewers.",
-    codeSnippet: `void demo() {
-    int x = 10;                    // x on stack
-    String s = new String("hi");   // s ref on stack, object on heap
-}`,
-    tags: ["memory", "stack", "heap", "jvm"]
-  },
-  {
-    id: 4, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "Garbage Collection", difficulty: "medium",
-    question: "How does Java's garbage collector work? Explain generational GC.",
-    answer: "Java uses **generational GC** based on the weak generational hypothesis (most objects die young). The heap is split into: **Young Generation** (Eden + two Survivor spaces S0/S1) — minor GC happens here frequently and is fast. **Old Generation** — long-lived objects promoted from young; collected by major/full GC, which is slower. **Metaspace** holds class metadata. Common collectors: Serial, Parallel, CMS (deprecated), G1 (default since Java 9), ZGC and Shenandoah (low-latency).",
-    proTip: "Know that `System.gc()` is only a *hint* — the JVM may ignore it. Tuning flags like `-Xms`, `-Xmx`, `-XX:+UseG1GC` are great to mention.",
-    tags: ["gc", "memory", "jvm"]
-  },
-  {
-    id: 5, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "Strings", difficulty: "easy",
-    question: "Why are Strings immutable in Java?",
-    answer: "Strings are immutable for: **1) Security** — used in classloading, file paths, network connections; mutation could be exploited. **2) String pool / interning** — multiple references can safely share one object. **3) Thread safety** — immutable objects are inherently thread-safe. **4) Caching hashCode** — since content never changes, the hash is computed once and cached, making `String` ideal as a `HashMap` key. The `String` class is `final`, and the underlying `char[]`/`byte[]` field is `private final`.",
-    proTip: "Follow-up: 'How would you create a mutable string?' → Use `StringBuilder` (single-threaded) or `StringBuffer` (synchronized).",
-    codeSnippet: `String a = "java";
-String b = "java";
-System.out.println(a == b); // true — same pooled instance
-String c = new String("java");
-System.out.println(a == c);        // false — heap object
-System.out.println(a == c.intern()); // true`,
-    tags: ["string", "immutability", "string-pool"]
-  },
-  {
-    id: 6, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "Strings", difficulty: "easy",
-    question: "What is the difference between StringBuilder and StringBuffer?",
-    answer: "Both are mutable character sequences. **StringBuffer** (Java 1.0) is synchronized — every method is thread-safe but slower. **StringBuilder** (Java 1.5) is not synchronized — faster, preferred for single-threaded code (e.g., inside a method). Both have the same API: `append`, `insert`, `delete`, `reverse`. Default capacity is 16; capacity grows as `(old * 2) + 2`.",
-    proTip: "In modern code, **always prefer StringBuilder unless you genuinely share the buffer across threads** — and even then, prefer external synchronization or immutability over `StringBuffer`.",
-    codeSnippet: `StringBuilder sb = new StringBuilder();
-for (int i = 0; i < 5; i++) sb.append(i).append(",");
-System.out.println(sb); // 0,1,2,3,4,`,
-    tags: ["string", "stringbuilder", "stringbuffer"]
-  },
-  {
-    id: 7, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "Equality", difficulty: "easy",
-    question: "What is the difference between == and .equals() in Java?",
-    answer: "`==` compares **references** (memory addresses) for objects and **values** for primitives. `.equals()` is a method defined in `Object` that by default also compares references, but is **overridden** in classes like `String`, `Integer`, and collections to compare *content/value*. Always use `.equals()` for content comparison and `==` only for primitives or reference identity checks (e.g., `obj == null`).",
-    proTip: "Use `Objects.equals(a, b)` — it null-safely handles both sides. Also remember the autoboxing trap: `Integer` cache is only -128..127, so `Integer.valueOf(200) == Integer.valueOf(200)` is `false`.",
-    codeSnippet: `String a = new String("hi");
-String b = new String("hi");
-System.out.println(a == b);      // false
-System.out.println(a.equals(b)); // true
-System.out.println(Objects.equals(null, null)); // true`,
-    tags: ["equals", "equality", "hashcode"]
-  },
-  {
-    id: 8, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "Equality", difficulty: "medium",
-    question: "Explain the equals() and hashCode() contract.",
-    answer: "Contract: **(1)** If `a.equals(b)` is true, then `a.hashCode() == b.hashCode()` MUST be true. **(2)** If hash codes are equal, equals may still be false (collision allowed). **(3)** equals must be reflexive, symmetric, transitive, and consistent. **(4)** `x.equals(null)` must be false. Violating this breaks `HashMap`, `HashSet`, `Hashtable` — equal objects placed in different buckets become 'lost'. Always override both together.",
-    proTip: "Use IDE generation or `Objects.hash(field1, field2)` and `Objects.equals()` for safe implementations. For Java 14+ records, both are auto-generated.",
-    codeSnippet: `class User {
-    private final String email;
-    public User(String e) { this.email = e; }
-    @Override public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof User u)) return false;
-        return Objects.equals(email, u.email);
-    }
-    @Override public int hashCode() { return Objects.hash(email); }
-}`,
-    tags: ["equals", "hashcode", "contract"]
-  },
-  {
-    id: 9, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "Modifiers", difficulty: "easy",
-    question: "Explain the access modifiers in Java.",
-    answer: "**public** — accessible from anywhere. **protected** — accessible within the same package and by subclasses (even in different packages). **default / package-private** (no modifier) — accessible only within the same package. **private** — accessible only within the declaring class. From most to least restrictive: `private < default < protected < public`. Encapsulation best practice: keep fields `private` and expose them via methods.",
-    proTip: "Top-level classes can only be `public` or package-private — never `private` or `protected`. Inner classes can use any modifier.",
-    tags: ["modifiers", "encapsulation"]
-  },
-  {
-    id: 10, topic: "core-java", topicLabel: "Core Java Fundamentals", subtopic: "Modifiers", difficulty: "medium",
-    question: "What is the difference between final, finally, and finalize?",
-    answer: "**final** — keyword: a `final` variable can't be reassigned, a `final` method can't be overridden, a `final` class can't be extended. **finally** — block: always executes after try/catch (even on return or exception), used for cleanup like closing streams. **finalize()** — deprecated method (since Java 9, removed in Java 18) called by GC before reclaiming an object — unreliable timing, never rely on it. Use `try-with-resources` or explicit cleanup instead.",
-    proTip: "Mention that `finally` does NOT run if the JVM exits via `System.exit()` or the thread is killed — a great gotcha to bring up.",
-    codeSnippet: `final int MAX = 100;             // final variable
-try {
-    risky();
-} finally {
-    cleanup();                   // always runs
-}`,
-    tags: ["final", "finally", "finalize"]
-  },
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Streams", difficulty: "medium",
+    question: "Explain Java 8 Streams and the difference between intermediate and terminal operations.",
+    answer: "Streams are a functional pipeline over a data source (Collection, array, I/O). **Intermediate** ops (`filter`, `map`, `sorted`, `distinct`) return a new Stream and are **lazy** — they don't execute until a terminal op runs. **Terminal** ops (`collect`, `forEach`, `reduce`, `count`) trigger evaluation and produce a result/side effect. Streams can be sequential or `parallel()` for multi-core processing.",
+    proTip: "Don't reuse a stream — once a terminal op runs, the stream is consumed. Calling another op throws `IllegalStateException`.",
+    codeSnippet: `List<String> active = users.stream()
+    .filter(User::isActive)
+    .map(User::getName)
+    .sorted()
+    .collect(Collectors.toList());`,
+    tags: ["streams", "java8"] }),
 
-  // ============ DATA STRUCTURES (28) ============
-  // -- Arrays & Strings (4)
-  {
-    id: 11, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Arrays & Strings", difficulty: "easy",
-    question: "How do you rotate an array by k positions to the right?",
-    answer: "The optimal in-place O(n) time, O(1) space approach uses **three reversals**: (1) reverse the whole array, (2) reverse the first k elements, (3) reverse the remaining n-k elements. Always normalize `k = k % n` to handle k larger than length.",
-    proTip: "If asked for left rotation, the same trick works — just rotate by `n - k` to the right, or reverse the first k, then the rest, then the whole.",
-    codeSnippet: `void rotate(int[] a, int k) {
-    int n = a.length; k %= n;
-    reverse(a, 0, n - 1);
-    reverse(a, 0, k - 1);
-    reverse(a, k, n - 1);
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Functional Interfaces", difficulty: "medium",
+    question: "What are the four core functional interfaces in java.util.function?",
+    answer: "**Predicate<T>** — `boolean test(T)`, used in `filter`. **Function<T,R>** — `R apply(T)`, used in `map`. **Consumer<T>** — `void accept(T)`, used in `forEach`. **Supplier<T>** — `T get()`, used for lazy creation/factories. They enable lambda-friendly APIs throughout the JDK.",
+    proTip: "Also know `BiFunction`, `UnaryOperator`, and primitive specializations like `IntPredicate` to avoid autoboxing in hot loops.",
+    codeSnippet: `Predicate<User> isAdult = u -> u.getAge() >= 18;
+Function<User,String> name = User::getName;
+Consumer<String> log = System.out::println;
+Supplier<UUID> id = UUID::randomUUID;`,
+    tags: ["functional", "lambda"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Optional", difficulty: "easy",
+    question: "Why use Optional and what are common anti-patterns?",
+    answer: "`Optional<T>` documents that a value may be absent and forces the caller to handle it, replacing many `null` checks. Use `map`, `filter`, `orElse`, `orElseThrow`. Anti-patterns: using Optional for fields or method parameters, calling `get()` without `isPresent()`, and wrapping collections (return empty collections instead).",
+    proTip: "`orElse(x)` always evaluates `x`; use `orElseGet(() -> x)` for expensive defaults to keep them lazy.",
+    codeSnippet: `String email = userRepo.findById(id)
+    .map(User::getEmail)
+    .orElseThrow(() -> new NotFoundException("User"));`,
+    tags: ["optional", "java8"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Equality", difficulty: "easy",
+    question: "What is the difference between == and .equals(), and what is the hashCode contract?",
+    answer: "`==` compares references for objects (and values for primitives). `.equals()` compares logical equality (overridden in `String`, wrappers, etc.). **Contract:** if `a.equals(b)` then `a.hashCode() == b.hashCode()`. Violating it breaks `HashMap`/`HashSet` lookups. Always override both together.",
+    proTip: "Always include the same fields in `equals` and `hashCode`. Use `Objects.equals` and `Objects.hash` to avoid NPEs.",
+    codeSnippet: `@Override public boolean equals(Object o) {
+    if (this == o) return true;
+    if (!(o instanceof User u)) return false;
+    return Objects.equals(id, u.id);
 }
-void reverse(int[] a, int i, int j) {
-    while (i < j) { int t = a[i]; a[i++] = a[j]; a[j--] = t; }
+@Override public int hashCode() { return Objects.hash(id); }`,
+    tags: ["equals", "hashcode"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Strings", difficulty: "medium",
+    question: "Explain the String pool and why String is immutable.",
+    answer: "String literals are interned in the **String pool** (a region of the heap) so identical literals share one object. Immutability gives: thread-safety without locks, safe use as `HashMap` keys (hash cached), security (e.g. file paths/credentials can't change after validation), and pool-based memory savings. `new String(\"x\")` bypasses the pool; use `intern()` to add it.",
+    proTip: "Prefer `StringBuilder` in loops — concatenation with `+` creates a new String each iteration (O(n²) total).",
+    tags: ["string", "immutability"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "JVM Memory", difficulty: "medium",
+    question: "Explain the Java Memory Model: stack vs heap, and how G1 GC works.",
+    answer: "**Stack** — per-thread, holds frames/locals/refs, fast LIFO. **Heap** — shared, holds objects, GC-managed. Heap is split into Young (Eden + S0/S1) and Old generations. **G1 GC** divides the heap into equal-size regions, collects regions with the most garbage first ('garbage first'), runs mostly concurrently, and aims to meet a soft pause-time goal. It replaced CMS and is the default since Java 9.",
+    proTip: "Mention escape analysis: the JIT may stack-allocate objects that don't escape a method, reducing GC pressure.",
+    tags: ["jvm", "gc", "memory"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Exceptions", difficulty: "easy",
+    question: "Checked vs unchecked exceptions, and what is try-with-resources?",
+    answer: "**Checked** (extend `Exception`) must be caught or declared — for recoverable conditions (IOException). **Unchecked** (extend `RuntimeException`) signal programming errors (NPE, IllegalArgument). **try-with-resources** auto-closes any resource implementing `AutoCloseable`, in reverse declaration order, even on exception — preventing resource leaks.",
+    proTip: "Custom exceptions: extend `RuntimeException` for service-layer errors so callers aren't forced into ugly try/catch chains.",
+    codeSnippet: `try (var conn = ds.getConnection();
+     var ps = conn.prepareStatement(sql)) {
+    return ps.executeQuery();
+} // auto-closed`,
+    tags: ["exceptions"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Concurrency", difficulty: "hard",
+    question: "Difference between synchronized and volatile, and when to use each?",
+    answer: "`synchronized` provides **mutual exclusion** AND **visibility** — only one thread enters the block, and changes are flushed to main memory. `volatile` provides **only visibility** and ordering (happens-before) — reads/writes go to main memory, but compound actions (`x++`) are still not atomic. Use `volatile` for single-writer flags or DCL singletons; use `synchronized`/`Lock`/atomics for compound actions.",
+    proTip: "Prefer `java.util.concurrent.atomic` (`AtomicInteger`, `AtomicReference`) over manual synchronization for counters and refs.",
+    codeSnippet: `private volatile boolean running = true;
+public void stop() { running = false; }   // safe publish
+public void loop() { while (running) doWork(); }`,
+    tags: ["concurrency", "volatile"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Concurrency", difficulty: "medium",
+    question: "ExecutorService vs CompletableFuture — when to use which?",
+    answer: "`ExecutorService` is a thread-pool abstraction: submit `Runnable`/`Callable`, get `Future`. `CompletableFuture` is built on top — it's a *composable* async pipeline supporting `thenApply`, `thenCompose`, `thenCombine`, `exceptionally`, and async chaining. Use `ExecutorService` for fire-and-forget work; use `CompletableFuture` for non-blocking pipelines (parallel API calls, fan-out/fan-in).",
+    proTip: "Always pass an explicit `Executor` to `CompletableFuture.supplyAsync` — the default `ForkJoinPool.commonPool` can starve under blocking I/O.",
+    codeSnippet: `CompletableFuture<User> u = CompletableFuture.supplyAsync(() -> userApi.fetch(id), exec);
+CompletableFuture<Score> s = CompletableFuture.supplyAsync(() -> scoreApi.fetch(id), exec);
+u.thenCombine(s, Profile::new).thenAccept(this::send);`,
+    tags: ["concurrency", "completablefuture"], resumeLink: "Concurrent banking calls at KUWY" }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Java 8", difficulty: "easy",
+    question: "What are method references and default methods?",
+    answer: "**Method references** (`ClassName::method`) are shorthand for lambdas calling a single method — four kinds: static, bound instance, unbound instance, and constructor. **Default methods** let interfaces provide a method body, enabling backward-compatible API evolution (e.g. `Collection.stream()`).",
+    proTip: "Diamond conflict: if two interfaces define the same default method, the implementing class must override it explicitly.",
+    codeSnippet: `users.forEach(System.out::println);
+Function<String,Integer> len = String::length;
+Supplier<List<String>> mk = ArrayList::new;`,
+    tags: ["java8", "lambda"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Java 11", difficulty: "easy",
+    question: "Notable features added between Java 8 and Java 11?",
+    answer: "Java 9: modules (JPMS), `var`-less factory methods (`List.of`). Java 10: `var` local-variable type inference. Java 11: HTTP Client API (`java.net.http`), `String.isBlank/lines/repeat/strip`, `Files.readString/writeString`, running single-file source (`java App.java`), and removal of Java EE modules.",
+    proTip: "Java 11 is the LTS most enterprise teams (including KUWY-style stacks) standardize on after Java 8.",
+    tags: ["java11"] }),
+
+  // ============ SPRING (10) ============
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "Auto-Config", difficulty: "easy",
+    question: "How does Spring Boot auto-configuration work?",
+    answer: "Spring Boot scans the classpath and applies `@Configuration` classes from `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` (formerly `spring.factories`). Each config is conditional via `@ConditionalOnClass`, `@ConditionalOnMissingBean`, `@ConditionalOnProperty` — so beans are only created when needed. Starters (`spring-boot-starter-web`) bundle dependencies that trigger the right auto-configs.",
+    proTip: "Use `--debug` flag or `/actuator/conditions` to see which auto-configs matched and why others didn't.",
+    tags: ["spring-boot", "autoconfig"] }),
+
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "DI", difficulty: "medium",
+    question: "Constructor vs Field vs Setter injection — which is best and why?",
+    answer: "**Constructor injection** is preferred: dependencies are immutable (`final`), the bean is fully initialized after construction, easy to unit-test (no Spring needed), and circular dependencies fail fast. **Field injection** (`@Autowired` on fields) is concise but hides dependencies and breaks testability. **Setter injection** is useful for optional dependencies.",
+    proTip: "With Spring 4.3+, a single constructor implicitly autowires — no `@Autowired` needed. Lombok's `@RequiredArgsConstructor` makes this elegant.",
+    codeSnippet: `@Service
+@RequiredArgsConstructor
+public class LoanService {
+    private final LoanRepository repo;
+    private final CreditClient credit;
 }`,
-    tags: ["array", "rotation", "two-pointer"]
-  },
-  {
-    id: 12, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Arrays & Strings", difficulty: "easy",
+    tags: ["di", "spring"] }),
+
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "Bean Lifecycle", difficulty: "medium",
+    question: "Explain Spring bean lifecycle and bean scopes.",
+    answer: "**Lifecycle:** instantiate → populate properties → `BeanNameAware/BeanFactoryAware` → `BeanPostProcessor.before` → `@PostConstruct` / `InitializingBean.afterPropertiesSet` → custom init → `BeanPostProcessor.after` → in use → `@PreDestroy` / `DisposableBean.destroy`. **Scopes:** `singleton` (default, one per container), `prototype` (new each request), `request`, `session`, `application`, `websocket`.",
+    proTip: "Injecting a prototype bean into a singleton freezes one instance — use `ObjectProvider<T>` or `@Lookup` to get a fresh one each call.",
+    tags: ["spring", "lifecycle"] }),
+
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "REST", difficulty: "easy",
+    question: "Difference between @RestController/@Controller and @RequestMapping/@GetMapping?",
+    answer: "`@Controller` returns view names (resolved by ViewResolver). `@RestController` = `@Controller` + `@ResponseBody`, so return values are serialized to JSON via Jackson. `@RequestMapping` is generic (any method); `@GetMapping`/`@PostMapping`/etc. are HTTP-method-specific shortcuts — clearer and safer.",
+    proTip: "Use `ResponseEntity<T>` when you need to control status code or headers (e.g. 201 + Location for POST).",
+    codeSnippet: `@RestController
+@RequestMapping("/api/v1/loans")
+@RequiredArgsConstructor
+public class LoanController {
+    private final LoanService svc;
+    @GetMapping("/{id}")
+    public LoanDto get(@PathVariable Long id) { return svc.get(id); }
+}`,
+    tags: ["rest", "spring"], resumeLink: "20+ REST APIs at KUWY" }),
+
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "Profiles", difficulty: "easy",
+    question: "How do Spring Profiles and externalized configuration work?",
+    answer: "Profiles activate environment-specific beans/config. Set with `spring.profiles.active=dev` (env var, JVM arg, `application.yml`). Use `application-dev.yml`, `application-prod.yml`. Annotate beans with `@Profile(\"prod\")`. Property precedence (high→low): command-line args, OS env, `application-{profile}.yml`, `application.yml`, `@PropertySource`.",
+    proTip: "Never commit secrets to YAML — use env vars, AWS Secrets Manager, or Spring Cloud Config in production.",
+    tags: ["spring", "profiles"] }),
+
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "AOP", difficulty: "hard",
+    question: "Explain Spring AOP — what are @Aspect, @Before, @After, @Around used for?",
+    answer: "AOP modularizes cross-cutting concerns (logging, metrics, security, transactions) without polluting business code. Spring AOP is **proxy-based** (JDK dynamic proxy for interfaces, CGLIB for classes). `@Before` runs before the join point; `@After` always runs; `@AfterReturning`/`@AfterThrowing` run conditionally; `@Around` wraps the call (must invoke `pjp.proceed()`). `@Transactional` and `@Cacheable` are AOP-driven.",
+    proTip: "Self-invocation bypasses the proxy — calling `this.cachedMethod()` from another method in the same class skips `@Cacheable`.",
+    codeSnippet: `@Aspect @Component
+public class TimingAspect {
+  @Around("@annotation(Timed)")
+  public Object time(ProceedingJoinPoint pjp) throws Throwable {
+    long t = System.nanoTime();
+    try { return pjp.proceed(); }
+    finally { log.info("{} took {} ns", pjp.getSignature(), System.nanoTime()-t); }
+  }
+}`,
+    tags: ["aop", "spring"] }),
+
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "Exception Handling", difficulty: "medium",
+    question: "How do you handle exceptions globally with @ControllerAdvice?",
+    answer: "`@ControllerAdvice` (or `@RestControllerAdvice`) is a global interceptor for `@ExceptionHandler` methods. Map domain exceptions (e.g. `LoanNotFoundException`) to HTTP statuses + a consistent error body. Combine with `@Valid` + `MethodArgumentNotValidException` handler for validation errors.",
+    proTip: "Return RFC 7807 `ProblemDetail` (Spring 6) for a standard error format consumable by frontends and API clients.",
+    codeSnippet: `@RestControllerAdvice
+public class ApiExceptionHandler {
+  @ExceptionHandler(LoanNotFoundException.class)
+  public ResponseEntity<ApiError> notFound(LoanNotFoundException ex) {
+    return ResponseEntity.status(404).body(new ApiError("LOAN_NOT_FOUND", ex.getMessage()));
+  }
+}`,
+    tags: ["spring", "exceptions"], resumeLink: "Banking API error handling at KUWY" }),
+
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "Spring Data", difficulty: "medium",
+    question: "What does @Transactional do and what are propagation levels?",
+    answer: "`@Transactional` opens a transaction before the method, commits on success, rolls back on `RuntimeException` (configurable via `rollbackFor`). Propagation: **REQUIRED** (default — join existing or start new), **REQUIRES_NEW** (suspend current, start new — useful for audit logs that must persist even if outer fails), **NESTED**, **SUPPORTS**, **MANDATORY**, **NEVER**. Isolation maps to DB levels (READ_COMMITTED, REPEATABLE_READ, etc.).",
+    proTip: "`@Transactional` only works through the proxy — calling a `@Transactional` method from the same class won't open a transaction.",
+    tags: ["transactional", "spring"] }),
+
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "Project", difficulty: "hard",
+    question: "How did you structure your Banking Loan APIs at KUWY?",
+    answer: "Layered architecture: **Controller → Service → Repository → Entity**, with DTOs at the boundary. Each loan product (auto, personal) was a microservice with its own MySQL schema. Cross-cutting concerns: `@ControllerAdvice` for errors, `@Aspect` for audit logging, Resilience4j Circuit Breakers around third-party calls (Aadhar/PAN/RC verification), Redis cache-aside for KYC lookups (30% latency drop), JWT-based auth via Spring Security, Swagger for docs, and Flyway for schema migrations. Deployed on AWS EC2 behind ALB with Auto Scaling.",
+    proTip: "When asked 'how do you keep services consistent?' mention saga / outbox pattern for distributed transactions instead of 2PC.",
+    tags: ["project", "architecture"], resumeLink: "Banking Loan APIs @ KUWY" }),
+
+  Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "Validation", difficulty: "easy",
+    question: "How do you validate request bodies in Spring Boot?",
+    answer: "Add `spring-boot-starter-validation`, annotate the DTO (`@NotNull`, `@Size`, `@Pattern`, `@Email`), then `@Valid` on the controller parameter. Spring throws `MethodArgumentNotValidException`, which a `@RestControllerAdvice` converts to a 400 with field errors.",
+    proTip: "For complex cross-field rules, write a custom `ConstraintValidator` rather than scattering checks in the service.",
+    codeSnippet: `public record LoanRequest(
+    @NotBlank String pan,
+    @Min(10000) @Max(5_000_000) Long amount,
+    @Pattern(regexp="\\\\d{12}") String aadhar) {}`,
+    tags: ["validation", "spring"] }),
+
+  // ============ MICROSERVICES (8) ============
+  Q({ id: next(), topic: "microservices", topicLabel: "Microservices Architecture", subtopic: "Fundamentals", difficulty: "easy",
+    question: "Monolith vs Microservices — when to choose which?",
+    answer: "**Monolith** wins for small teams, simple domains, fast iteration: one deploy, one DB, no network hops. **Microservices** win when teams scale, the domain has clear bounded contexts, you need independent deploys/scaling, and polyglot tech. Costs: distributed-system complexity (latency, partial failures, eventual consistency, observability). Start monolith → extract services as pain emerges.",
+    proTip: "Cite Conway's Law: your service boundaries will mirror your team boundaries — design accordingly.",
+    tags: ["microservices"] }),
+
+  Q({ id: next(), topic: "microservices", topicLabel: "Microservices Architecture", subtopic: "Infra", difficulty: "medium",
+    question: "Explain Service Discovery, API Gateway, and Load Balancing.",
+    answer: "**Service Discovery** (Eureka, Consul) lets services find each other dynamically as instances scale up/down. **API Gateway** (Spring Cloud Gateway, Kong) is the single entry point: routing, auth, rate limiting, request transformation, response aggregation. **Load Balancing** distributes requests — client-side (Ribbon/Spring Cloud LoadBalancer) picks an instance from the registry; server-side (ALB, Nginx) sits in front of pools.",
+    proTip: "On AWS we used ALB (server-side) + ECS service discovery — simpler than running Eureka.",
+    tags: ["discovery", "gateway"], resumeLink: "ALB + Auto Scaling at KUWY" }),
+
+  Q({ id: next(), topic: "microservices", topicLabel: "Microservices Architecture", subtopic: "Communication", difficulty: "medium",
+    question: "REST vs messaging (Kafka/RabbitMQ) for inter-service communication?",
+    answer: "**REST/sync** — simple, request/response, immediate result; couples caller availability to callee. **Messaging/async** — decouples producers/consumers, buffers spikes, enables event-driven flows (order placed → inventory + email + analytics consume). **Kafka** is a distributed log (high-throughput, replayable). **RabbitMQ** is a smart broker (routing, priorities). Use sync for queries; async for state-change events.",
+    proTip: "For 'how do you avoid losing events?' mention the **transactional outbox** pattern — persist event in same DB tx as state change, then publish.",
+    tags: ["kafka", "messaging"] }),
+
+  Q({ id: next(), topic: "microservices", topicLabel: "Microservices Architecture", subtopic: "Resilience", difficulty: "hard",
+    question: "Explain the Circuit Breaker pattern (Resilience4j).",
+    answer: "Wraps a remote call in a state machine: **CLOSED** (calls pass through, failures counted) → **OPEN** (after threshold, fail fast for `waitDurationInOpenState`) → **HALF_OPEN** (try a few probes; success → CLOSED, failure → OPEN). Prevents cascading failures and gives the downstream time to recover. Pair with timeouts, retries (with jitter), and bulkheads.",
+    proTip: "Always provide a `fallback` (cached data, default, partial response) — circuit breaker without fallback just turns 5xx into faster 5xx.",
+    codeSnippet: `@CircuitBreaker(name="aadhar", fallbackMethod="cachedAadhar")
+public Verification verify(String pan) {
+    return aadharClient.verify(pan);
+}
+public Verification cachedAadhar(String pan, Throwable t) {
+    return cache.get(pan); // graceful degradation
+}`,
+    tags: ["resilience4j", "circuit-breaker"], resumeLink: "Reliability for Aadhar/PAN at KUWY" }),
+
+  Q({ id: next(), topic: "microservices", topicLabel: "Microservices Architecture", subtopic: "Caching", difficulty: "medium",
+    question: "Caching strategies — how did you improve performance by 30%?",
+    answer: "Strategies: **Cache-aside** (app reads cache, on miss reads DB and populates), **Read-through** (cache loads from DB), **Write-through** (writes go through cache to DB), **Write-behind** (async). At KUWY we used Redis cache-aside for hot KYC and loan-product lookups + Caffeine in-process L1 for ultra-hot keys, with TTL + event-driven invalidation on updates. Hot endpoints dropped from ~250ms to ~170ms (30%+).",
+    proTip: "Watch for **cache stampede** — use locking or `request coalescing`, and add jitter to TTLs to prevent synchronized expiry.",
+    tags: ["redis", "cache"], resumeLink: "30% perf improvement at KUWY" }),
+
+  Q({ id: next(), topic: "microservices", topicLabel: "Microservices Architecture", subtopic: "Observability", difficulty: "medium",
+    question: "Distributed tracing and centralized logging — how would you set them up?",
+    answer: "**Tracing**: Spring Cloud Sleuth / Micrometer Tracing propagate `traceId`/`spanId` across HTTP/Kafka via headers (W3C Trace Context); export to Zipkin/Jaeger. **Logging**: structured JSON logs (Logback + Logstash encoder) shipped via Filebeat to ELK/CloudWatch with `traceId` for correlation. **Metrics**: Micrometer → Prometheus → Grafana dashboards + alerts.",
+    proTip: "Always log the `traceId` — it lets you reconstruct a single user request across 5+ services in seconds.",
+    tags: ["observability", "tracing"] }),
+
+  Q({ id: next(), topic: "microservices", topicLabel: "Microservices Architecture", subtopic: "Data", difficulty: "medium",
+    question: "Why 'database per service'? How do you query across services?",
+    answer: "Each service owns its schema → loose coupling, independent scaling, polyglot persistence. To query across services: **API composition** (gateway/aggregator calls each service), **CQRS + materialized read model** (services emit events; a read service builds a denormalized view), or **data replication** via change data capture (Debezium → Kafka). Avoid sharing a DB — it recreates the monolith with extra latency.",
+    proTip: "Joining via API composition is fine for 2-3 services; beyond that, build a read model.",
+    tags: ["microservices", "data"] }),
+
+  Q({ id: next(), topic: "microservices", topicLabel: "Microservices Architecture", subtopic: "Project", difficulty: "hard",
+    question: "How did you split your banking services into microservices?",
+    answer: "Split by **bounded context**: Customer/KYC, Loan Origination, Underwriting, Disbursement, Repayment, Notifications. Each owns its DB schema. Sync REST for query flows (loan status), async Kafka events for state changes (LoanApproved → Disbursement + Notification consume). API Gateway centralized JWT validation and rate limiting. Resilience4j + Redis cache around third-party (Aadhar/PAN/Vehicle RC). Deployed on AWS ECS behind ALB with Auto Scaling.",
+    proTip: "Be ready for 'how would you handle a failed disbursement?' — outbox + saga compensations (reverse the loan approval, notify ops).",
+    tags: ["project", "microservices"], resumeLink: "Microservices @ KUWY" }),
+
+  // ============ REST API (8) ============
+  Q({ id: next(), topic: "rest-api", topicLabel: "REST API Design", subtopic: "Principles", difficulty: "easy",
+    question: "What are REST principles and the right HTTP method/status codes?",
+    answer: "REST = stateless, cacheable, uniform interface, resource-oriented. **Methods:** GET (read, safe+idempotent), POST (create, not idempotent), PUT (full replace, idempotent), PATCH (partial update), DELETE (idempotent). **Statuses:** 200 OK, 201 Created (+Location), 204 No Content, 400 Bad Request, 401 Unauthorized, 403 Forbidden, 404 Not Found, 409 Conflict, 422 Unprocessable, 429 Too Many Requests, 500 Server Error, 503 Unavailable.",
+    proTip: "Don't return 200 with `{\"error\":...}` — use proper status codes; clients and middleware depend on them.",
+    tags: ["rest", "http"] }),
+
+  Q({ id: next(), topic: "rest-api", topicLabel: "REST API Design", subtopic: "Versioning", difficulty: "medium",
+    question: "What are the API versioning strategies and trade-offs?",
+    answer: "**URI versioning** (`/api/v1/loans`) — simple, cache-friendly, most popular. **Header versioning** (`Accept: application/vnd.bank.v2+json`) — keeps URIs clean, true content negotiation, but harder to test in browsers. **Query param** (`?v=2`) — easy but mixes config with data. Pick one and stay consistent. Bump major versions only on breaking changes; add fields backward-compatibly.",
+    proTip: "Maintain N and N-1 in production. Deprecate with `Sunset`/`Deprecation` headers and clear timelines.",
+    tags: ["rest", "versioning"] }),
+
+  Q({ id: next(), topic: "rest-api", topicLabel: "REST API Design", subtopic: "Pagination", difficulty: "medium",
+    question: "Pagination, filtering, and sorting in REST APIs?",
+    answer: "**Offset pagination** (`?page=2&size=20`) — easy but slow on large offsets and unstable when data changes. **Cursor/keyset** (`?after=<id>&size=20`) — stable, fast, but no jumping to page N. Filtering: `?status=APPROVED&minAmount=10000`. Sorting: `?sort=createdAt,desc`. Always cap `size` server-side.",
+    proTip: "Spring Data's `Pageable` parameter handles offset pagination automatically and returns `Page<T>` with totals.",
+    codeSnippet: `@GetMapping
+public Page<LoanDto> list(@RequestParam(required=false) Status status,
+                          Pageable pageable) {
+    return svc.search(status, pageable);
+}`,
+    tags: ["rest", "pagination"] }),
+
+  Q({ id: next(), topic: "rest-api", topicLabel: "REST API Design", subtopic: "Reliability", difficulty: "hard",
+    question: "Explain HATEOAS, idempotency, and rate limiting.",
+    answer: "**HATEOAS** — responses include links to next actions (`{\"_links\":{\"approve\":\"/loans/1/approve\"}}`); enables discoverability. **Idempotency** — repeating the call has the same effect; use an `Idempotency-Key` header for POSTs (payments) and store the key+result so retries are safe. **Rate limiting** — token bucket / leaky bucket per API key/IP; respond 429 with `Retry-After`. Implement at gateway (Bucket4j, Kong, ALB+WAF).",
+    proTip: "For payments: combine idempotency keys with DB unique constraint on the key — guarantees 'process once' even under retries.",
+    tags: ["rest", "idempotency", "rate-limit"] }),
+
+  Q({ id: next(), topic: "rest-api", topicLabel: "REST API Design", subtopic: "Validation", difficulty: "easy",
+    question: "How do you validate API requests with @Valid?",
+    answer: "Add Jakarta validation annotations (`@NotNull`, `@Size`, `@Pattern`, `@Email`, `@Min/@Max`) on the DTO. Annotate controller param with `@Valid`. On violation, Spring throws `MethodArgumentNotValidException` — handle in `@RestControllerAdvice` to return 400 with a field-level error array.",
+    proTip: "Use validation **groups** (e.g. `Create.class`, `Update.class`) when the same DTO is reused with different rules.",
+    tags: ["rest", "validation"] }),
+
+  Q({ id: next(), topic: "rest-api", topicLabel: "REST API Design", subtopic: "Docs", difficulty: "easy",
+    question: "How do you document APIs with Swagger/OpenAPI?",
+    answer: "Add `springdoc-openapi-starter-webmvc-ui`. It auto-generates an OpenAPI 3 spec at `/v3/api-docs` and a Swagger UI at `/swagger-ui.html`. Enrich with `@Operation`, `@Schema`, `@ApiResponse`. Export the JSON to generate client SDKs (openapi-generator) for frontend/mobile teams.",
+    proTip: "Lock down Swagger UI in production — disable it via profiles or protect with auth; never expose API surface to the world.",
+    tags: ["swagger", "openapi"] }),
+
+  Q({ id: next(), topic: "rest-api", topicLabel: "REST API Design", subtopic: "Project", difficulty: "hard",
+    question: "How did you design 20+ scalable REST APIs at KUWY?",
+    answer: "Standardized: URI versioning (`/api/v1/...`), DTOs (never expose entities), Bean Validation on inputs, `@RestControllerAdvice` for uniform errors, pagination via `Pageable`, OpenAPI docs, JWT auth, rate limiting at gateway, request/response logging with `traceId`, and Resilience4j around outbound calls. Performance: connection pooling (HikariCP), Redis caching on hot reads, async non-blocking calls with `CompletableFuture` for fan-out (Aadhar + PAN + RC in parallel).",
+    proTip: "Mention an SLA mindset — you measured p95/p99 latency per endpoint and alerted in Grafana, not just averages.",
+    tags: ["rest", "project"], resumeLink: "20+ APIs @ KUWY" }),
+
+  Q({ id: next(), topic: "rest-api", topicLabel: "REST API Design", subtopic: "Integration", difficulty: "medium",
+    question: "How did you integrate third-party APIs (Aadhar, PAN, Vehicle RC)?",
+    answer: "Wrapped each in a thin client (`AadharClient`, `PanClient`) using Spring's `RestClient`/Feign with: timeouts, retries with exponential backoff + jitter, Resilience4j circuit breaker, Redis cache for repeat lookups, structured logging, and a typed exception hierarchy. Calls were parallelized via `CompletableFuture.allOf`. On breaker-open, returned cached/last-known-good data and queued an async re-verification.",
+    proTip: "Always set explicit connect + read timeouts. Default infinite timeouts will hang threads and crash the service under provider slowness.",
+    tags: ["integration", "resilience4j"], resumeLink: "Aadhar/PAN/RC at KUWY" }),
+
+  // ============ HIBERNATE/JPA (6) ============
+  Q({ id: next(), topic: "hibernate-jpa", topicLabel: "Hibernate / JPA", subtopic: "Mappings", difficulty: "easy",
+    question: "Explain @OneToMany, @ManyToOne, @ManyToMany with examples.",
+    answer: "**@ManyToOne** is the *owning* side (holds the FK) — most common. **@OneToMany** is the inverse side, declared with `mappedBy`. **@ManyToMany** uses a join table — usually replaced by an explicit join entity to add columns (e.g. `LoanCustomer` with role/timestamps).",
+    proTip: "Always make collections lazy (default for `@OneToMany`/`@ManyToMany`) and reach for them inside an open session/transaction.",
+    codeSnippet: `@Entity class Loan {
+  @ManyToOne(fetch = LAZY) Customer customer;
+}
+@Entity class Customer {
+  @OneToMany(mappedBy = "customer") List<Loan> loans;
+}`,
+    tags: ["jpa", "mappings"] }),
+
+  Q({ id: next(), topic: "hibernate-jpa", topicLabel: "Hibernate / JPA", subtopic: "Performance", difficulty: "hard",
+    question: "What is the N+1 problem and how do you fix it?",
+    answer: "Loading N parents triggers N additional queries to load each parent's lazy children — total N+1 queries. Fixes: **JOIN FETCH** in JPQL, **`@EntityGraph`** on repository methods, **batch fetching** (`@BatchSize`), or DTO projections that fetch only needed fields in one query.",
+    proTip: "Enable `spring.jpa.show-sql=true` + `org.hibernate.SQL=DEBUG` in dev — N+1 is invisible until you watch the SQL log.",
+    codeSnippet: `@Query("select l from Loan l join fetch l.customer where l.status=:s")
+List<Loan> findActiveWithCustomer(@Param("s") Status s);`,
+    tags: ["jpa", "n+1"] }),
+
+  Q({ id: next(), topic: "hibernate-jpa", topicLabel: "Hibernate / JPA", subtopic: "Queries", difficulty: "medium",
+    question: "JPQL vs Native queries vs Criteria API — when to use each?",
+    answer: "**JPQL** — entity-oriented, portable across DBs; default choice. **Native SQL** — when you need DB-specific features (window functions, CTEs, JSONB ops). **Criteria API** — type-safe, dynamic queries built programmatically; verbose. Modern alternative: **QueryDSL** or **Spring Data Specifications** for dynamic filters.",
+    proTip: "For dynamic search filters (status + amount range + date), Specifications/QueryDSL beat string concatenation any day.",
+    tags: ["jpql", "criteria"] }),
+
+  Q({ id: next(), topic: "hibernate-jpa", topicLabel: "Hibernate / JPA", subtopic: "Transactions", difficulty: "medium",
+    question: "Explain @Transactional propagation levels.",
+    answer: "**REQUIRED** (default) — join existing or start new. **REQUIRES_NEW** — suspend current, start new (audit logs that must commit even if outer fails). **NESTED** — savepoint within outer tx. **SUPPORTS** — use if exists, else non-tx. **MANDATORY** — must exist, else exception. **NEVER** — must NOT exist. Isolation: READ_COMMITTED (default in most DBs), REPEATABLE_READ, SERIALIZABLE.",
+    proTip: "Self-invocation pitfall: calling a `@Transactional` method on `this` skips the proxy and the transaction.",
+    tags: ["transactional", "jpa"] }),
+
+  Q({ id: next(), topic: "hibernate-jpa", topicLabel: "Hibernate / JPA", subtopic: "Caching", difficulty: "medium",
+    question: "First-level vs Second-level cache in Hibernate?",
+    answer: "**L1 cache** = persistence context (`EntityManager`/`Session`) — per-transaction, automatic, dedupes entity loads within a single tx. **L2 cache** = shared across sessions (Ehcache, Caffeine, Hazelcast) — must be enabled (`hibernate.cache.use_second_level_cache=true`) and entities annotated `@Cacheable`. Adds the **Query cache** for query-result caching.",
+    proTip: "L2 cache pays off for read-mostly reference data (countries, product types). For read/write hot tables it can hurt due to invalidation cost.",
+    tags: ["hibernate", "cache"] }),
+
+  Q({ id: next(), topic: "hibernate-jpa", topicLabel: "Hibernate / JPA", subtopic: "Project", difficulty: "medium",
+    question: "How did you handle data persistence for banking loan data?",
+    answer: "Spring Data JPA repositories over MySQL with HikariCP pooling. Entities for Customer, Loan, LoanProduct, Document, AuditLog — strict use of DTOs at controller boundary. JOIN FETCH / `@EntityGraph` to avoid N+1 on listing screens. Flyway for versioned migrations. `@Transactional` at the service layer with REQUIRES_NEW for audit writes. Optimistic locking (`@Version`) on Loan to prevent concurrent updates from underwriters.",
+    proTip: "For BFSI: keep an immutable audit table written via REQUIRES_NEW + DB triggers as a backstop — required for compliance.",
+    tags: ["jpa", "project"], resumeLink: "Loan persistence @ KUWY" }),
+
+  // ============ DSA (15) ============
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Arrays", difficulty: "easy",
     question: "Explain the two-pointer technique with an example.",
-    answer: "Two pointers traverse the data structure from different positions (both ends, or fast/slow) to reduce time complexity from O(n²) to O(n). Common patterns: (1) **Opposite ends** — pair sum in sorted array, palindrome check. (2) **Fast/slow** — cycle detection, middle of list. (3) **Sliding window** — variable-size subarrays. It works best on sorted or contiguous data.",
-    proTip: "Always state the invariant your pointers maintain — e.g., 'left points to a candidate smallest element, right to a candidate largest'. Interviewers love clear reasoning.",
-    codeSnippet: `// Pair sum in sorted array
-boolean hasPair(int[] a, int target) {
+    answer: "Two indices move through an array (same or opposite ends) to reduce O(n²) brute force to O(n). Common uses: pair sum in sorted array, removing duplicates in-place, container with most water, 3-sum.",
+    proTip: "Two pointers usually require the input to be **sorted** or have some monotonic property — state that requirement first.",
+    codeSnippet: `int[] twoSumSorted(int[] a, int target) {
     int l = 0, r = a.length - 1;
     while (l < r) {
         int s = a[l] + a[r];
-        if (s == target) return true;
+        if (s == target) return new int[]{l, r};
         if (s < target) l++; else r--;
     }
-    return false;
+    return new int[0];
 }`,
-    tags: ["array", "two-pointer", "technique"]
-  },
-  {
-    id: 13, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Arrays & Strings", difficulty: "easy",
-    question: "How do you check if two strings are anagrams?",
-    answer: "Two strings are anagrams if they contain the same characters with the same frequency. **Approach 1 (sort)**: O(n log n) — sort both and compare. **Approach 2 (counting)**: O(n) — use an int[26] frequency array (for lowercase letters) or a HashMap; increment for one string, decrement for the other; all counts must end at 0.",
-    proTip: "Always ask the interviewer about charset (ASCII vs Unicode) and case sensitivity — it shows attention to constraints.",
-    codeSnippet: `boolean isAnagram(String s, String t) {
-    if (s.length() != t.length()) return false;
-    int[] count = new int[26];
-    for (int i = 0; i < s.length(); i++) {
-        count[s.charAt(i) - 'a']++;
-        count[t.charAt(i) - 'a']--;
-    }
-    for (int c : count) if (c != 0) return false;
-    return true;
-}`,
-    tags: ["string", "anagram", "hashing"]
-  },
-  {
-    id: 14, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Arrays & Strings", difficulty: "medium",
-    question: "Find the maximum subarray sum (Kadane's algorithm).",
-    answer: "**Kadane's algorithm** computes the max contiguous subarray sum in O(n) time, O(1) space. Maintain `currentMax` (best sum ending at current index) and `globalMax`. At each index: `currentMax = max(a[i], currentMax + a[i])` — either start fresh at i, or extend the previous subarray. Update `globalMax` accordingly.",
-    proTip: "If the interviewer asks for the actual subarray (not just sum), track start/end indices: reset `start = i` whenever you start fresh.",
-    codeSnippet: `int maxSubArray(int[] a) {
-    int curr = a[0], best = a[0];
-    for (int i = 1; i < a.length; i++) {
-        curr = Math.max(a[i], curr + a[i]);
-        best = Math.max(best, curr);
+    tags: ["arrays", "two-pointer"] }),
+
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Arrays", difficulty: "medium",
+    question: "Sliding window — explain with longest substring without repeating chars.",
+    answer: "Maintain a window `[l, r]` and slide `r`; shrink from `l` when constraint breaks. Use a HashMap/Set to track window contents. O(n) time, O(k) space where k is alphabet/distinct count.",
+    proTip: "Decide fixed vs variable window first. Fixed windows (size k) usually use a deque; variable windows use l/r + map.",
+    codeSnippet: `int lengthOfLongestSubstring(String s) {
+    Map<Character,Integer> last = new HashMap<>();
+    int l = 0, best = 0;
+    for (int r = 0; r < s.length(); r++) {
+        char c = s.charAt(r);
+        if (last.containsKey(c) && last.get(c) >= l) l = last.get(c) + 1;
+        last.put(c, r);
+        best = Math.max(best, r - l + 1);
     }
     return best;
 }`,
-    tags: ["array", "kadane", "dp"]
-  },
+    tags: ["sliding-window"] }),
 
-  // -- Linked Lists (4)
-  {
-    id: 15, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Linked Lists", difficulty: "easy",
-    question: "How do you reverse a singly linked list iteratively?",
-    answer: "Use three pointers: `prev = null`, `curr = head`, `next`. At each step, save `curr.next`, point `curr.next` to `prev`, advance `prev = curr`, then `curr = next`. When done, `prev` is the new head. Time O(n), space O(1).",
-    proTip: "Recursive version is elegant but uses O(n) stack: `ListNode rev(ListNode h){ if(h==null||h.next==null) return h; ListNode r=rev(h.next); h.next.next=h; h.next=null; return r; }`",
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Arrays", difficulty: "medium",
+    question: "Explain Kadane's algorithm for max subarray sum.",
+    answer: "At each index, decide: extend the current subarray or start fresh. `cur = max(a[i], cur + a[i])`; `best = max(best, cur)`. O(n) time, O(1) space. Handles all-negative arrays correctly when `best` is initialized to `a[0]`.",
+    proTip: "Follow-up: also return the indices — track start when you 'start fresh' and end when you update `best`.",
+    codeSnippet: `int maxSubArray(int[] a) {
+    int cur = a[0], best = a[0];
+    for (int i = 1; i < a.length; i++) {
+        cur = Math.max(a[i], cur + a[i]);
+        best = Math.max(best, cur);
+    }
+    return best;
+}`,
+    tags: ["dp", "kadane"] }),
+
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Linked List", difficulty: "easy",
+    question: "Reverse a singly linked list (iterative).",
+    answer: "Walk the list, flipping each `next` pointer to the previous node. O(n) time, O(1) space.",
+    proTip: "Recursive version is elegant but uses O(n) stack. State the trade-off in interviews.",
     codeSnippet: `ListNode reverse(ListNode head) {
-    ListNode prev = null, curr = head;
-    while (curr != null) {
-        ListNode next = curr.next;
-        curr.next = prev;
-        prev = curr;
-        curr = next;
+    ListNode prev = null, cur = head;
+    while (cur != null) {
+        ListNode nxt = cur.next;
+        cur.next = prev;
+        prev = cur; cur = nxt;
     }
     return prev;
 }`,
-    tags: ["linked-list", "reverse"]
-  },
-  {
-    id: 16, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Linked Lists", difficulty: "medium",
-    question: "How do you detect a cycle in a linked list (Floyd's algorithm)?",
-    answer: "Floyd's tortoise-and-hare: use a `slow` pointer (1 step) and `fast` pointer (2 steps). If they ever meet, there's a cycle. If `fast` reaches null, no cycle. To find the cycle's *start*: after they meet, reset `slow` to head; move both one step at a time — they meet at the cycle entry. Time O(n), space O(1).",
-    proTip: "Alternative is HashSet of visited nodes (O(n) space). Always mention both, then justify Floyd's for O(1) space.",
+    tags: ["linked-list"] }),
+
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Linked List", difficulty: "medium",
+    question: "Detect a cycle in a linked list (Floyd's algorithm).",
+    answer: "Two pointers: `slow` (1 step) and `fast` (2 steps). If they meet, a cycle exists. To find cycle start: reset one pointer to head and advance both one step until they meet. O(n) time, O(1) space.",
+    proTip: "Mention HashSet alternative (O(n) space) — interviewers love hearing both and the trade-off.",
     codeSnippet: `boolean hasCycle(ListNode head) {
-    ListNode slow = head, fast = head;
-    while (fast != null && fast.next != null) {
-        slow = slow.next;
-        fast = fast.next.next;
-        if (slow == fast) return true;
+    ListNode s = head, f = head;
+    while (f != null && f.next != null) {
+        s = s.next; f = f.next.next;
+        if (s == f) return true;
     }
     return false;
 }`,
-    tags: ["linked-list", "floyd", "cycle"]
-  },
-  {
-    id: 17, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Linked Lists", difficulty: "easy",
-    question: "How do you merge two sorted linked lists?",
-    answer: "Use a dummy node to simplify edge cases. Maintain a `tail` pointer; at each step, attach the smaller of `l1`/`l2` and advance. After the loop, attach whatever remains. Return `dummy.next`. Time O(n+m), space O(1).",
-    proTip: "Mention the recursive version too — short and elegant: `if(l1==null)return l2; if(l2==null)return l1; if(l1.val<l2.val){l1.next=merge(l1.next,l2); return l1;} else {l2.next=merge(l1,l2.next); return l2;}`",
-    codeSnippet: `ListNode merge(ListNode l1, ListNode l2) {
-    ListNode dummy = new ListNode(0), tail = dummy;
-    while (l1 != null && l2 != null) {
-        if (l1.val <= l2.val) { tail.next = l1; l1 = l1.next; }
-        else { tail.next = l2; l2 = l2.next; }
-        tail = tail.next;
-    }
-    tail.next = (l1 != null) ? l1 : l2;
-    return dummy.next;
-}`,
-    tags: ["linked-list", "merge", "sorting"]
-  },
-  {
-    id: 18, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Linked Lists", difficulty: "medium",
-    question: "Find the middle of a linked list in one pass.",
-    answer: "Use the **fast/slow pointer** technique. Move `fast` two steps, `slow` one step. When `fast` reaches the end, `slow` is at the middle. For even length, this returns the second middle (e.g., 1→2→3→4 returns 3). To get the first middle, use `while(fast.next!=null && fast.next.next!=null)`.",
-    proTip: "Clarify with the interviewer which middle they want for even-length lists — this attention to detail is impressive.",
-    codeSnippet: `ListNode middle(ListNode head) {
-    ListNode slow = head, fast = head;
-    while (fast != null && fast.next != null) {
-        slow = slow.next;
-        fast = fast.next.next;
-    }
-    return slow;
-}`,
-    tags: ["linked-list", "two-pointer"]
-  },
+    tags: ["linked-list", "floyd"] }),
 
-  // -- Stacks & Queues (3)
-  {
-    id: 19, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Stacks & Queues", difficulty: "medium",
-    question: "How do you implement a stack using two queues?",
-    answer: "Two approaches. **Push-costly**: use q1; on push, enqueue x into q2, drain q1 into q2, swap names. Push O(n), pop O(1). **Pop-costly**: push directly to q1; on pop, move all but the last from q1 to q2, return the last, swap. Push O(1), pop O(n). The push-costly version keeps the newest on top of q1 for O(1) pop/peek.",
-    proTip: "Mention that with a single queue you can also do it: on push, enqueue x then rotate the queue (size-1) times so x moves to the front.",
-    codeSnippet: `class StackUsingQueues {
-    Queue<Integer> q1 = new LinkedList<>(), q2 = new LinkedList<>();
-    public void push(int x) {
-        q2.offer(x);
-        while (!q1.isEmpty()) q2.offer(q1.poll());
-        Queue<Integer> tmp = q1; q1 = q2; q2 = tmp;
-    }
-    public int pop() { return q1.poll(); }
-    public int top() { return q1.peek(); }
-}`,
-    tags: ["stack", "queue", "design"]
-  },
-  {
-    id: 20, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Stacks & Queues", difficulty: "easy",
-    question: "How do you check for valid parentheses?",
-    answer: "Use a stack. Iterate through the string: push opening brackets `(`, `[`, `{`. For closing brackets, the stack must be non-empty AND the top must match. At the end, the stack must be empty. Time O(n), space O(n). Use a map or switch to pair openers with closers.",
-    proTip: "Use Deque (`ArrayDeque`) instead of `Stack` — `Stack` extends `Vector` and is synchronized/legacy. `ArrayDeque` is faster.",
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Stack", difficulty: "easy",
+    question: "Valid parentheses — match brackets using a stack.",
+    answer: "Push openers; on a closer, pop and check it matches. Empty stack at end = valid. O(n) time, O(n) space.",
+    proTip: "Use a `Map<Character,Character>` of close→open to keep the matching code clean.",
     codeSnippet: `boolean isValid(String s) {
+    Map<Character,Character> m = Map.of(')','(', ']','[', '}','{');
     Deque<Character> st = new ArrayDeque<>();
     for (char c : s.toCharArray()) {
-        if (c == '(') st.push(')');
-        else if (c == '[') st.push(']');
-        else if (c == '{') st.push('}');
-        else if (st.isEmpty() || st.pop() != c) return false;
+        if (m.containsKey(c)) { if (st.isEmpty() || st.pop() != m.get(c)) return false; }
+        else st.push(c);
     }
     return st.isEmpty();
 }`,
-    tags: ["stack", "parentheses"]
-  },
-  {
-    id: 21, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Stacks & Queues", difficulty: "medium",
-    question: "Design a Min Stack supporting getMin() in O(1).",
-    answer: "Maintain a second stack that tracks the running minimum. On `push(x)`: push x to the main stack; push `min(x, minStack.peek())` to the min stack (or x if empty). On `pop`: pop from both. `getMin()` returns `minStack.peek()`. All operations are O(1) time, O(n) space. A space-optimized variant pushes to minStack only when a new min appears.",
-    proTip: "Truly space-optimized version: encode the difference between the pushed value and the current min on a single stack — but the two-stack version is easier to explain in interviews.",
+    tags: ["stack"] }),
+
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Stack", difficulty: "medium",
+    question: "Design a Min Stack with O(1) getMin().",
+    answer: "Use two stacks: main + a `min` stack that pushes the new minimum on each push, pops in sync. Alternatively, store `(value, currentMin)` pairs.",
+    proTip: "Variant: implement with a single stack by storing the difference `value - min` to save memory.",
     codeSnippet: `class MinStack {
-    Deque<Integer> st = new ArrayDeque<>(), min = new ArrayDeque<>();
+    Deque<Integer> st = new ArrayDeque<>(), mins = new ArrayDeque<>();
     public void push(int x) {
         st.push(x);
-        min.push(min.isEmpty() ? x : Math.min(x, min.peek()));
+        mins.push(mins.isEmpty() ? x : Math.min(x, mins.peek()));
     }
-    public void pop()    { st.pop(); min.pop(); }
-    public int top()     { return st.peek(); }
-    public int getMin()  { return min.peek(); }
+    public void pop() { st.pop(); mins.pop(); }
+    public int top() { return st.peek(); }
+    public int getMin() { return mins.peek(); }
 }`,
-    tags: ["stack", "design", "min-stack"]
-  },
+    tags: ["stack", "design"] }),
 
-  // -- Trees & BST (5)
-  {
-    id: 22, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Trees & BST", difficulty: "easy",
-    question: "Explain inorder, preorder, and postorder tree traversals.",
-    answer: "All three are DFS traversals on binary trees. **Preorder**: root → left → right (used for tree copying/serialization). **Inorder**: left → root → right (on a BST, returns values in sorted order). **Postorder**: left → right → root (used for deletion / dependency resolution / expression evaluation). Each is O(n) time and O(h) space (h = tree height) for the recursion stack.",
-    proTip: "Be ready to write the iterative inorder using an explicit stack — it's a classic interview ask.",
-    codeSnippet: `void inorder(TreeNode n) {
-    if (n == null) return;
-    inorder(n.left);
-    System.out.println(n.val);
-    inorder(n.right);
-}
-// Iterative inorder
-void inorderIter(TreeNode root) {
-    Deque<TreeNode> st = new ArrayDeque<>();
-    TreeNode c = root;
-    while (c != null || !st.isEmpty()) {
-        while (c != null) { st.push(c); c = c.left; }
-        c = st.pop();
-        System.out.println(c.val);
-        c = c.right;
-    }
-}`,
-    tags: ["tree", "traversal", "dfs"]
-  },
-  {
-    id: 23, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Trees & BST", difficulty: "easy",
-    question: "How do you find the height of a binary tree?",
-    answer: "Recursively: `height(node) = 0` if null, else `1 + max(height(left), height(right))`. Some define height of a single node as 0 instead of 1 — clarify with the interviewer. Time O(n), space O(h) for recursion. An iterative BFS approach increments a counter per level.",
-    proTip: "Distinguish **height** (longest path down to a leaf) from **depth** (distance from root). The height of an empty tree is conventionally -1 or 0 — be explicit.",
-    codeSnippet: `int height(TreeNode n) {
-    if (n == null) return 0;
-    return 1 + Math.max(height(n.left), height(n.right));
-}`,
-    tags: ["tree", "height", "recursion"]
-  },
-  {
-    id: 24, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Trees & BST", difficulty: "medium",
-    question: "How do you find the Lowest Common Ancestor (LCA) in a binary tree?",
-    answer: "**General binary tree**: recurse left and right. If a subtree contains either p or q, return that node; if both subtrees return non-null, current node is the LCA. Time O(n). **For a BST**: walk down — if both p and q are smaller, go left; if both larger, go right; otherwise current node splits them and is the LCA. Time O(h).",
-    proTip: "If the interviewer asks for parent pointers available, you can find LCA by walking up from both nodes and finding the first common ancestor (HashSet approach).",
-    codeSnippet: `// Generic binary tree LCA
-TreeNode lca(TreeNode root, TreeNode p, TreeNode q) {
-    if (root == null || root == p || root == q) return root;
-    TreeNode L = lca(root.left, p, q);
-    TreeNode R = lca(root.right, p, q);
-    if (L != null && R != null) return root;
-    return L != null ? L : R;
-}`,
-    tags: ["tree", "lca", "bst"]
-  },
-  {
-    id: 25, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Trees & BST", difficulty: "medium",
-    question: "How do you validate a Binary Search Tree?",
-    answer: "Each node must be greater than all values in its left subtree and less than all values in its right subtree. Recurse passing **min/max bounds**: left child must be in (min, node.val), right child in (node.val, max). The naive check (`node.val > left.val && node.val < right.val`) is wrong because it doesn't enforce the *global* property. Time O(n), space O(h).",
-    proTip: "An elegant alternative: do an inorder traversal — for a valid BST, the values must be strictly increasing.",
-    codeSnippet: `boolean isBST(TreeNode n, Long min, Long max) {
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Trees", difficulty: "medium",
+    question: "Explain BST validation and tree traversals.",
+    answer: "**Traversals:** Inorder (LNR — sorted for BST), Preorder (NLR), Postorder (LRN), Level-order (BFS via queue). **Validate BST:** recurse passing `(min, max)` bounds, ensuring `min < node.val < max`. Naïve `left.val < node && right.val > node` check is wrong (fails on grandchildren).",
+    proTip: "Inorder traversal of a BST yields sorted values — handy for 'kth smallest' problems.",
+    codeSnippet: `boolean isBST(TreeNode n, long lo, long hi) {
     if (n == null) return true;
-    if (n.val <= min || n.val >= max) return false;
-    return isBST(n.left, min, (long) n.val) &&
-           isBST(n.right, (long) n.val, max);
-}
-// Call: isBST(root, Long.MIN_VALUE, Long.MAX_VALUE)`,
-    tags: ["bst", "validation", "tree"]
-  },
-  {
-    id: 26, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Trees & BST", difficulty: "medium",
-    question: "How do you perform level-order traversal of a binary tree?",
-    answer: "Use BFS with a queue. Offer the root, then loop while the queue is not empty: for each node, poll, process, and offer its non-null children. To group results by level, capture `queue.size()` at the start of each outer loop and process exactly that many nodes per level. Time O(n), space O(w) where w is the max width.",
-    proTip: "Common follow-ups: zigzag order (alternate left-to-right per level using a deque), right-side view (last node per level), or bottom-up level order.",
-    codeSnippet: `List<List<Integer>> levelOrder(TreeNode root) {
-    List<List<Integer>> res = new ArrayList<>();
-    if (root == null) return res;
-    Queue<TreeNode> q = new LinkedList<>();
-    q.offer(root);
-    while (!q.isEmpty()) {
-        int sz = q.size();
-        List<Integer> level = new ArrayList<>();
-        for (int i = 0; i < sz; i++) {
-            TreeNode n = q.poll();
-            level.add(n.val);
-            if (n.left != null)  q.offer(n.left);
-            if (n.right != null) q.offer(n.right);
-        }
-        res.add(level);
-    }
-    return res;
+    if (n.val <= lo || n.val >= hi) return false;
+    return isBST(n.left, lo, n.val) && isBST(n.right, n.val, hi);
 }`,
-    tags: ["tree", "bfs", "level-order"]
-  },
+    tags: ["trees", "bst"] }),
 
-  // -- Heaps (3)
-  {
-    id: 27, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Heaps", difficulty: "easy",
-    question: "What is the difference between a min-heap and a max-heap?",
-    answer: "Both are complete binary trees stored as arrays. In a **min-heap**, every parent ≤ its children — the smallest element is at the root. In a **max-heap**, every parent ≥ its children — the largest element is at the root. Insertion and removal are O(log n); peek is O(1). Java's `PriorityQueue` is a min-heap by default; use `Comparator.reverseOrder()` for max-heap.",
-    proTip: "Mention array indexing: for a node at index i, parent = (i-1)/2, left = 2i+1, right = 2i+2. Interviewers often probe this.",
-    codeSnippet: `PriorityQueue<Integer> min = new PriorityQueue<>();
-PriorityQueue<Integer> max = new PriorityQueue<>(Comparator.reverseOrder());`,
-    tags: ["heap", "priority-queue"]
-  },
-  {
-    id: 28, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Heaps", difficulty: "medium",
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Trees", difficulty: "hard",
+    question: "Lowest Common Ancestor (LCA) in a binary tree.",
+    answer: "Recurse: if root is null or matches `p` or `q`, return root. Recurse left and right. If both return non-null, root is LCA. Otherwise return whichever is non-null. O(n) time.",
+    proTip: "For BST, use the ordering: walk down — if both p,q < root go left; if both > root go right; else root is LCA. O(h) time.",
+    codeSnippet: `TreeNode lca(TreeNode r, TreeNode p, TreeNode q) {
+    if (r == null || r == p || r == q) return r;
+    TreeNode l = lca(r.left, p, q), R = lca(r.right, p, q);
+    return (l != null && R != null) ? r : (l != null ? l : R);
+}`,
+    tags: ["trees", "lca"] }),
+
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Graphs", difficulty: "medium",
+    question: "BFS vs DFS, and how to detect a cycle in a directed graph.",
+    answer: "**BFS** uses a queue, visits by levels — best for shortest path in unweighted graphs. **DFS** uses recursion/stack — best for connectivity, topological sort, cycle detection. **Directed cycle:** DFS with three colors (WHITE/GRAY/BLACK) — back edge to GRAY node = cycle. **Undirected cycle:** DFS tracking parent, or Union-Find.",
+    proTip: "For shortest path with weights, use Dijkstra (non-negative) or Bellman-Ford (negatives allowed).",
+    tags: ["graphs", "bfs", "dfs"] }),
+
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Graphs", difficulty: "hard",
+    question: "Explain Dijkstra's shortest path algorithm.",
+    answer: "Greedy: maintain `dist[]` initialized to ∞ (0 for source) and a min-heap of `(dist, node)`. Pop the smallest, relax its neighbors; push updated entries. O((V+E) log V) with a binary heap. Requires non-negative edge weights.",
+    proTip: "Don't decrease-key (Java's PriorityQueue lacks it efficiently) — just push duplicates and skip stale entries on pop.",
+    codeSnippet: `int[] dijkstra(int n, List<int[]>[] g, int src) {
+    int[] d = new int[n]; Arrays.fill(d, Integer.MAX_VALUE); d[src]=0;
+    PriorityQueue<int[]> pq = new PriorityQueue<>(Comparator.comparingInt(a->a[0]));
+    pq.add(new int[]{0,src});
+    while (!pq.isEmpty()) {
+        int[] cur = pq.poll();
+        if (cur[0] > d[cur[1]]) continue;
+        for (int[] e : g[cur[1]]) {
+            int nd = cur[0] + e[1];
+            if (nd < d[e[0]]) { d[e[0]] = nd; pq.add(new int[]{nd, e[0]}); }
+        }
+    }
+    return d;
+}`,
+    tags: ["graphs", "dijkstra"] }),
+
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Hashing", difficulty: "easy",
+    question: "Two Sum — explain the HashMap O(n) approach.",
+    answer: "Iterate once, for each `a[i]` check if `target - a[i]` is in the map; if yes, return indices; else put `a[i] → i`. O(n) time, O(n) space.",
+    proTip: "If asked to return *all* pairs without duplicates, sort and use two pointers, skipping equal neighbors.",
+    codeSnippet: `int[] twoSum(int[] a, int target) {
+    Map<Integer,Integer> seen = new HashMap<>();
+    for (int i = 0; i < a.length; i++) {
+        Integer j = seen.get(target - a[i]);
+        if (j != null) return new int[]{j, i};
+        seen.put(a[i], i);
+    }
+    return new int[0];
+}`,
+    tags: ["hashing", "two-sum"] }),
+
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Heaps", difficulty: "medium",
     question: "Find the Kth largest element in an array.",
-    answer: "**Min-heap of size k**: iterate, push each element; if size > k, poll. The root is the kth largest. Time O(n log k), space O(k). Best for streaming. Other approaches: **sort** O(n log n), **Quickselect** O(n) average / O(n²) worst (in-place partition like quicksort, but recurse only into one side).",
-    proTip: "If the interviewer says 'streaming data', the heap approach is the only viable one — explicitly state this trade-off.",
-    codeSnippet: `int kthLargest(int[] nums, int k) {
+    answer: "Use a **min-heap of size k**: push, then poll when size exceeds k. End: heap top is the k-th largest. O(n log k) time, O(k) space. Alternative: Quickselect — average O(n), worst O(n²).",
+    proTip: "If k is close to n, use a max-heap of size n-k+1 instead — symmetry trick.",
+    codeSnippet: `int kthLargest(int[] a, int k) {
     PriorityQueue<Integer> pq = new PriorityQueue<>();
-    for (int n : nums) {
-        pq.offer(n);
+    for (int x : a) {
+        pq.offer(x);
         if (pq.size() > k) pq.poll();
     }
     return pq.peek();
 }`,
-    tags: ["heap", "kth-largest", "priority-queue"]
-  },
-  {
-    id: 29, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Heaps", difficulty: "hard",
-    question: "Explain how heap sort works.",
-    answer: "Heap sort works in two phases: **(1) Build a max-heap** from the input array in O(n) (using bottom-up sift-down). **(2) Repeatedly extract the max**: swap the root with the last element, reduce heap size by 1, sift-down the new root. After n-1 extractions, the array is sorted ascending. Time O(n log n) all cases; space O(1) — in-place. Not stable.",
-    proTip: "Compare to quicksort: heap sort has guaranteed O(n log n) but worse cache locality — quicksort is usually faster in practice. Mention this trade-off.",
-    tags: ["heap", "sorting", "algorithm"]
-  },
+    tags: ["heap", "kth"] }),
 
-  // -- Graphs (4)
-  {
-    id: 30, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Graphs", difficulty: "easy",
-    question: "How do you implement BFS on a graph?",
-    answer: "BFS explores level-by-level using a queue. Start: mark source visited and enqueue. Loop: poll node, process it, enqueue all unvisited neighbors and mark them visited. Time O(V + E), space O(V). Use an adjacency list for sparse graphs. BFS finds the **shortest path in unweighted graphs**.",
-    proTip: "Mark nodes visited *when you enqueue them*, not when you poll them — otherwise you may enqueue the same node multiple times.",
-    codeSnippet: `void bfs(Map<Integer, List<Integer>> g, int src) {
-    Set<Integer> seen = new HashSet<>();
-    Queue<Integer> q = new LinkedList<>();
-    q.offer(src); seen.add(src);
-    while (!q.isEmpty()) {
-        int n = q.poll();
-        System.out.println(n);
-        for (int nb : g.getOrDefault(n, List.of())) {
-            if (seen.add(nb)) q.offer(nb);
-        }
-    }
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "Sorting", difficulty: "medium",
+    question: "Compare Quicksort and Mergesort — time complexity and use cases.",
+    answer: "**Quicksort:** average O(n log n), worst O(n²) (bad pivot), in-place, NOT stable. Cache-friendly, fast in practice. **Mergesort:** O(n log n) guaranteed, O(n) extra space, stable. Java's `Arrays.sort(int[])` uses Dual-Pivot Quicksort; `Arrays.sort(Object[])` and `Collections.sort` use Timsort (stable, adaptive merge sort).",
+    proTip: "Pick mergesort when stability matters (sorting by multiple keys) or for linked lists; quicksort for raw speed on primitive arrays.",
+    tags: ["sorting"] }),
+
+  Q({ id: next(), topic: "dsa", topicLabel: "Data Structures & Algorithms", subtopic: "DP", difficulty: "hard",
+    question: "Coin change — minimum coins to make amount N.",
+    answer: "DP: `dp[i] = min(dp[i - coin] + 1)` over all coins `<= i`, base `dp[0]=0`. O(N * coins) time, O(N) space. Return -1 if `dp[N]` stayed ∞.",
+    proTip: "If asked for *number of ways* (not min coins), it's the unbounded knapsack count — iterate coins outer, amount inner.",
+    codeSnippet: `int coinChange(int[] coins, int amount) {
+    int[] dp = new int[amount + 1];
+    Arrays.fill(dp, amount + 1); dp[0] = 0;
+    for (int i = 1; i <= amount; i++)
+        for (int c : coins)
+            if (c <= i) dp[i] = Math.min(dp[i], dp[i - c] + 1);
+    return dp[amount] > amount ? -1 : dp[amount];
 }`,
-    tags: ["graph", "bfs"]
-  },
-  {
-    id: 31, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Graphs", difficulty: "easy",
-    question: "How do you implement DFS on a graph?",
-    answer: "DFS goes deep before exploring siblings. **Recursive**: mark node visited, process, recurse into each unvisited neighbor. **Iterative**: use a stack instead of a queue. Time O(V + E), space O(V). DFS is used for topological sort, cycle detection, finding connected components, and path discovery.",
-    proTip: "For very deep graphs, the recursive version may overflow the stack — switch to the iterative version with an explicit stack.",
-    codeSnippet: `void dfs(Map<Integer, List<Integer>> g, int n, Set<Integer> seen) {
-    if (!seen.add(n)) return;
-    System.out.println(n);
-    for (int nb : g.getOrDefault(n, List.of())) dfs(g, nb, seen);
+    tags: ["dp", "coin-change"] }),
+
+  // ============ SQL & DB (10) ============
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "Joins", difficulty: "easy",
+    question: "Explain INNER, LEFT, RIGHT, FULL JOINs, subqueries, and CTEs.",
+    answer: "**INNER** — rows present in both. **LEFT** — all from left + matching right (NULLs otherwise). **RIGHT** — mirror. **FULL** — all from both. **Subquery** — query inside a query (in SELECT, FROM, or WHERE). **CTE** (`WITH x AS (...)`) — named, readable, supports recursion (org charts, tree paths).",
+    proTip: "Prefer CTEs over deeply nested subqueries — much easier to read and debug. Many DBs now optimize them just as well.",
+    codeSnippet: `WITH active AS (
+    SELECT customer_id, COUNT(*) c
+    FROM loans WHERE status='APPROVED' GROUP BY customer_id
+)
+SELECT c.name, a.c FROM customers c
+LEFT JOIN active a ON a.customer_id = c.id;`,
+    tags: ["sql", "joins"] }),
+
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "Indexing", difficulty: "hard",
+    question: "How do B-Tree indexes work, and when should you NOT add an index?",
+    answer: "B-Tree (actually B+Tree) keeps sorted keys in a balanced multi-way tree → O(log n) lookup, range scan via leaf links. **Composite index** `(a,b,c)` is usable for filters on `a`, `(a,b)`, `(a,b,c)` — left-prefix rule. **Don't index** when: tables are small, columns have very low cardinality (e.g. boolean), the table is write-heavy and the index is rarely used, or queries do `LIKE '%foo'` (left-wildcard kills B-Tree).",
+    proTip: "Each index slows down INSERT/UPDATE/DELETE — measure write impact, not just read gains.",
+    tags: ["sql", "indexing"] }),
+
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "Performance", difficulty: "medium",
+    question: "How do you analyze and optimize a slow query?",
+    answer: "1) Reproduce + measure. 2) `EXPLAIN ANALYZE` — look for Seq Scan on big tables, sort spills, nested loop on large rows. 3) Add/adjust indexes (composite to cover filter+sort), rewrite to remove `SELECT *`, push filters down, replace correlated subqueries with joins, batch N+1 patterns. 4) Check stats (`ANALYZE`), partitioning for huge tables, and connection pool sizing.",
+    proTip: "Always test on production-like data volume — a query that's fast on 1k rows can be O(n²) on 10M.",
+    tags: ["sql", "explain"] }),
+
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "Stored Procs", difficulty: "medium",
+    question: "What are stored procedures and when did you use them?",
+    answer: "Precompiled SQL routines stored in the DB; called by name with parameters. Pros: reduce network round trips, encapsulate complex multi-statement logic, enforce data-access rules. Cons: business logic in two places, harder to version-control and test, vendor lock-in. Used in **AI English Tutor** for batch grading and lesson-progress aggregations to avoid pulling thousands of rows over the wire.",
+    proTip: "Modern preference: keep logic in the app layer; use procs only for performance-critical, set-based ops or for security boundaries.",
+    tags: ["sql", "stored-proc"], resumeLink: "AI English Tutor" }),
+
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "Normalization", difficulty: "easy",
+    question: "Explain 1NF, 2NF, 3NF, BCNF in plain terms.",
+    answer: "**1NF** — atomic values, no repeating groups. **2NF** — 1NF + no partial dependency on a composite PK. **3NF** — 2NF + no transitive dependency (non-key → non-key). **BCNF** — stricter 3NF where every determinant is a candidate key. Normalize for integrity; **denormalize** for read performance (reporting, hot dashboards).",
+    proTip: "OLTP → normalize. OLAP / read-heavy analytics → denormalize (star/snowflake schema).",
+    tags: ["sql", "normalization"] }),
+
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "SQL vs NoSQL", difficulty: "medium",
+    question: "When to use MySQL vs MongoDB?",
+    answer: "**MySQL/PostgreSQL** — strong schema, ACID, complex relational queries, transactions across rows. Pick for banking, orders, anything with strict consistency. **MongoDB** — flexible schema, horizontal scale via sharding, document-shaped data (chat messages, product catalogs, IoT events). I used PostgreSQL for BarathAI structured data and MongoDB for chat message history (high write throughput, naturally document-shaped).",
+    proTip: "MongoDB now supports ACID multi-doc transactions, and PostgreSQL has JSONB — the line is blurring. Pick by access pattern, not buzzword.",
+    tags: ["sql", "nosql"], resumeLink: "BarathAI Chat" }),
+
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "PostgreSQL", difficulty: "medium",
+    question: "PostgreSQL specifics — foreign keys and schema design from BarathAI.",
+    answer: "Used `REFERENCES ... ON DELETE CASCADE` for owned children (e.g. messages → conversation), `ON DELETE SET NULL` for soft links. Schema: `users`, `conversations`, `messages`, `attachments`, indexed on `(conversation_id, created_at DESC)` for fast pagination of latest messages. Used `JSONB` for flexible message metadata, `UUID` PKs, partial indexes for active conversations only.",
+    proTip: "Always create the FK + a matching index on the child column — Postgres doesn't auto-index FKs and joins crawl without it.",
+    tags: ["postgres", "schema"], resumeLink: "BarathAI Chat" }),
+
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "Transactions", difficulty: "medium",
+    question: "Explain ACID and isolation levels.",
+    answer: "**Atomicity** — all or nothing. **Consistency** — invariants preserved. **Isolation** — concurrent tx don't see each other's partial state. **Durability** — committed data survives crashes. **Levels (weakest→strongest):** READ UNCOMMITTED (dirty reads), READ COMMITTED (default in Postgres), REPEATABLE READ (default in MySQL/InnoDB), SERIALIZABLE. Each level prevents specific anomalies (dirty/non-repeatable/phantom reads).",
+    proTip: "Higher isolation = more locks/aborts = less throughput. Pick the lowest level that prevents the anomaly your business cares about.",
+    tags: ["sql", "acid"] }),
+
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "Project", difficulty: "hard",
+    question: "How did you reduce database query time by 40% in BarathAI?",
+    answer: "Profiled with `EXPLAIN ANALYZE`. Wins: (1) added composite index `(conversation_id, created_at DESC)` for message pagination, (2) replaced `SELECT *` with projections, (3) introduced cursor-based pagination instead of OFFSET for chat history, (4) batched N+1 user-lookup with a single `IN (...)` query, (5) Redis cache-aside for active conversation metadata, (6) connection pool tuned (HikariCP min/max). Combined p95 read latency dropped ~40%.",
+    proTip: "Always quantify — interviewers love 'before vs after p95 numbers + the one change that mattered most'.",
+    tags: ["sql", "performance"], resumeLink: "BarathAI Chat 40% improvement" }),
+
+  Q({ id: next(), topic: "sql-db", topicLabel: "SQL & Databases", subtopic: "Window Functions", difficulty: "medium",
+    question: "What are window functions and when to use them?",
+    answer: "Compute aggregates *over a window* of rows without collapsing them: `ROW_NUMBER()`, `RANK()`, `DENSE_RANK()`, `LAG/LEAD`, running totals (`SUM() OVER (PARTITION BY x ORDER BY y)`). Perfect for top-N-per-group, deduplication, time-series diffs.",
+    proTip: "Top-N-per-group is the canonical use: `ROW_NUMBER() OVER (PARTITION BY customer_id ORDER BY created_at DESC)` then `WHERE rn = 1`.",
+    codeSnippet: `SELECT id, customer_id, amount,
+       SUM(amount) OVER (PARTITION BY customer_id ORDER BY created_at) AS running_total
+FROM loans;`,
+    tags: ["sql", "window"] }),
+
+  // ============ REACT (8) ============
+  Q({ id: next(), topic: "react", topicLabel: "React.js & Frontend", subtopic: "Hooks", difficulty: "easy",
+    question: "Explain useState, useEffect, useContext, useRef.",
+    answer: "**useState** — local component state with setter. **useEffect** — side effects after render; cleanup via returned function; deps array controls when it re-runs. **useContext** — read context value without prop drilling. **useRef** — mutable container that persists across renders without causing re-render; also for DOM refs.",
+    proTip: "Empty deps `[]` = once on mount; missing deps = every render; explicit deps = on change. Use the ESLint exhaustive-deps rule.",
+    codeSnippet: `const [msgs, setMsgs] = useState([]);
+useEffect(() => {
+    const id = setInterval(fetchMsgs, 5000);
+    return () => clearInterval(id);
+}, []);`,
+    tags: ["react", "hooks"] }),
+
+  Q({ id: next(), topic: "react", topicLabel: "React.js & Frontend", subtopic: "Internals", difficulty: "medium",
+    question: "Virtual DOM, reconciliation, and React Fiber — what are they?",
+    answer: "**Virtual DOM** — in-memory tree of React elements. On state change, React builds a new VDOM and **diffs** it against the previous (reconciliation), applying minimal real-DOM updates. **Fiber** (since React 16) is the reimplementation that splits work into units, allowing pauses, prioritization (urgent input vs background data), and concurrent rendering.",
+    proTip: "Stable `key` props are critical for list reconciliation — using array index as key causes subtle bugs on reorder.",
+    tags: ["react", "fiber"] }),
+
+  Q({ id: next(), topic: "react", topicLabel: "React.js & Frontend", subtopic: "State Mgmt", difficulty: "medium",
+    question: "Context API vs Redux — when to use which?",
+    answer: "**Context** — built-in, great for low-frequency global values (theme, auth user, locale). Re-renders all consumers when value changes — bad for high-frequency state. **Redux (Toolkit)** — predictable global store, time-travel debugging, middleware (thunk/saga), great for large apps with complex shared state. Modern alternatives: Zustand, Jotai, TanStack Query (server state).",
+    proTip: "For server data, use TanStack Query — caches, dedupes, refetches. Don't put server data in Redux.",
+    tags: ["react", "redux"] }),
+
+  Q({ id: next(), topic: "react", topicLabel: "React.js & Frontend", subtopic: "Routing", difficulty: "easy",
+    question: "How do you implement protected routes with React Router v6?",
+    answer: "Wrap children in a `<RequireAuth>` component that reads auth state and either renders `<Outlet />` (or children) or `<Navigate to=\"/login\" replace state={{from: location}}/>`. Use route-level layouts via `<Route element={<RequireAuth/>}>` to group protected routes.",
+    proTip: "Persist `from` location and redirect back after login — small UX touch interviewers notice.",
+    codeSnippet: `function RequireAuth() {
+    const { user } = useAuth();
+    const loc = useLocation();
+    return user ? <Outlet/> : <Navigate to="/login" state={{from: loc}} replace/>;
 }`,
-    tags: ["graph", "dfs", "recursion"]
-  },
-  {
-    id: 32, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Graphs", difficulty: "medium",
-    question: "How do you detect a cycle in a directed graph?",
-    answer: "Use DFS with **three colors / states**: WHITE (unvisited), GRAY (in current DFS path), BLACK (fully processed). If during DFS you reach a GRAY node, you found a back-edge → cycle exists. Time O(V + E). For **undirected graphs**, simpler: a cycle exists if DFS visits a node already visited that is *not* the parent.",
-    proTip: "Alternative for directed graphs: Kahn's algorithm (BFS-based topological sort) — if the result has fewer nodes than V, there's a cycle.",
-    codeSnippet: `boolean hasCycle(int V, List<List<Integer>> g) {
-    int[] state = new int[V]; // 0=W, 1=G, 2=B
-    for (int i = 0; i < V; i++)
-        if (state[i] == 0 && dfs(i, g, state)) return true;
-    return false;
+    tags: ["react-router"] }),
+
+  Q({ id: next(), topic: "react", topicLabel: "React.js & Frontend", subtopic: "API", difficulty: "easy",
+    question: "Best practices for API integration with Axios/fetch?",
+    answer: "Centralize a client (`api.ts`) with base URL, interceptors for auth header injection, and 401 → refresh-token → retry flow. Handle errors with try/catch + typed error objects. Cancel in-flight requests on unmount (AbortController). Use TanStack Query for caching, retries, background refetch.",
+    proTip: "Always show a loading state and an error state — never just a blank screen on slow networks.",
+    tags: ["react", "api"] }),
+
+  Q({ id: next(), topic: "react", topicLabel: "React.js & Frontend", subtopic: "Performance", difficulty: "hard",
+    question: "Performance optimization — React.memo, useMemo, useCallback.",
+    answer: "**React.memo** — skip re-render if props are shallow-equal. **useMemo** — memoize expensive computations across renders. **useCallback** — memoize function identity (so memoized children don't re-render). Also: code splitting (`React.lazy` + `Suspense`), virtualization for long lists (`react-window`), avoiding inline objects/arrays in props.",
+    proTip: "Don't memo everything — measure first with React DevTools Profiler. Premature memoization adds memory and complexity for no gain.",
+    tags: ["react", "perf"] }),
+
+  Q({ id: next(), topic: "react", topicLabel: "React.js & Frontend", subtopic: "Project", difficulty: "medium",
+    question: "How did you build the BarathAI Chat UI?",
+    answer: "React + TypeScript + Tailwind. Component tree: `ChatLayout → Sidebar (conversations) + ChatWindow (MessageList + Composer)`. WebSocket via STOMP for real-time messages, with optimistic UI (append local msg immediately, reconcile on ack). Virtualized message list for long histories. JWT in httpOnly cookie + Axios interceptor for auth. Reconnection w/ exponential backoff. Reached 100+ concurrent users.",
+    proTip: "Be ready for 'how did you handle dropped connections?' — heartbeats + visible 'reconnecting' state + queued outbound messages flushed on reconnect.",
+    tags: ["react", "websocket"], resumeLink: "BarathAI Chat" }),
+
+  Q({ id: next(), topic: "react", topicLabel: "React.js & Frontend", subtopic: "Styling", difficulty: "easy",
+    question: "Why Tailwind CSS — what is the utility-first approach?",
+    answer: "Compose styles from small atomic utility classes (`flex`, `p-4`, `text-sm`) directly in markup. Pros: no naming overhead, consistent design tokens via config, dead-code elimination at build (purge), fast iteration, mobile-first responsive variants. Cons: noisy markup — extract repeated patterns into components or `@apply`.",
+    proTip: "Use semantic tokens in `tailwind.config` (`primary`, `surface`) instead of raw colors — themable and consistent.",
+    tags: ["react", "tailwind"] }),
+
+  // ============ AWS (6) ============
+  Q({ id: next(), topic: "aws", topicLabel: "AWS & Cloud Deployment", subtopic: "Core", difficulty: "easy",
+    question: "Explain EC2, S3, RDS, and Lambda in one line each.",
+    answer: "**EC2** — virtual servers (compute). **S3** — object storage (files, backups, static sites). **RDS** — managed relational DB (MySQL/Postgres) with automated backups, failover, read replicas. **Lambda** — serverless functions, billed per ms, auto-scales, ideal for event-driven and glue code.",
+    proTip: "Know one cost trade-off: Lambda is amazing until you hit constant high RPS — then EC2/Fargate becomes cheaper.",
+    tags: ["aws"] }),
+
+  Q({ id: next(), topic: "aws", topicLabel: "AWS & Cloud Deployment", subtopic: "ALB", difficulty: "medium",
+    question: "What does an Application Load Balancer (ALB) do?",
+    answer: "Layer-7 load balancer: routes HTTP(S) by host/path/headers, terminates TLS, supports WebSocket and HTTP/2, integrates with WAF, target groups (EC2, ECS, Lambda), health checks for instance removal. Used at KUWY to fan traffic across Auto Scaling group of API instances and route `/api/loans/*` vs `/api/customers/*` to different target groups.",
+    proTip: "Sticky sessions are a code smell at scale — push session state to Redis so any instance can serve any request.",
+    tags: ["aws", "alb"], resumeLink: "ALB at KUWY" }),
+
+  Q({ id: next(), topic: "aws", topicLabel: "AWS & Cloud Deployment", subtopic: "Auto Scaling", difficulty: "medium",
+    question: "How do Auto Scaling groups and scaling policies work?",
+    answer: "ASG keeps a target number of instances using a Launch Template across AZs. **Scaling policies:** **target tracking** (keep CPU at 60%), **step scaling** (rules per CloudWatch threshold), **scheduled** (predictable load), **predictive** (ML-based). Health-check failures auto-replace instances. Combine with ALB for elastic capacity.",
+    proTip: "Warm-up time matters — set `HealthCheckGracePeriod` long enough for the JVM to JIT and connect pools to fill before counting health checks.",
+    tags: ["aws", "asg"], resumeLink: "Auto Scaling at KUWY" }),
+
+  Q({ id: next(), topic: "aws", topicLabel: "AWS & Cloud Deployment", subtopic: "Security", difficulty: "medium",
+    question: "Explain IAM roles, security groups, and VPC basics.",
+    answer: "**IAM role** — set of permissions assumed by a service/user (EC2 role to read S3 — no static keys on instance). **Security group** — stateful instance-level firewall (inbound/outbound rules). **VPC** — isolated virtual network with public/private subnets, route tables, NAT Gateway (private→internet), Internet Gateway (public→internet). Apps in private subnets, ALB in public subnet.",
+    proTip: "Least privilege always — never attach `AdministratorAccess` to app roles. Use IAM Access Analyzer to spot over-permissive policies.",
+    tags: ["aws", "iam", "vpc"] }),
+
+  Q({ id: next(), topic: "aws", topicLabel: "AWS & Cloud Deployment", subtopic: "CI/CD", difficulty: "medium",
+    question: "How do you set up CI/CD with GitHub Actions / CodePipeline?",
+    answer: "**GitHub Actions:** workflow on push → checkout → setup Java → `mvn verify` → build Docker image → push to ECR → trigger ECS/EC2 deploy (or `aws codedeploy create-deployment`). Use OIDC to assume an AWS role (no long-lived keys). Separate jobs for test, build, deploy with manual approval gate before prod.",
+    proTip: "Cache Maven/Gradle dependencies between runs — cuts CI time dramatically; use `actions/cache` keyed on lockfile hash.",
+    tags: ["ci-cd", "github-actions"] }),
+
+  Q({ id: next(), topic: "aws", topicLabel: "AWS & Cloud Deployment", subtopic: "Project", difficulty: "hard",
+    question: "How did you deploy your banking APIs on AWS?",
+    answer: "Spring Boot apps Dockerized, pushed to ECR, deployed to EC2 instances (later containerized) behind ALB with Auto Scaling across two AZs. RDS MySQL (Multi-AZ) for primary data, ElastiCache Redis for caching, S3 for KYC document storage. CloudWatch + custom metrics for monitoring; alarms triggered scale-out or PagerDuty alerts. CI/CD via GitHub Actions → ECR → CodeDeploy with blue/green for zero-downtime releases.",
+    proTip: "When asked about cost, mention Reserved Instances / Savings Plans for steady baseline + Spot for batch/non-critical.",
+    tags: ["aws", "project"], resumeLink: "AWS deployment @ KUWY" }),
+
+  // ============ WEBSOCKET (4) ============
+  Q({ id: next(), topic: "websocket", topicLabel: "WebSocket & Real-Time", subtopic: "Concepts", difficulty: "easy",
+    question: "WebSocket vs HTTP polling vs Server-Sent Events?",
+    answer: "**Polling** — client repeatedly asks; wasteful, high latency. **Long polling** — server holds request until data; better but still per-message overhead. **SSE** — server→client stream over HTTP; one-way, auto-reconnect, simple. **WebSocket** — full-duplex, low overhead after handshake, ideal for chat/games/trading. Use SSE for one-way push (notifications), WebSocket for two-way (chat, collaborative editing).",
+    proTip: "Mention HTTP/2 push and HTTP/3 — sometimes plain SSE on HTTP/2 is enough and simpler than WebSocket.",
+    tags: ["websocket"] }),
+
+  Q({ id: next(), topic: "websocket", topicLabel: "WebSocket & Real-Time", subtopic: "STOMP", difficulty: "medium",
+    question: "How does STOMP work with Spring Boot WebSocket?",
+    answer: "STOMP is a text framing protocol on top of WebSocket: SUBSCRIBE/SEND/MESSAGE frames. Spring `@EnableWebSocketMessageBroker` registers an endpoint and a simple in-memory broker (or RabbitMQ/ActiveMQ for distributed). Map handlers with `@MessageMapping` and target user-specific destinations via `convertAndSendToUser`. Clients use stomp.js / SockJS for fallback.",
+    proTip: "For multi-instance deployments, swap the simple broker for a real broker (RabbitMQ STOMP plugin) so messages reach users connected to other nodes.",
+    codeSnippet: `@MessageMapping("/chat.send")
+public void send(ChatMessage msg, Principal user) {
+    msg.setFrom(user.getName());
+    template.convertAndSend("/topic/room." + msg.getRoom(), msg);
+}`,
+    tags: ["websocket", "stomp"] }),
+
+  Q({ id: next(), topic: "websocket", topicLabel: "WebSocket & Real-Time", subtopic: "Scaling", difficulty: "hard",
+    question: "How do you scale WebSocket connections (handled 100+ concurrent users)?",
+    answer: "Use a non-blocking server (Netty/Undertow — Spring Boot defaults work). Tune OS file descriptors and Tomcat/Undertow IO threads. Behind ALB enable WebSocket support + sticky sessions. For multi-node, use an external broker (RabbitMQ/Redis Pub/Sub) so a message published on node A reaches subscribers on node B. Heartbeats + reconnect with backoff on client. Track connections per user to apply rate/connection limits.",
+    proTip: "100+ is small — for 10k+, you need backpressure on the producer side and binary frames + msgpack/protobuf to cut bandwidth.",
+    tags: ["websocket", "scaling"], resumeLink: "BarathAI Chat 100+ users" }),
+
+  Q({ id: next(), topic: "websocket", topicLabel: "WebSocket & Real-Time", subtopic: "Project", difficulty: "medium",
+    question: "How did you implement real-time messaging in BarathAI?",
+    answer: "Spring Boot WebSocket + STOMP endpoint `/ws-chat`, JWT-authenticated during the CONNECT frame via a `ChannelInterceptor`. Client (React + stomp.js) subscribed to `/user/queue/messages` for direct messages and `/topic/room.{id}` for rooms. Messages persisted to MongoDB asynchronously, then broadcast. Optimistic UI on the React side, with ack reconciliation. Heartbeats every 25s; auto-reconnect with exponential backoff; queued outbound messages flushed on reconnect.",
+    proTip: "Mention idempotency — assign a client-side `tempId` per message so retries on reconnect don't duplicate.",
+    tags: ["websocket", "project"], resumeLink: "BarathAI Chat" }),
+
+  // ============ AUTH/SECURITY (5) ============
+  Q({ id: next(), topic: "auth-security", topicLabel: "Authentication & Security", subtopic: "JWT", difficulty: "medium",
+    question: "Explain JWT structure and a refresh-token strategy.",
+    answer: "JWT = `base64url(header).base64url(payload).signature`. Header has alg (HS256/RS256). Payload has claims (`sub`, `exp`, custom). Signature verifies integrity + (with RS256) origin. **Strategy:** short-lived access token (5–15 min) + long-lived refresh token stored in httpOnly Secure cookie. Client hits `/refresh` to rotate when access expires. Maintain a server-side refresh token store for revocation.",
+    proTip: "Never store JWTs in `localStorage` for sensitive apps — XSS steals them. Use httpOnly cookies + CSRF protection.",
+    codeSnippet: `String token = Jwts.builder()
+    .setSubject(user.getId().toString())
+    .claim("roles", user.getRoles())
+    .setIssuedAt(new Date())
+    .setExpiration(Date.from(Instant.now().plus(15, ChronoUnit.MINUTES)))
+    .signWith(key, SignatureAlgorithm.HS256)
+    .compact();`,
+    tags: ["jwt", "auth"] }),
+
+  Q({ id: next(), topic: "auth-security", topicLabel: "Authentication & Security", subtopic: "Hashing", difficulty: "medium",
+    question: "Why bcrypt and not MD5/SHA — what about salt rounds?",
+    answer: "MD5/SHA are *fast* hashes built for integrity; attackers can brute-force billions/sec on GPUs. **bcrypt** is intentionally **slow** and **memory-bound**, with a built-in **salt** (defeats rainbow tables) and a tunable **cost factor** (work doubles per +1). As hardware improves, bump the cost. Alternatives: Argon2 (modern winner), scrypt.",
+    proTip: "Pick a cost so a single hash takes ~250ms on your prod hardware — slow enough to deter brute force, fast enough not to DoS your auth endpoint.",
+    codeSnippet: `BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(12);
+String hash = encoder.encode(rawPassword);
+boolean ok = encoder.matches(rawPassword, hash);`,
+    tags: ["bcrypt", "hashing"] }),
+
+  Q({ id: next(), topic: "auth-security", topicLabel: "Authentication & Security", subtopic: "Spring Security", difficulty: "hard",
+    question: "Explain the Spring Security filter chain and @PreAuthorize.",
+    answer: "Every request passes through an ordered chain of servlet filters: `SecurityContextPersistenceFilter`, `UsernamePasswordAuthenticationFilter` (form login), custom `JwtAuthFilter` (extract token, set `Authentication`), `ExceptionTranslationFilter`, `FilterSecurityInterceptor` (URL-based authz). After that, **method-level** `@PreAuthorize(\"hasRole('ADMIN')\")` / `@PostAuthorize` enforce rules at service methods.",
+    proTip: "Custom JWT filter goes *before* `UsernamePasswordAuthenticationFilter` via `addFilterBefore` — common gotcha.",
+    tags: ["spring-security"] }),
+
+  Q({ id: next(), topic: "auth-security", topicLabel: "Authentication & Security", subtopic: "OAuth", difficulty: "medium",
+    question: "OAuth 2.0 vs OpenID Connect — what's the difference?",
+    answer: "**OAuth 2.0** is an *authorization* framework — delegated access to resources via access tokens (Authorization Code + PKCE is the recommended flow for SPAs/mobile). **OpenID Connect (OIDC)** layers *authentication* on top — adds an `id_token` (a JWT identifying the user) and a `/userinfo` endpoint. Use OIDC for 'login with Google'; use plain OAuth for API access delegation.",
+    proTip: "For SPAs, always use Authorization Code + PKCE (not implicit flow — deprecated for security).",
+    tags: ["oauth", "oidc"] }),
+
+  Q({ id: next(), topic: "auth-security", topicLabel: "Authentication & Security", subtopic: "Project", difficulty: "hard",
+    question: "How did you reduce API latency by 150ms with bcrypt tuning?",
+    answer: "Original cost factor was over-tuned (cost=14 → ~700ms per login on prod CPUs), throttling auth throughput. Re-benchmarked on actual prod hardware, dropped cost to 12 (~250ms), still well above OWASP's recommended floor. Combined with: enabling HTTP keep-alive, moving JWT signing to a cached `Key`, and async audit logging. Login endpoint p95 dropped ~150ms with no security regression.",
+    proTip: "Always benchmark hashing cost on production-class CPUs — devbox numbers are misleading.",
+    tags: ["bcrypt", "performance"], resumeLink: "Auth latency improvement" }),
+
+  // ============ DESIGN PATTERNS / SYSTEM DESIGN (8) ============
+  Q({ id: next(), topic: "design-patterns", topicLabel: "Design Patterns & System Design", subtopic: "Creational", difficulty: "medium",
+    question: "Implement a thread-safe Singleton in Java.",
+    answer: "Best options: (1) **Enum singleton** — JVM-guaranteed single instance, serialization-safe. (2) **Initialization-on-Demand Holder** — lazy + thread-safe via JVM class-loading semantics. Avoid double-checked locking pre-Java-5; from Java 5+ it works only with `volatile`.",
+    proTip: "Joshua Bloch (Effective Java) recommends Enum — it's the simplest and prevents reflection attacks.",
+    codeSnippet: `public enum Config { INSTANCE;
+    public String getEnv() { return System.getenv("APP_ENV"); }
 }
-boolean dfs(int u, List<List<Integer>> g, int[] s) {
-    s[u] = 1;
-    for (int v : g.get(u)) {
-        if (s[v] == 1) return true;
-        if (s[v] == 0 && dfs(v, g, s)) return true;
-    }
-    s[u] = 2;
-    return false;
+// Holder idiom:
+public class Lazy {
+    private Lazy() {}
+    private static class H { static final Lazy I = new Lazy(); }
+    public static Lazy get() { return H.I; }
 }`,
-    tags: ["graph", "cycle", "dfs"]
-  },
-  {
-    id: 33, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Graphs", difficulty: "hard",
-    question: "Explain Dijkstra's shortest path algorithm.",
-    answer: "Dijkstra's finds the shortest path from a source to all nodes in a graph with **non-negative edge weights**. Use a min-heap (priority queue) keyed on distance. Initialize all distances to infinity except source = 0. Pop the closest node; for each neighbor, if `dist[u] + w < dist[v]`, relax it and push (newDist, v). Time O((V+E) log V) with a binary heap, O(E + V log V) with a Fibonacci heap.",
-    proTip: "Dijkstra fails with negative edges — use Bellman-Ford instead. For unweighted graphs, plain BFS gives shortest path in O(V+E).",
-    codeSnippet: `int[] dijkstra(int n, List<int[]>[] g, int src) {
-    int[] dist = new int[n];
-    Arrays.fill(dist, Integer.MAX_VALUE);
-    dist[src] = 0;
-    PriorityQueue<int[]> pq = new PriorityQueue<>((a, b) -> a[1] - b[1]);
-    pq.offer(new int[]{src, 0});
-    while (!pq.isEmpty()) {
-        int[] cur = pq.poll();
-        int u = cur[0], d = cur[1];
-        if (d > dist[u]) continue;
-        for (int[] e : g[u]) {
-            int v = e[0], w = e[1];
-            if (dist[u] + w < dist[v]) {
-                dist[v] = dist[u] + w;
-                pq.offer(new int[]{v, dist[v]});
-            }
-        }
-    }
-    return dist;
-}`,
-    tags: ["graph", "dijkstra", "shortest-path"]
-  },
+    tags: ["singleton", "patterns"] }),
 
-  // -- Hashing (3)
-  {
-    id: 34, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Hashing", difficulty: "hard",
-    question: "How would you design your own HashMap?",
-    answer: "An array of buckets indexed by `hash(key) & (capacity - 1)` (capacity is a power of 2). Each bucket is a linked list (or tree once it grows past a threshold, like Java's 8). On `put`: compute index, walk the chain — if key found update, else append. On `get`: walk the chain comparing with `.equals()`. **Resize** when `size / capacity > loadFactor` (default 0.75): allocate 2× array and rehash all entries. Average O(1), worst O(n) (or O(log n) with treeify).",
-    proTip: "Mention thread safety: your custom HashMap is not thread-safe. For concurrent use, design with bucket-level locks (segments) like ConcurrentHashMap.",
-    codeSnippet: `class MyHashMap<K, V> {
-    static class Node<K, V> { K k; V v; Node<K, V> next; Node(K k, V v){ this.k=k; this.v=v; } }
-    Node<K, V>[] buckets = new Node[16];
-    int size = 0;
-    int idx(K k) { return (k.hashCode() & 0x7fffffff) % buckets.length; }
-    public V get(K k) {
-        for (Node<K, V> n = buckets[idx(k)]; n != null; n = n.next)
-            if (n.k.equals(k)) return n.v;
-        return null;
-    }
-    public void put(K k, V v) {
-        int i = idx(k);
-        for (Node<K, V> n = buckets[i]; n != null; n = n.next)
-            if (n.k.equals(k)) { n.v = v; return; }
-        Node<K, V> n = new Node<>(k, v); n.next = buckets[i]; buckets[i] = n; size++;
-    }
-}`,
-    tags: ["hashmap", "design", "hashing"]
-  },
-  {
-    id: 35, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Hashing", difficulty: "medium",
-    question: "How are hash collisions handled in HashMap?",
-    answer: "Java's `HashMap` uses **separate chaining**: each bucket holds a singly linked list of entries with the same index. Since Java 8, when a bucket's chain length exceeds `TREEIFY_THRESHOLD = 8` (and capacity ≥ 64), the chain converts to a **red-black tree** for O(log n) lookup; it untreeifies below 6. Other collision strategies: **open addressing** (linear/quadratic probing, double hashing) — used by `IdentityHashMap`.",
-    proTip: "A poorly-distributed hashCode (e.g., always returning the same int) would otherwise turn HashMap into O(n) — treeification mitigates this DoS-style attack.",
-    tags: ["hashmap", "collision", "chaining"]
-  },
-  {
-    id: 36, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Hashing", difficulty: "easy",
-    question: "Solve the Two Sum problem in O(n).",
-    answer: "Use a HashMap from value → index. Iterate once: for each `nums[i]`, check whether `target - nums[i]` already exists in the map; if yes, return the pair of indices; otherwise put `nums[i] → i`. Time O(n), space O(n). The naive double-loop is O(n²).",
-    proTip: "If the input is **sorted**, you can do it in O(n) time and O(1) space using two pointers — interviewers love when you ask 'is the array sorted?'",
-    codeSnippet: `int[] twoSum(int[] nums, int target) {
-    Map<Integer, Integer> seen = new HashMap<>();
-    for (int i = 0; i < nums.length; i++) {
-        int need = target - nums[i];
-        if (seen.containsKey(need)) return new int[]{seen.get(need), i};
-        seen.put(nums[i], i);
-    }
-    return new int[0];
-}`,
-    tags: ["hashing", "two-sum", "array"]
-  },
+  Q({ id: next(), topic: "design-patterns", topicLabel: "Design Patterns & System Design", subtopic: "Patterns", difficulty: "medium",
+    question: "Explain Factory, Builder, Observer, Strategy patterns with examples.",
+    answer: "**Factory** — encapsulate object creation (`PaymentGatewayFactory.create(\"razorpay\")`). **Builder** — fluent step-by-step construction for objects with many optional params (`Loan.builder().amount(...).tenure(...).build()`). **Observer** — pub/sub; Spring's `ApplicationEventPublisher` + `@EventListener`. **Strategy** — pluggable algorithms behind a common interface (`InterestStrategy` with Fixed/Floating implementations).",
+    proTip: "Spring uses many of these under the hood — call them out: `BeanFactory` (factory), Events (observer), `RestTemplate`/`RestClient.builder()` (builder).",
+    tags: ["patterns"] }),
 
-  // -- Tries (2)
-  {
-    id: 37, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Tries", difficulty: "medium",
-    question: "How do you implement a Trie (prefix tree)?",
-    answer: "A trie is a tree where each node represents a character and each path from root spells a string. Each node holds a children map (or array of size 26 for lowercase letters) and an `isEnd` flag. **Insert**: walk/create nodes per character, mark end. **Search**: walk; return `isEnd`. **StartsWith**: walk; return true if path exists. All operations are O(L), where L is the word length.",
-    proTip: "Tries shine for autocomplete, spell-check, IP routing, and longest-prefix matching — way better than HashSet for these use cases.",
-    codeSnippet: `class Trie {
-    static class Node { Node[] next = new Node[26]; boolean end; }
-    Node root = new Node();
-    public void insert(String w) {
-        Node n = root;
-        for (char c : w.toCharArray()) {
-            int i = c - 'a';
-            if (n.next[i] == null) n.next[i] = new Node();
-            n = n.next[i];
-        }
-        n.end = true;
-    }
-    public boolean search(String w)     { Node n = walk(w); return n != null && n.end; }
-    public boolean startsWith(String p) { return walk(p) != null; }
-    private Node walk(String s) {
-        Node n = root;
-        for (char c : s.toCharArray()) {
-            n = n.next[c - 'a'];
-            if (n == null) return null;
-        }
-        return n;
-    }
-}`,
-    tags: ["trie", "prefix-tree", "design"]
-  },
-  {
-    id: 38, topic: "data-structures", topicLabel: "Data Structures in Java", subtopic: "Tries", difficulty: "hard",
-    question: "How do you implement autocomplete using a Trie?",
-    answer: "Insert all dictionary words. For a query: walk the trie to the node representing the prefix; if not found, return empty. From that node, perform DFS collecting all completed words (where `isEnd` is true) into a list. Optional optimization: store the top-K most frequent suggestions at each node (heavy-hitters cache) to avoid the DFS for popular prefixes.",
-    proTip: "Mention real-world relevance: search engines (Google, Elasticsearch) use tries with frequency weights and edit-distance for typo tolerance.",
-    codeSnippet: `List<String> autocomplete(Trie t, String prefix) {
-    List<String> out = new ArrayList<>();
-    Trie.Node n = t.walk(prefix);
-    if (n == null) return out;
-    dfs(n, new StringBuilder(prefix), out);
-    return out;
-}
-void dfs(Trie.Node n, StringBuilder sb, List<String> out) {
-    if (n.end) out.add(sb.toString());
-    for (int i = 0; i < 26; i++) {
-        if (n.next[i] != null) {
-            sb.append((char)('a' + i));
-            dfs(n.next[i], sb, out);
-            sb.deleteCharAt(sb.length() - 1);
-        }
-    }
-}`,
-    tags: ["trie", "autocomplete", "dfs"]
-  },
+  Q({ id: next(), topic: "design-patterns", topicLabel: "Design Patterns & System Design", subtopic: "Architecture", difficulty: "easy",
+    question: "Explain MVC architecture and how you enforced it at KUWY.",
+    answer: "**Model** — domain entities + business logic. **View** — presentation (JSON for APIs, templates for server-rendered). **Controller** — receives requests, orchestrates services, returns response. At KUWY: `@RestController` was thin (validation + delegation), `@Service` held business logic, `@Repository` handled persistence; DTOs at the boundary kept entities out of the API surface. Code reviews enforced 'no business logic in controllers, no JPA in controllers'.",
+    proTip: "Add a hexagonal/ports-and-adapters touch — keep domain pure, push framework concerns (JPA, web) to the edges.",
+    tags: ["mvc", "architecture"], resumeLink: "MVC at KUWY" }),
 
-  // ============ COLLECTIONS (8) ============
-  {
-    id: 39, topic: "collections", topicLabel: "Collections Framework", subtopic: "List", difficulty: "easy",
-    question: "What is the difference between ArrayList and LinkedList?",
-    answer: "**ArrayList** is backed by a dynamic array — O(1) random access, O(1) amortized append, O(n) insertion/removal in the middle. Better cache locality. **LinkedList** is a doubly-linked list — O(1) insertion/removal at known positions (especially head/tail), O(n) random access. Higher per-element memory overhead (next/prev pointers). For most use cases, **ArrayList wins** thanks to cache friendliness — even for queue-like workloads, prefer `ArrayDeque`.",
-    proTip: "If asked 'when would you use LinkedList?' — honestly, almost never in modern Java. Sometimes for `Deque` semantics, but `ArrayDeque` is faster.",
-    tags: ["arraylist", "linkedlist", "collections"]
-  },
-  {
-    id: 40, topic: "collections", topicLabel: "Collections Framework", subtopic: "Map", difficulty: "hard",
-    question: "How does HashMap work internally in Java 8+?",
-    answer: "HashMap uses an array of `Node<K,V>` buckets (default capacity 16). Index = `(n - 1) & hash` where `hash = key.hashCode() ^ (hashCode >>> 16)` (mix high/low bits to reduce collisions). Buckets store linked lists of entries; if a chain reaches 8 entries (and table ≥ 64), it converts to a red-black tree (O(log n) lookup). Resizing doubles the capacity at load factor 0.75 and rehashes all entries. Not thread-safe.",
-    proTip: "The high-bit XOR is to handle hashCodes that vary mostly in upper bits — e.g., Float values. Mention this for senior-level points.",
-    codeSnippet: `// Pseudo of internal index calculation
-int hash = key.hashCode() ^ (key.hashCode() >>> 16);
-int index = (table.length - 1) & hash;`,
-    tags: ["hashmap", "internals", "treeify"]
-  },
-  {
-    id: 41, topic: "collections", topicLabel: "Collections Framework", subtopic: "Map", difficulty: "hard",
-    question: "How does ConcurrentHashMap differ from Hashtable and synchronized HashMap?",
-    answer: "**Hashtable** synchronizes every method on the whole map → poor concurrency. **Collections.synchronizedMap(hm)** is the same coarse-grained lock. **ConcurrentHashMap** (Java 8+) uses per-bucket CAS operations and `synchronized` only on the first node of each bucket — many threads can write concurrently to different buckets. Reads are mostly lock-free. Iterators are **weakly consistent** (won't throw ConcurrentModificationException, may or may not reflect concurrent changes). Null keys/values are not allowed.",
-    proTip: "Pre-Java 8 used 'segments' (fixed number of locks). Java 8 redesigned it to per-bucket — interviewers love when you mention this evolution.",
-    tags: ["concurrenthashmap", "concurrency", "thread-safety"]
-  },
-  {
-    id: 42, topic: "collections", topicLabel: "Collections Framework", subtopic: "Sorting", difficulty: "easy",
-    question: "What is the difference between Comparable and Comparator?",
-    answer: "**Comparable<T>** defines a class's *natural ordering* via `compareTo(T other)` — implemented inside the class itself (e.g., `String`, `Integer`). **Comparator<T>** is an external strategy via `compare(T a, T b)` — multiple comparators can sort the same class differently without modifying it. Use `Comparable` when there's one obvious order; use `Comparator` for flexibility (multi-field sort, runtime selection).",
-    proTip: "Java 8 lambdas + `Comparator.comparing(...)` and `.thenComparing(...)` make multi-field sorts elegant — show this in your answer.",
-    codeSnippet: `// Comparable
-class Person implements Comparable<Person> {
-    String name; int age;
-    public int compareTo(Person o) { return this.age - o.age; }
-}
-// Comparator (multi-field)
-list.sort(Comparator.comparing(Person::getAge)
-                    .thenComparing(Person::getName));`,
-    tags: ["comparable", "comparator", "sorting"]
-  },
-  {
-    id: 43, topic: "collections", topicLabel: "Collections Framework", subtopic: "Iterators", difficulty: "medium",
-    question: "What is the difference between fail-fast and fail-safe iterators?",
-    answer: "**Fail-fast** iterators (most `java.util` collections like ArrayList, HashMap) check a `modCount` field; if the collection is structurally modified during iteration (except via the iterator's own `remove`), they throw `ConcurrentModificationException`. **Fail-safe** iterators (e.g., `CopyOnWriteArrayList`, `ConcurrentHashMap`) operate on a snapshot or use weakly-consistent traversal — no CME, but may not see the latest changes. Fail-safe trades visibility for safety.",
-    proTip: "CME is not strictly tied to threads — modifying a collection from the same thread mid-iteration also triggers it.",
-    codeSnippet: `List<Integer> list = new ArrayList<>(List.of(1, 2, 3));
-for (int x : list) if (x == 2) list.remove(Integer.valueOf(x)); // throws CME
-// Safe:
-list.removeIf(x -> x == 2);`,
-    tags: ["iterator", "fail-fast", "concurrency"]
-  },
-  {
-    id: 44, topic: "collections", topicLabel: "Collections Framework", subtopic: "Map", difficulty: "medium",
-    question: "How does TreeMap differ from HashMap and LinkedHashMap?",
-    answer: "**HashMap** — unordered, O(1) average get/put. **LinkedHashMap** — preserves insertion order (or access order with a flag, useful for LRU caches), O(1) get/put with slight overhead from a doubly-linked list. **TreeMap** — backed by a red-black tree, keys sorted by natural order or supplied Comparator, O(log n) get/put, but provides navigational methods (`firstKey`, `floorKey`, `subMap`, `ceilingKey`).",
-    proTip: "If you need range queries or 'closest key' lookups, TreeMap is unmatched. If you need stable iteration order without sorting cost, LinkedHashMap.",
-    tags: ["treemap", "linkedhashmap", "hashmap"]
-  },
-  {
-    id: 45, topic: "collections", topicLabel: "Collections Framework", subtopic: "Map", difficulty: "medium",
-    question: "How does HashSet work internally?",
-    answer: "`HashSet` is implemented as a `HashMap` where every value is a shared dummy object (`PRESENT`). All set operations delegate to the underlying map — `add(e)` calls `map.put(e, PRESENT)`, returning true only if the previous value was null. Same time complexity as HashMap: O(1) average for `add`, `contains`, `remove`. Not thread-safe.",
-    proTip: "If you need a thread-safe set, use `ConcurrentHashMap.newKeySet()` or `Collections.newSetFromMap(new ConcurrentHashMap<>())`.",
-    tags: ["hashset", "internals"]
-  },
-  {
-    id: 46, topic: "collections", topicLabel: "Collections Framework", subtopic: "List", difficulty: "medium",
-    question: "What is CopyOnWriteArrayList and when would you use it?",
-    answer: "`CopyOnWriteArrayList` is a thread-safe `List` where every mutating operation (`add`, `set`, `remove`) creates a fresh copy of the underlying array. Reads are lock-free and very fast. Iterators operate on a snapshot, so no `ConcurrentModificationException`. Best for **read-heavy, write-rare** scenarios (e.g., listener lists, configuration). Writes are O(n) and expensive in memory — bad for write-heavy workloads.",
-    proTip: "Classic use case: `EventListenerList` in Swing, or observer lists. Avoid for high-write workloads where ConcurrentLinkedQueue or other concurrent structures suit better.",
-    tags: ["cow", "concurrency", "list"]
-  },
+  Q({ id: next(), topic: "design-patterns", topicLabel: "Design Patterns & System Design", subtopic: "Caching", difficulty: "medium",
+    question: "Cache-aside vs Write-through caching patterns.",
+    answer: "**Cache-aside (lazy loading):** app reads cache → on miss, reads DB and populates cache → returns. Writes go to DB and **invalidate** cache. Simple, resilient to cache outage; risk of stale data on invalidation gaps. **Write-through:** writes go through cache → cache writes to DB synchronously. Always consistent but slower writes and cache becomes a SPOF. **Write-behind:** async DB write — fast but risk of data loss on crash.",
+    proTip: "For read-heavy systems with rare writes, cache-aside + TTL is the safe default. Add a fallback for cache outages.",
+    tags: ["cache", "patterns"] }),
 
-  // ============ CONCURRENCY (8) ============
-  {
-    id: 47, topic: "concurrency", topicLabel: "Multithreading & Concurrency", subtopic: "Threads", difficulty: "easy",
-    question: "Explain the lifecycle of a Java thread.",
-    answer: "Six states (per `Thread.State`): **NEW** — created, not started. **RUNNABLE** — `start()` called, eligible for CPU (includes 'ready' and 'running'). **BLOCKED** — waiting for a monitor lock. **WAITING** — `wait()`, `join()` without timeout, `LockSupport.park()`. **TIMED_WAITING** — `sleep(t)`, `wait(t)`, `join(t)`. **TERMINATED** — `run()` finished or threw uncaught exception. Transitions are managed by the OS scheduler and the JVM.",
-    proTip: "BLOCKED is specifically waiting for a *monitor* (synchronized) lock. WAITING includes `Lock` waits via `Condition`. Be precise — interviewers test this.",
-    tags: ["thread", "lifecycle", "states"]
-  },
-  {
-    id: 48, topic: "concurrency", topicLabel: "Multithreading & Concurrency", subtopic: "Threads", difficulty: "easy",
-    question: "What is the difference between Runnable and Callable?",
-    answer: "**Runnable** has `void run()` — no return value, cannot throw checked exceptions. **Callable<V>** has `V call() throws Exception` — returns a value and can throw checked exceptions. Callables are used with `ExecutorService.submit()` which returns a `Future<V>` — call `future.get()` to retrieve the result (blocks). Runnable suits fire-and-forget; Callable suits compute-then-return tasks.",
-    proTip: "You can wrap a Runnable as a Callable using `Executors.callable(runnable, result)` — handy when an API requires a Callable.",
-    codeSnippet: `Callable<Integer> task = () -> {
-    Thread.sleep(100);
-    return 42;
-};
-ExecutorService es = Executors.newSingleThreadExecutor();
-Future<Integer> f = es.submit(task);
-System.out.println(f.get()); // 42
-es.shutdown();`,
-    tags: ["runnable", "callable", "future"]
-  },
-  {
-    id: 49, topic: "concurrency", topicLabel: "Multithreading & Concurrency", subtopic: "Synchronization", difficulty: "medium",
-    question: "How does the synchronized keyword work?",
-    answer: "`synchronized` acquires an intrinsic monitor lock on an object. **Synchronized method** locks `this` (or `Class<T>` for static methods). **Synchronized block** locks an explicit object. Only one thread can hold the monitor at a time; others block. It also establishes a **happens-before** relationship: actions before releasing the lock are visible to the next thread acquiring it (ensuring memory visibility, not just mutual exclusion).",
-    proTip: "Lock the smallest scope you need — coarse locks kill performance. Use private final lock objects to avoid leaking the lock externally: `private final Object lock = new Object();`",
-    codeSnippet: `class Counter {
-    private int n = 0;
-    private final Object lock = new Object();
-    public void inc() {
-        synchronized (lock) { n++; }
-    }
-}`,
-    tags: ["synchronized", "monitor", "happens-before"]
-  },
-  {
-    id: 50, topic: "concurrency", topicLabel: "Multithreading & Concurrency", subtopic: "Memory model", difficulty: "medium",
-    question: "What is the volatile keyword and when should you use it?",
-    answer: "`volatile` guarantees: **(1) Visibility** — writes are flushed to main memory, reads come from main memory; no thread sees a stale cached value. **(2) Ordering** — prevents the JIT/CPU from reordering reads/writes around the volatile access (memory barriers). It does **NOT** provide atomicity for compound actions (e.g., `n++` is still racy on a volatile int). Use it for simple flags, double-checked locking (Java 5+), or single-writer scenarios.",
-    proTip: "For atomic increments use `AtomicInteger`; for richer state with compound updates use locks or `synchronized`. `volatile` is too weak for most non-trivial cases.",
-    codeSnippet: `class StopFlag {
-    private volatile boolean stop = false;
-    public void requestStop() { stop = true; }
-    public void run() {
-        while (!stop) { /* work */ }
-    }
-}`,
-    tags: ["volatile", "memory-model", "visibility"]
-  },
-  {
-    id: 51, topic: "concurrency", topicLabel: "Multithreading & Concurrency", subtopic: "Locks", difficulty: "medium",
-    question: "Compare ReentrantLock with synchronized.",
-    answer: "`ReentrantLock` is an explicit lock from `java.util.concurrent.locks`. Advantages over `synchronized`: **(1) tryLock()** with timeout (avoid indefinite blocking). **(2) Interruptible** lock acquisition. **(3) Fairness** option — FIFO order of waiters. **(4) Multiple `Condition` variables** per lock. Drawback: must remember `unlock()` in a finally block — failure to do so causes leaks. `synchronized` is simpler, JVM-managed, and slightly faster in uncontended cases.",
-    proTip: "Always pair lock/unlock in try/finally: `lock.lock(); try { ... } finally { lock.unlock(); }`. Forgetting this is a classic interview trap.",
-    codeSnippet: `ReentrantLock lock = new ReentrantLock();
-lock.lock();
-try {
-    // critical section
-} finally {
-    lock.unlock();
-}`,
-    tags: ["lock", "reentrantlock", "synchronized"]
-  },
-  {
-    id: 52, topic: "concurrency", topicLabel: "Multithreading & Concurrency", subtopic: "Executors", difficulty: "medium",
-    question: "What is ExecutorService and what executor types exist?",
-    answer: "`ExecutorService` decouples task submission from thread management — you submit `Runnable`/`Callable`, the pool reuses threads. Common factory methods: **newFixedThreadPool(n)** — fixed pool. **newCachedThreadPool()** — grows on demand, reuses idle threads (60s timeout). **newSingleThreadExecutor()** — single worker, sequential. **newScheduledThreadPool(n)** — for delayed/periodic tasks. Java 21 adds **Executors.newVirtualThreadPerTaskExecutor()** for virtual threads. Always call `shutdown()`.",
-    proTip: "Avoid `Executors.newCachedThreadPool` in production — unbounded queue/pool can exhaust resources. Prefer a tuned `ThreadPoolExecutor` directly.",
-    codeSnippet: `ExecutorService es = Executors.newFixedThreadPool(4);
-for (int i = 0; i < 10; i++) {
-    final int id = i;
-    es.submit(() -> System.out.println("Task " + id));
-}
-es.shutdown();
-es.awaitTermination(1, TimeUnit.MINUTES);`,
-    tags: ["executor", "thread-pool"]
-  },
-  {
-    id: 53, topic: "concurrency", topicLabel: "Multithreading & Concurrency", subtopic: "Async", difficulty: "hard",
-    question: "What is CompletableFuture and how does it improve over Future?",
-    answer: "`CompletableFuture<T>` (Java 8) is a Future that supports **non-blocking composition**. Unlike `Future` which only has blocking `get()`, CompletableFuture provides: `thenApply` (transform), `thenCompose` (chain async), `thenCombine` (combine two), `allOf`/`anyOf` (multi-future), `exceptionally`/`handle` (error recovery). It runs callbacks on the common ForkJoinPool by default (use `*Async` overloads with a custom executor for control). Enables a fluent reactive style.",
-    proTip: "Always provide an explicit executor for production use — relying on the common ForkJoinPool can cause contention with parallel streams.",
-    codeSnippet: `CompletableFuture
-    .supplyAsync(() -> fetchUser(id))
-    .thenApply(User::getEmail)
-    .thenAccept(System.out::println)
-    .exceptionally(ex -> { ex.printStackTrace(); return null; });`,
-    tags: ["completablefuture", "async", "future"]
-  },
-  {
-    id: 54, topic: "concurrency", topicLabel: "Multithreading & Concurrency", subtopic: "Hazards", difficulty: "hard",
-    question: "What is a deadlock and how do you prevent it?",
-    answer: "A **deadlock** is when two or more threads are blocked forever, each waiting for a lock held by another. Coffman conditions: mutual exclusion, hold-and-wait, no preemption, circular wait. **Prevention**: (1) **Lock ordering** — always acquire locks in a globally consistent order. (2) **tryLock with timeout** — back off and retry on failure. (3) **Reduce lock scope** or use lock-free data structures (CAS, AtomicReference). (4) Use higher-level concurrency tools (`ConcurrentHashMap`, queues).",
-    proTip: "Producer-consumer is a related classic — solve it with `BlockingQueue` (e.g., `ArrayBlockingQueue`), which handles wait/notify internally and removes the chance of bugs.",
-    codeSnippet: `// Bad: inconsistent lock order can deadlock
-synchronized (a) { synchronized (b) { ... } } // T1
-synchronized (b) { synchronized (a) { ... } } // T2
-
-// Good: order by identityHashCode
-Object first = System.identityHashCode(a) < System.identityHashCode(b) ? a : b;
-Object second = first == a ? b : a;
-synchronized (first) { synchronized (second) { ... } }`,
-    tags: ["deadlock", "race-condition", "concurrency"]
-  },
-
-  // ============ JAVA 8+ (6) ============
-  {
-    id: 55, topic: "java8", topicLabel: "Java 8+ Features", subtopic: "Lambdas", difficulty: "easy",
-    question: "What is a lambda expression and a functional interface?",
-    answer: "A **lambda** is a concise way to represent an anonymous function: `(params) -> expression` or `(params) -> { body }`. A **functional interface** is an interface with exactly one abstract method (SAM). The `@FunctionalInterface` annotation enforces this. Lambdas are syntactic sugar for instances of functional interfaces — the compiler infers which interface from the target type. Built-in examples: `Runnable`, `Comparator`, `Predicate`, `Function`.",
-    proTip: "Lambdas can capture *effectively final* local variables. They cannot mutate captured locals — but they CAN mutate fields of captured objects.",
-    codeSnippet: `Runnable r = () -> System.out.println("hi");
-Comparator<String> c = (a, b) -> a.length() - b.length();
-Function<Integer, Integer> sq = x -> x * x;`,
-    tags: ["lambda", "functional-interface"]
-  },
-  {
-    id: 56, topic: "java8", topicLabel: "Java 8+ Features", subtopic: "Functional Interfaces", difficulty: "easy",
-    question: "Explain Predicate, Function, Consumer, and Supplier.",
-    answer: "**Predicate<T>** — `boolean test(T t)`; tests a condition (e.g., `s -> s.isEmpty()`). **Function<T, R>** — `R apply(T t)`; transforms input (e.g., `String::length`). **Consumer<T>** — `void accept(T t)`; performs side effects (e.g., `System.out::println`). **Supplier<T>** — `T get()`; produces values lazily (e.g., `() -> new ArrayList<>()`). All four live in `java.util.function` and are the building blocks of streams.",
-    proTip: "Mention `BiFunction`, `BiPredicate`, `BiConsumer` (two-arg variants), and primitive specializations like `IntPredicate` to avoid autoboxing in hot paths.",
-    codeSnippet: `Predicate<String> nonEmpty = s -> !s.isEmpty();
-Function<String, Integer> len = String::length;
-Consumer<String> printer = System.out::println;
-Supplier<List<String>> listSupplier = ArrayList::new;`,
-    tags: ["functional", "predicate", "function"]
-  },
-  {
-    id: 57, topic: "java8", topicLabel: "Java 8+ Features", subtopic: "Streams", difficulty: "medium",
-    question: "Explain the Stream API and its main operations.",
-    answer: "Streams are pipelines of operations on a sequence of elements. **Intermediate** ops are lazy and return a stream: `filter`, `map`, `flatMap`, `sorted`, `distinct`, `limit`. **Terminal** ops trigger execution: `collect`, `forEach`, `reduce`, `count`, `findFirst`, `anyMatch`. Streams may be **sequential** or **parallel** (`.parallelStream()`). They don't store data and are single-use — once consumed, they cannot be reused.",
-    proTip: "Use `parallelStream()` only for CPU-bound, large, stateless workloads. For small or I/O-bound work, the overhead of fork/join hurts performance.",
-    codeSnippet: `List<String> names = List.of("alice", "bob", "carol");
-String joined = names.stream()
-    .filter(n -> n.length() > 3)
-    .map(String::toUpperCase)
-    .sorted()
-    .collect(Collectors.joining(", "));
-System.out.println(joined); // ALICE, CAROL`,
-    tags: ["streams", "functional"]
-  },
-  {
-    id: 58, topic: "java8", topicLabel: "Java 8+ Features", subtopic: "Streams", difficulty: "medium",
-    question: "How does Stream.reduce() work? Give examples.",
-    answer: "`reduce` combines stream elements into a single result using a binary operator. Three forms: **reduce(BinaryOperator)** returns Optional. **reduce(identity, BinaryOperator)** returns T directly. **reduce(identity, accumulator, combiner)** for parallel streams where accumulator and combiner may have different types. The operator must be associative for correct parallel results.",
-    proTip: "For most aggregations, prefer `Collectors.summingInt`, `averagingDouble`, `groupingBy` etc. — they're more readable than raw reduce.",
-    codeSnippet: `int sum = List.of(1, 2, 3, 4).stream().reduce(0, Integer::sum); // 10
-Optional<String> longest = words.stream()
-    .reduce((a, b) -> a.length() >= b.length() ? a : b);`,
-    tags: ["streams", "reduce"]
-  },
-  {
-    id: 59, topic: "java8", topicLabel: "Java 8+ Features", subtopic: "Optional", difficulty: "easy",
-    question: "What is Optional and how should you use it?",
-    answer: "`Optional<T>` is a container that may or may not hold a non-null value, designed to make 'might be absent' explicit in APIs and reduce NullPointerExceptions. Use `Optional.of(x)`, `Optional.ofNullable(x)`, `Optional.empty()`. Consume via `ifPresent`, `orElse`, `orElseGet`, `orElseThrow`, `map`, `flatMap`. **Best practice**: use Optional as a return type, NOT as a field, parameter, or in collections.",
-    proTip: "Avoid `optional.get()` without first checking — it's the new NPE. Prefer `orElseThrow()` or `orElse(default)`.",
-    codeSnippet: `Optional<User> u = repo.findById(1);
-String email = u.map(User::getEmail).orElse("unknown@example.com");`,
-    tags: ["optional", "null-safety"]
-  },
-  {
-    id: 60, topic: "java8", topicLabel: "Java 8+ Features", subtopic: "Method References & Default Methods", difficulty: "easy",
-    question: "What are method references and default methods?",
-    answer: "**Method references** are shorthand for lambdas calling existing methods. Four kinds: `Class::staticMethod`, `instance::method`, `Class::instanceMethod` (unbound), `Class::new` (constructor). Example: `s -> s.toUpperCase()` becomes `String::toUpperCase`. **Default methods** in interfaces (Java 8+) provide a default implementation, allowing interfaces to evolve without breaking existing implementations. Use `interface Foo { default void bar() { ... } }`.",
-    proTip: "Default methods enabled adding `stream()`, `forEach()`, etc. to `Collection` without breaking the world. They also resolve the diamond problem with explicit `InterfaceName.super.method()` syntax.",
-    codeSnippet: `// Method reference
-list.forEach(System.out::println);
-
-// Default method in interface
-interface Greeter {
-    String name();
-    default String greet() { return "Hello, " + name(); }
-}`,
-    tags: ["method-reference", "default-method"]
-  },
-
-  // ============ EXCEPTIONS & JVM (5) ============
-  {
-    id: 61, topic: "exceptions-jvm", topicLabel: "Exception Handling & JVM Internals", subtopic: "Exceptions", difficulty: "easy",
-    question: "What is the difference between checked and unchecked exceptions?",
-    answer: "**Checked exceptions** extend `Exception` (but not `RuntimeException`) — the compiler forces you to handle them with try/catch or declare via `throws` (e.g., `IOException`, `SQLException`). **Unchecked exceptions** extend `RuntimeException` — no compile-time enforcement (e.g., `NullPointerException`, `IllegalArgumentException`, `ArrayIndexOutOfBoundsException`). **Errors** (`OutOfMemoryError`, `StackOverflowError`) are unchecked and indicate JVM-level problems you typically shouldn't catch.",
-    proTip: "Modern frameworks (Spring) often wrap checked exceptions in unchecked ones — checked exceptions are widely considered overused. Argue both sides if asked.",
-    tags: ["exceptions", "checked", "unchecked"]
-  },
-  {
-    id: 62, topic: "exceptions-jvm", topicLabel: "Exception Handling & JVM Internals", subtopic: "Exceptions", difficulty: "easy",
-    question: "How do you create a custom exception in Java?",
-    answer: "Extend `Exception` (checked) or `RuntimeException` (unchecked). Provide constructors that accept a message and/or cause, and forward to `super(...)`. Add custom fields (e.g., error code) if useful. Always preserve the cause when wrapping — never silently drop it.",
-    proTip: "Prefer unchecked custom exceptions for business errors; reserve checked exceptions for recoverable I/O-style failures the caller must handle.",
-    codeSnippet: `public class UserNotFoundException extends RuntimeException {
-    private final long userId;
-    public UserNotFoundException(long id) {
-        super("User not found: " + id);
-        this.userId = id;
-    }
-    public UserNotFoundException(long id, Throwable cause) {
-        super("User not found: " + id, cause);
-        this.userId = id;
-    }
-    public long getUserId() { return userId; }
-}`,
-    tags: ["custom-exception", "exceptions"]
-  },
-  {
-    id: 63, topic: "exceptions-jvm", topicLabel: "Exception Handling & JVM Internals", subtopic: "Resources", difficulty: "medium",
-    question: "What is try-with-resources and how does it differ from try-finally?",
-    answer: "`try-with-resources` (Java 7+) automatically closes any resource implementing `AutoCloseable` (or `Closeable`) at the end of the block, even on exceptions. Equivalent to a `finally` calling `close()`, but without boilerplate AND it correctly handles **suppressed exceptions** — if both the body and `close()` throw, the close exception is attached via `Throwable.getSuppressed()` instead of masking the original.",
-    proTip: "Multiple resources can be declared, separated by `;`. They're closed in **reverse** declaration order. Java 9+ allows referencing effectively-final variables declared outside the try.",
-    codeSnippet: `try (BufferedReader br = new BufferedReader(new FileReader("a.txt"));
-     PrintWriter pw = new PrintWriter("b.txt")) {
-    String line;
-    while ((line = br.readLine()) != null) pw.println(line);
-} // both auto-closed`,
-    tags: ["try-with-resources", "exceptions", "autocloseable"]
-  },
-  {
-    id: 64, topic: "exceptions-jvm", topicLabel: "Exception Handling & JVM Internals", subtopic: "JVM", difficulty: "hard",
-    question: "Explain the JVM architecture and class loading process.",
-    answer: "JVM components: **ClassLoader subsystem** (loads .class files), **Runtime Data Areas** (Method Area / Metaspace, Heap, Stack per thread, PC Register, Native Method Stack), **Execution Engine** (Interpreter, JIT compiler, GC), **Native Interface (JNI)**. **Class loading**: (1) **Loading** — read .class. (2) **Linking** = Verification (bytecode safety) + Preparation (default static field values) + Resolution (symbolic refs). (3) **Initialization** — run static initializers. Loaders use **parent delegation** (Bootstrap → Platform → Application → custom).",
-    proTip: "Mention that Metaspace replaced PermGen in Java 8 — it's allocated in native memory and grows dynamically, eliminating the classic `OutOfMemoryError: PermGen space`.",
-    tags: ["jvm", "classloader", "architecture"]
-  },
-  {
-    id: 65, topic: "exceptions-jvm", topicLabel: "Exception Handling & JVM Internals", subtopic: "JVM", difficulty: "medium",
-    question: "What is JIT compilation and how does it improve performance?",
-    answer: "The **JIT (Just-In-Time) compiler** translates frequently executed bytecode into native machine code at runtime, caching it in the code cache. The JVM starts by **interpreting** bytecode (fast startup); the JIT identifies hot methods (via invocation counters / back-edge counters) and compiles them with optimizations like inlining, escape analysis, dead-code elimination, and loop unrolling. HotSpot uses two compilers: **C1 (client)** — quick, lighter optimizations; **C2 (server)** — slower, aggressive optimizations. Tiered compilation uses both.",
-    proTip: "Mention `-XX:+PrintCompilation` and JITWatch as practical tools to inspect what's getting compiled — shows hands-on familiarity.",
-    tags: ["jit", "jvm", "performance"]
-  },
-
-  // ============ DESIGN PATTERNS (5) ============
-  {
-    id: 66, topic: "design-patterns", topicLabel: "Design Patterns & SOLID", subtopic: "Creational", difficulty: "medium",
-    question: "How do you implement a thread-safe Singleton in Java?",
-    answer: "Best modern approaches: **(1) Enum singleton (preferred)** — JVM guarantees a single instance, handles serialization, and is reflection-safe. **(2) Bill Pugh holder** — uses a static inner class loaded lazily on first access; thread-safe via class-loading semantics, no synchronization cost. **(3) Double-checked locking** — uses `volatile` + synchronized block; correct since Java 5 with the proper memory model. Avoid eager init if construction is expensive.",
-    proTip: "Joshua Bloch's *Effective Java* recommends enum as the simplest correct singleton — quote that, interviewers love the reference.",
-    codeSnippet: `// Enum (preferred)
-public enum Config { INSTANCE; public void doStuff() {} }
-
-// Bill Pugh holder
-public class Singleton {
-    private Singleton() {}
-    private static class Holder { static final Singleton I = new Singleton(); }
-    public static Singleton getInstance() { return Holder.I; }
-}
-
-// Double-checked locking
-public class DCL {
-    private static volatile DCL i;
-    private DCL() {}
-    public static DCL getInstance() {
-        if (i == null) {
-            synchronized (DCL.class) {
-                if (i == null) i = new DCL();
-            }
-        }
-        return i;
-    }
-}`,
-    tags: ["singleton", "design-pattern", "thread-safety"]
-  },
-  {
-    id: 67, topic: "design-patterns", topicLabel: "Design Patterns & SOLID", subtopic: "Creational", difficulty: "easy",
-    question: "Explain the Factory pattern with a Java example.",
-    answer: "The **Factory pattern** centralizes object creation, so callers depend on an interface rather than concrete classes. A static or instance method returns a product based on input. Benefits: decouples client from concrete types, supports easy extension, can cache instances or apply preprocessing. **Abstract Factory** generalizes to families of related products.",
-    proTip: "Distinguish from the **Builder** pattern — Factory chooses *which* type to build; Builder constructs *complex* instances step-by-step. Common interview confusion.",
-    codeSnippet: `interface Shape { void draw(); }
-class Circle implements Shape { public void draw(){ System.out.println("○"); } }
-class Square implements Shape { public void draw(){ System.out.println("□"); } }
-
-class ShapeFactory {
-    public static Shape create(String type) {
-        return switch (type.toLowerCase()) {
-            case "circle" -> new Circle();
-            case "square" -> new Square();
-            default -> throw new IllegalArgumentException(type);
-        };
-    }
-}`,
-    tags: ["factory", "design-pattern", "creational"]
-  },
-  {
-    id: 68, topic: "design-patterns", topicLabel: "Design Patterns & SOLID", subtopic: "Creational", difficulty: "medium",
-    question: "Explain the Builder pattern.",
-    answer: "The **Builder pattern** constructs complex objects step-by-step using a fluent API, useful when there are many optional parameters or a long telescoping constructor. The Builder collects state, then `build()` returns an immutable product. Benefits: readability, immutability of the product, validation before construction, supports optional fields naturally.",
-    proTip: "Mention Lombok's `@Builder` or Java 14+ records as alternatives. For records, you can define a static builder if you need optional fields.",
-    codeSnippet: `public class User {
-    private final String name; private final int age; private final String email;
-    private User(Builder b) { this.name = b.name; this.age = b.age; this.email = b.email; }
-    public static class Builder {
-        private String name; private int age; private String email;
-        public Builder name(String n)  { this.name = n; return this; }
-        public Builder age(int a)      { this.age = a; return this; }
-        public Builder email(String e) { this.email = e; return this; }
-        public User build()            { return new User(this); }
-    }
-}
-User u = new User.Builder().name("Alice").age(30).email("a@x.com").build();`,
-    tags: ["builder", "design-pattern", "creational"]
-  },
-  {
-    id: 69, topic: "design-patterns", topicLabel: "Design Patterns & SOLID", subtopic: "Behavioral", difficulty: "medium",
-    question: "Explain the Observer and Strategy patterns.",
-    answer: "**Observer**: a subject maintains a list of observers and notifies them of state changes. Decouples publisher from subscribers — used in event systems, listeners, reactive streams. Java provides `PropertyChangeSupport`; reactive frameworks (RxJava, Project Reactor) generalize it. **Strategy**: defines a family of interchangeable algorithms behind a common interface, swapped at runtime. Replaces conditional logic — e.g., different sorting comparators, payment methods, compression algorithms.",
-    proTip: "In modern Java, both patterns often collapse into lambdas — a `Consumer<Event>` IS an observer; a `Comparator<T>` IS a strategy.",
-    codeSnippet: `// Strategy via lambda
-interface PricingStrategy { double price(double base); }
-PricingStrategy regular = b -> b;
-PricingStrategy holiday = b -> b * 0.8;
-double total = holiday.price(100); // 80.0`,
-    tags: ["observer", "strategy", "design-pattern"]
-  },
-  {
-    id: 70, topic: "design-patterns", topicLabel: "Design Patterns & SOLID", subtopic: "Principles", difficulty: "medium",
+  Q({ id: next(), topic: "design-patterns", topicLabel: "Design Patterns & System Design", subtopic: "SOLID", difficulty: "medium",
     question: "Explain the SOLID principles with Java examples.",
-    answer: "**S — Single Responsibility**: a class should have one reason to change. Split `User` (data) from `UserRepository` (persistence). **O — Open/Closed**: open for extension, closed for modification. Add new shapes by implementing `Shape`, not by editing `AreaCalculator`. **L — Liskov Substitution**: subtypes must be usable wherever the base type is expected — don't violate base contracts (classic `Square extends Rectangle` violation). **I — Interface Segregation**: many small focused interfaces beat one fat one — split `Worker` into `Workable` and `Eatable`. **D — Dependency Inversion**: depend on abstractions, not concretions — inject `NotificationService` rather than `new EmailService()`.",
-    proTip: "Tie SOLID to real Spring usage: DI containers enforce DIP; `@Service`/`@Repository` separation embodies SRP; interface-based DI naturally supports OCP/ISP.",
-    tags: ["solid", "principles", "design"]
-  },
+    answer: "**S**ingle Responsibility — a class has one reason to change. **O**pen/Closed — open for extension, closed for modification (Strategy pattern). **L**iskov Substitution — subtypes must be usable wherever the base type is, without surprises. **I**nterface Segregation — many small interfaces over one fat one. **D**ependency Inversion — depend on abstractions, not concretions (constructor inject `PaymentGateway`, not `RazorpayClient`).",
+    proTip: "When asked 'where do you see SOLID violated?' — point to god services, anemic domain models, and `instanceof` chains (LSP smell).",
+    tags: ["solid"] }),
 
-  // ============ SPRING (5) ============
-  {
-    id: 71, topic: "spring", topicLabel: "Spring Framework", subtopic: "Spring Boot", difficulty: "medium",
-    question: "How does Spring Boot auto-configuration work?",
-    answer: "Auto-configuration is enabled by `@SpringBootApplication` (which includes `@EnableAutoConfiguration`). On startup, Spring Boot scans the classpath for `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports` (Boot 3+) or `META-INF/spring.factories` (Boot 2). Each auto-config class is annotated with conditionals like `@ConditionalOnClass`, `@ConditionalOnMissingBean`, `@ConditionalOnProperty` — beans are registered only if the conditions are met. This way, adding a starter dependency 'just works' without XML.",
-    proTip: "Use `--debug` (or `debug=true` in application.properties) to print the auto-configuration report — shows which configs matched and why others didn't.",
-    tags: ["spring-boot", "auto-configuration"]
-  },
-  {
-    id: 72, topic: "spring", topicLabel: "Spring Framework", subtopic: "Dependency Injection", difficulty: "medium",
-    question: "What is the difference between Constructor and Field injection in Spring?",
-    answer: "**Constructor injection** (recommended) — dependencies are passed via the constructor; fields can be `final` (immutable); Spring detects circular dependencies at startup; the class is easy to unit test (just call `new`). **Field injection** — uses `@Autowired` directly on fields; concise but the class can't be instantiated without Spring/reflection, hides required dependencies, and complicates testing. **Setter injection** is best for optional dependencies.",
-    proTip: "Since Spring 4.3, single-constructor classes get implicit `@Autowired` — no annotation needed. Combined with Lombok's `@RequiredArgsConstructor`, constructor injection becomes one line.",
-    codeSnippet: `@Service
-public class OrderService {
-    private final PaymentGateway gateway;        // final & immutable
-    private final InventoryRepo inventory;
-    public OrderService(PaymentGateway g, InventoryRepo i) {
-        this.gateway = g;
-        this.inventory = i;
-    }
-}`,
-    tags: ["spring", "di", "constructor-injection"]
-  },
-  {
-    id: 73, topic: "spring", topicLabel: "Spring Framework", subtopic: "Web", difficulty: "easy",
-    question: "What is the difference between @RestController and @Controller?",
-    answer: "**@Controller** marks a Spring MVC controller — methods return view names that a `ViewResolver` renders (e.g., a Thymeleaf template). To return JSON, you must annotate methods with `@ResponseBody`. **@RestController** is a convenience meta-annotation = `@Controller` + `@ResponseBody` on every method — return values are serialized directly to the HTTP response body (typically JSON via Jackson). Use `@RestController` for REST APIs; `@Controller` for server-rendered apps.",
-    proTip: "If you need to return JSON from a few endpoints in an MVC app, annotate just those methods with `@ResponseBody` rather than mixing controllers — keeps intent clear.",
-    codeSnippet: `@RestController
-@RequestMapping("/api/users")
-public class UserController {
-    @GetMapping("/{id}")
-    public User get(@PathVariable Long id) {
-        return service.findById(id); // serialized to JSON
-    }
-}`,
-    tags: ["spring", "rest", "controller"]
-  },
-  {
-    id: 74, topic: "spring", topicLabel: "Spring Framework", subtopic: "Beans", difficulty: "medium",
-    question: "Explain the Spring Bean lifecycle.",
-    answer: "Lifecycle: **(1)** Container instantiates the bean. **(2)** Populates dependencies (DI). **(3)** Calls `BeanNameAware`, `BeanFactoryAware`, `ApplicationContextAware` setters. **(4)** Calls `BeanPostProcessor.postProcessBeforeInitialization`. **(5)** Calls `@PostConstruct`, then `InitializingBean.afterPropertiesSet()`, then custom `initMethod`. **(6)** Calls `BeanPostProcessor.postProcessAfterInitialization` (where AOP proxies are created). **(7)** Bean is ready. **(8)** On context shutdown: `@PreDestroy`, `DisposableBean.destroy()`, custom `destroyMethod`.",
-    proTip: "Default scope is **singleton** — one instance per container. Other scopes: prototype, request, session, application, websocket. Singleton beans must be stateless or thread-safe.",
-    tags: ["spring", "bean-lifecycle"]
-  },
-  {
-    id: 75, topic: "spring", topicLabel: "Spring Framework", subtopic: "AOP & Security", difficulty: "hard",
-    question: "What is Spring AOP and how does it work?",
-    answer: "**AOP (Aspect-Oriented Programming)** modularizes cross-cutting concerns (logging, transactions, security, caching) into **aspects** instead of scattering them across business code. Spring AOP uses **runtime proxies**: JDK dynamic proxies for interface-based beans, or CGLIB subclass proxies for classes. Key terms: **Aspect** (the module), **Advice** (the action: `@Before`, `@After`, `@Around`, `@AfterReturning`, `@AfterThrowing`), **Pointcut** (where to apply, via expressions), **JoinPoint** (a specific execution point). `@Transactional` and `@Cacheable` are AOP-powered.",
-    proTip: "Self-invocation pitfall: calling an `@Transactional` method from another method in the same class bypasses the proxy — the annotation won't apply. Inject self or move to another bean.",
-    codeSnippet: `@Aspect
-@Component
-public class LoggingAspect {
-    @Around("execution(* com.app.service..*(..))")
-    public Object log(ProceedingJoinPoint pjp) throws Throwable {
-        long t = System.currentTimeMillis();
-        Object out = pjp.proceed();
-        System.out.println(pjp.getSignature() + " took " + (System.currentTimeMillis() - t) + "ms");
-        return out;
-    }
-}`,
-    tags: ["spring", "aop", "proxy"]
-  },
+  Q({ id: next(), topic: "design-patterns", topicLabel: "Design Patterns & System Design", subtopic: "System Design", difficulty: "hard",
+    question: "Design a Banking Loan Processing System.",
+    answer: "Bounded contexts as services: **Customer/KYC**, **Loan Origination**, **Underwriting/Credit Scoring**, **Disbursement** (bank integration), **Repayment/EMI**, **Notifications**. API Gateway with JWT auth + rate limiting. Sync REST for queries; **Kafka** events for state changes (`LoanApproved`, `Disbursed`) — consumers update read models, send SMS/email, accounting entries. Each service owns its DB (MySQL). Redis for KYC cache. Resilience4j around third-party (Aadhar/PAN/RC). Outbox pattern for reliable event publishing. Audit log table for compliance. Deployed on AWS ECS + ALB + Auto Scaling, RDS Multi-AZ, ElastiCache, S3 for documents. Observability: Micrometer → Prometheus → Grafana; Sleuth → Zipkin.",
+    proTip: "Drive it top-down: requirements → APIs → data model → services → scale/SLA → failure modes. Don't dive into Kafka topics first.",
+    tags: ["system-design", "banking"], resumeLink: "Banking Loans @ KUWY" }),
 
-  // ============ CODING CHALLENGES (5) ============
-  {
-    id: 76, topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Linked Lists", difficulty: "medium",
-    question: "Reverse a linked list — both iteratively and recursively.",
-    answer: "**Iterative** O(n) time / O(1) space: walk with `prev`, `curr`, `next`; flip each pointer. **Recursive** O(n) time / O(n) space: recurse to the tail, then on the way back set `head.next.next = head; head.next = null;`. Both return the new head. The iterative version is preferred when the list might be very long (avoids stack overflow).",
-    proTip: "Always ask: 'Is the list singly or doubly linked?' For doubly-linked, you also need to swap `prev` and `next` on each node.",
+  Q({ id: next(), topic: "design-patterns", topicLabel: "Design Patterns & System Design", subtopic: "System Design", difficulty: "hard",
+    question: "Design a Real-Time Chat Application (BarathAI-style).",
+    answer: "Stateless API gateway. WebSocket gateway (Spring + STOMP) horizontally scaled behind ALB with sticky sessions; backed by RabbitMQ STOMP broker so messages cross nodes. Auth via JWT during CONNECT. Persistence: PostgreSQL for users/conversations metadata, MongoDB for messages (high write throughput, document shape). Redis for presence (online users, last-seen) with TTL. Push to offline users via FCM/APNs from a notification service consuming Kafka. Read models for unread counts. Object storage (S3) for attachments with pre-signed URLs.",
+    proTip: "Cover delivery semantics — at-least-once with client-side idempotency keys to dedupe; message ordering per conversation via partitioning by conversation id.",
+    tags: ["system-design", "chat"], resumeLink: "BarathAI Chat" }),
+
+  Q({ id: next(), topic: "design-patterns", topicLabel: "Design Patterns & System Design", subtopic: "System Design", difficulty: "hard",
+    question: "Design a URL Shortener with rate limiting.",
+    answer: "Generate short code via base62 of an auto-increment ID, or hash(url)+collision retry. Persist `(short_code → long_url, owner, created_at, expires_at)` in a sharded SQL DB or Cassandra for write scale. Redis cache for hot mappings (`GET /{code}` is read-heavy). 301/302 redirects (302 if you need analytics on each click). **Rate limiting:** token bucket per API key in Redis (`INCR` + `EXPIRE`); respond 429 + `Retry-After`. Async analytics pipeline: emit click event to Kafka → ClickHouse for aggregations.",
+    proTip: "Discuss read/write ratio (~100:1 in URL shorteners) — shapes your caching and DB choice.",
+    tags: ["system-design", "url-shortener"] }),
+
+  // ============ DEVOPS (4) ============
+  Q({ id: next(), topic: "devops", topicLabel: "Git, CI/CD & DevOps", subtopic: "Git", difficulty: "easy",
+    question: "Compare GitFlow vs trunk-based branching strategies.",
+    answer: "**GitFlow** — long-lived `develop`, `main`, `feature/*`, `release/*`, `hotfix/*`. Heavy ceremony, suits scheduled releases. **Trunk-based** — short-lived feature branches (hours/days) merged into `main` behind feature flags; `main` always deployable. Modern CI/CD favors trunk-based for fast, safe delivery.",
+    proTip: "Combine trunk-based with feature flags (LaunchDarkly / Unleash) to ship code dark and release independently of deploy.",
+    tags: ["git"] }),
+
+  Q({ id: next(), topic: "devops", topicLabel: "Git, CI/CD & DevOps", subtopic: "Git", difficulty: "medium",
+    question: "Merge vs Rebase, cherry-pick, and stash — when to use each?",
+    answer: "**Merge** preserves history with a merge commit — safe for shared branches. **Rebase** rewrites your branch on top of target — clean linear history; never rebase shared/public branches. **Cherry-pick** applies a specific commit elsewhere (hotfix to release branch). **Stash** temporarily shelves uncommitted changes to switch branches.",
+    proTip: "Rule of thumb: 'rebase locally, merge to share'. And use `git pull --rebase` to keep your local feature branch tidy.",
+    tags: ["git"] }),
+
+  Q({ id: next(), topic: "devops", topicLabel: "Git, CI/CD & DevOps", subtopic: "CI/CD", difficulty: "medium",
+    question: "How do you set up a CI/CD pipeline with GitHub Actions?",
+    answer: "Workflow file `.github/workflows/ci.yml` triggers on push/PR. Jobs: **test** (checkout → setup-java → cache Maven → `mvn verify`), **build** (build Docker image, tag with SHA, push to ECR via OIDC), **deploy** (call AWS CodeDeploy / `kubectl apply`). Add manual approval for prod, use environment secrets, and matrix builds across JDK versions if needed.",
+    proTip: "Always cache dependencies and run tests in parallel matrices to keep CI under 5 minutes — slow CI kills team velocity.",
+    codeSnippet: `name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: '17', cache: maven }
+      - run: mvn -B verify`,
+    tags: ["github-actions"] }),
+
+  Q({ id: next(), topic: "devops", topicLabel: "Git, CI/CD & DevOps", subtopic: "Build Tools", difficulty: "easy",
+    question: "Maven vs Gradle build lifecycle — what are the differences?",
+    answer: "**Maven** — XML config (`pom.xml`), opinionated lifecycle (`validate → compile → test → package → verify → install → deploy`), huge plugin ecosystem, predictable. **Gradle** — Groovy/Kotlin DSL, task graph (DAG), incremental builds, build cache → much faster on large projects, more flexible.",
+    proTip: "For new projects pick Gradle for speed; for existing enterprise (and most Spring tutorials) Maven is still king and easier to onboard juniors to.",
+    tags: ["maven", "gradle"] }),
+
+  // ============ CODING CHALLENGES (8) ============
+  Q({ id: next(), topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Linked List", difficulty: "easy",
+    question: "Reverse a linked list — iterative AND recursive.",
+    answer: "**Iterative**: O(n) time, O(1) space — flip pointers in place. **Recursive**: O(n) time, O(n) stack — recurse to tail, then on the way up, set `head.next.next = head; head.next = null;`.",
+    proTip: "State trade-off: iterative wins on large lists due to constant space; recursive risks stack overflow.",
     codeSnippet: `// Iterative
-ListNode reverseIter(ListNode head) {
-    ListNode prev = null, curr = head;
-    while (curr != null) {
-        ListNode next = curr.next;
-        curr.next = prev;
-        prev = curr;
-        curr = next;
-    }
+ListNode reverse(ListNode head) {
+    ListNode prev = null, cur = head;
+    while (cur != null) { ListNode n = cur.next; cur.next = prev; prev = cur; cur = n; }
     return prev;
 }
 // Recursive
-ListNode reverseRec(ListNode head) {
+ListNode reverseR(ListNode head) {
     if (head == null || head.next == null) return head;
-    ListNode newHead = reverseRec(head.next);
-    head.next.next = head;
-    head.next = null;
+    ListNode newHead = reverseR(head.next);
+    head.next.next = head; head.next = null;
     return newHead;
 }`,
-    tags: ["linked-list", "reverse", "challenge"]
-  },
-  {
-    id: 77, topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Arrays", difficulty: "easy",
-    question: "Find all duplicates in an integer array.",
-    answer: "**Approach 1 (HashSet)** O(n) time / O(n) space: iterate, return elements that fail to add. **Approach 2 (in-place, when 1 ≤ nums[i] ≤ n)** O(n) time / O(1) extra space: for each value v = |nums[i]|, negate nums[v-1]; if it was already negative, v is a duplicate. Clarify constraints first to pick the right approach.",
-    proTip: "Be explicit about output: 'unique duplicates' vs 'every duplicate occurrence'. Many candidates assume one and lose points.",
-    codeSnippet: `// HashSet approach
-List<Integer> findDuplicates(int[] nums) {
-    Set<Integer> seen = new HashSet<>();
-    List<Integer> dup = new ArrayList<>();
-    for (int n : nums) if (!seen.add(n)) dup.add(n);
+    tags: ["linked-list", "reverse"] }),
+
+  Q({ id: next(), topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Design", difficulty: "hard",
+    question: "Implement an LRU Cache with O(1) get and put.",
+    answer: "Doubly linked list (most-recent at head, least-recent at tail) + HashMap from key → node. On get: move node to head. On put: insert at head; if over capacity, evict tail; update map. Java shortcut: `LinkedHashMap` with `accessOrder=true` and override `removeEldestEntry`.",
+    proTip: "Mention both: 'LinkedHashMap-based one-liner for production simplicity, manual DLL+HashMap to prove I understand it'.",
+    codeSnippet: `class LRUCache extends LinkedHashMap<Integer,Integer> {
+    private final int cap;
+    public LRUCache(int cap) {
+        super(cap, 0.75f, true);
+        this.cap = cap;
+    }
+    public int get(int k) { return getOrDefault(k, -1); }
+    public void put(int k, int v) { super.put(k, v); }
+    protected boolean removeEldestEntry(Map.Entry<Integer,Integer> e) {
+        return size() > cap;
+    }
+}`,
+    tags: ["lru", "design"] }),
+
+  Q({ id: next(), topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Arrays", difficulty: "easy",
+    question: "Find duplicates in an array — multiple approaches.",
+    answer: "(1) **HashSet** — O(n) time, O(n) space; add to set, if already present → duplicate. (2) **Sort + scan** — O(n log n), O(1). (3) For integers in [1..n], **mark by negation**: visit `a[abs(x)-1]`, negate; if already negative → duplicate. O(n)/O(1).",
+    proTip: "Always ask 'what's the value range?' — unlocks the in-place trick.",
+    codeSnippet: `Set<Integer> findDuplicates(int[] a) {
+    Set<Integer> seen = new HashSet<>(), dup = new HashSet<>();
+    for (int x : a) if (!seen.add(x)) dup.add(x);
     return dup;
-}
-// In-place (nums[i] in [1..n])
-List<Integer> findDuplicatesInPlace(int[] nums) {
-    List<Integer> res = new ArrayList<>();
-    for (int i = 0; i < nums.length; i++) {
-        int idx = Math.abs(nums[i]) - 1;
-        if (nums[idx] < 0) res.add(idx + 1);
-        else nums[idx] = -nums[idx];
-    }
-    return res;
 }`,
-    tags: ["array", "duplicates", "hashing"]
-  },
-  {
-    id: 78, topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Design", difficulty: "hard",
-    question: "Implement an LRU Cache using LinkedHashMap.",
-    answer: "Extend `LinkedHashMap` with **access-order** mode (`accessOrder = true` in the 3-arg constructor). Override `removeEldestEntry` to return `true` when `size() > capacity`. The map automatically reorders entries on access (`get` and `put`) so the eldest = least-recently-used. All operations are O(1). For a from-scratch implementation, combine a `HashMap` with a doubly-linked list — same time complexity.",
-    proTip: "`LinkedHashMap` is not thread-safe; wrap with `Collections.synchronizedMap` or use Caffeine/Guava cache for concurrent LRU.",
-    codeSnippet: `class LRUCache<K, V> extends LinkedHashMap<K, V> {
-    private final int capacity;
-    public LRUCache(int capacity) {
-        super(capacity, 0.75f, true); // accessOrder = true
-        this.capacity = capacity;
+    tags: ["arrays", "hashing"] }),
+
+  Q({ id: next(), topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Stack", difficulty: "easy",
+    question: "Valid parentheses using a stack.",
+    answer: "Push openers, on a closer pop and check it matches. Empty stack at end = valid. O(n)/O(n).",
+    proTip: "Edge cases interviewers love: empty string (valid), single char (invalid), unmatched closer first.",
+    codeSnippet: `boolean isValid(String s) {
+    Deque<Character> st = new ArrayDeque<>();
+    for (char c : s.toCharArray()) {
+        if (c=='(' || c=='[' || c=='{') st.push(c);
+        else {
+            if (st.isEmpty()) return false;
+            char o = st.pop();
+            if ((c==')'&&o!='(')||(c==']'&&o!='[')||(c=='}'&&o!='{')) return false;
+        }
     }
-    @Override protected boolean removeEldestEntry(Map.Entry<K, V> eldest) {
-        return size() > capacity;
-    }
-}
-LRUCache<Integer, String> c = new LRUCache<>(3);
-c.put(1, "a"); c.put(2, "b"); c.put(3, "c");
-c.get(1);                       // 1 becomes most recent
-c.put(4, "d");                  // evicts 2`,
-    tags: ["lru", "cache", "design", "linkedhashmap"]
-  },
-  {
-    id: 79, topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Graphs", difficulty: "medium",
-    question: "Implement BFS and DFS traversal of a graph.",
-    answer: "Represent the graph as `Map<Integer, List<Integer>>`. **BFS** uses a queue and a visited set — explores level by level (best for shortest path in unweighted graphs). **DFS** uses recursion or an explicit stack — goes deep first (best for connectivity, cycle detection, topological sort). Both are O(V + E) time and O(V) space.",
-    proTip: "For disconnected graphs, loop over all vertices and start a fresh traversal for any unvisited one — otherwise you only cover one component.",
-    codeSnippet: `void bfs(Map<Integer, List<Integer>> g, int start) {
-    Set<Integer> seen = new HashSet<>();
-    Queue<Integer> q = new ArrayDeque<>();
-    q.offer(start); seen.add(start);
+    return st.isEmpty();
+}`,
+    tags: ["stack"] }),
+
+  Q({ id: next(), topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Graphs", difficulty: "medium",
+    question: "BFS and DFS traversal of a graph.",
+    answer: "**BFS** — queue + visited set, level-by-level (shortest hops in unweighted graph). **DFS** — recursion or stack; great for connectivity and cycle detection.",
+    proTip: "For 'shortest path in unweighted grid', BFS is the answer. For 'all paths/exists path', DFS is usually simpler.",
+    codeSnippet: `void bfs(int start, List<List<Integer>> g) {
+    boolean[] vis = new boolean[g.size()];
+    Queue<Integer> q = new ArrayDeque<>(); q.add(start); vis[start]=true;
     while (!q.isEmpty()) {
-        int n = q.poll();
-        System.out.println(n);
-        for (int nb : g.getOrDefault(n, List.of()))
-            if (seen.add(nb)) q.offer(nb);
+        int u = q.poll();
+        for (int v : g.get(u))
+            if (!vis[v]) { vis[v]=true; q.add(v); }
     }
-}
-void dfs(Map<Integer, List<Integer>> g, int n, Set<Integer> seen) {
-    if (!seen.add(n)) return;
-    System.out.println(n);
-    for (int nb : g.getOrDefault(n, List.of())) dfs(g, nb, seen);
 }`,
-    tags: ["graph", "bfs", "dfs", "challenge"]
-  },
-  {
-    id: 80, topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Stacks", difficulty: "medium",
-    question: "Design a stack that supports getMin() in O(1).",
-    answer: "Maintain a second stack tracking the running minimum. On `push(x)`: push x to the data stack; push `min(x, minStack.peek())` (or x if empty) to the min stack. On `pop`: pop both. `getMin` returns the top of the min stack. All operations are O(1) time, O(n) extra space. A space-optimized variant pushes to the min stack only when a new minimum appears, but you must also pop only when popping the actual min — slightly trickier.",
-    proTip: "If asked to optimize space further: store `2*x - currentMin` on the data stack itself when x < currentMin — encodes the previous min into the new value. Show this for senior interviews.",
+    tags: ["graphs", "bfs", "dfs"] }),
+
+  Q({ id: next(), topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Stack", difficulty: "medium",
+    question: "Design a stack with getMin() in O(1).",
+    answer: "Two stacks: main + min stack tracking running minimum (push min(top, x) on each push). All ops O(1).",
+    proTip: "Optimization: only push to the min stack when new value <= current min — saves memory.",
     codeSnippet: `class MinStack {
-    Deque<Integer> data = new ArrayDeque<>();
-    Deque<Integer> mins = new ArrayDeque<>();
+    Deque<Integer> st = new ArrayDeque<>(), mins = new ArrayDeque<>();
     public void push(int x) {
-        data.push(x);
-        mins.push(mins.isEmpty() ? x : Math.min(x, mins.peek()));
+        st.push(x);
+        if (mins.isEmpty() || x <= mins.peek()) mins.push(x);
     }
-    public void pop()    { data.pop(); mins.pop(); }
-    public int top()     { return data.peek(); }
-    public int getMin()  { return mins.peek(); }
+    public void pop() {
+        if (st.pop().equals(mins.peek())) mins.pop();
+    }
+    public int top() { return st.peek(); }
+    public int getMin() { return mins.peek(); }
 }`,
-    tags: ["stack", "min-stack", "design", "challenge"]
-  },
+    tags: ["stack", "design"] }),
+
+  Q({ id: next(), topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Hashing", difficulty: "easy",
+    question: "Two Sum — HashMap approach.",
+    answer: "One pass: for each element, look up `target - x` in the map; if found, return indices; else put `x → i`. O(n)/O(n).",
+    proTip: "If asked for indices vs values: clarify upfront. If asked for *all unique pairs*, sort + two-pointer skipping duplicates.",
+    codeSnippet: `int[] twoSum(int[] a, int target) {
+    Map<Integer,Integer> m = new HashMap<>();
+    for (int i=0;i<a.length;i++) {
+        Integer j = m.get(target - a[i]);
+        if (j != null) return new int[]{j,i};
+        m.put(a[i], i);
+    }
+    return new int[0];
+}`,
+    tags: ["hashing", "two-sum"] }),
+
+  Q({ id: next(), topic: "coding-challenges", topicLabel: "Coding Challenges", subtopic: "Intervals", difficulty: "medium",
+    question: "Merge overlapping intervals.",
+    answer: "Sort by start. Iterate; if current overlaps with last in result (`cur.start <= last.end`), extend `last.end = max(last.end, cur.end)`; else append. O(n log n) time.",
+    proTip: "Edge cases: empty input, single interval, intervals exactly touching (`[1,2],[2,3]` — usually counts as overlap; clarify).",
+    codeSnippet: `int[][] merge(int[][] iv) {
+    Arrays.sort(iv, Comparator.comparingInt(a -> a[0]));
+    List<int[]> out = new ArrayList<>();
+    for (int[] cur : iv) {
+        if (!out.isEmpty() && cur[0] <= out.get(out.size()-1)[1]) {
+            out.get(out.size()-1)[1] = Math.max(out.get(out.size()-1)[1], cur[1]);
+        } else out.add(cur);
+    }
+    return out.toArray(new int[0][]);
+}`,
+    tags: ["intervals", "sorting"] }),
+
+  // ============ PROJECTS (10) ============
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "KUWY", difficulty: "hard",
+    question: "Walk me through the Banking Loan Processing system you built at KUWY.",
+    answer: "End-to-end loan origination platform built as Spring Boot microservices. Flow: Customer applies via web/app → KYC service verifies (Aadhar, PAN, Vehicle RC via third-party APIs, all wrapped in Resilience4j circuit breakers + Redis cache) → Underwriting service scores creditworthiness → Loan service creates the loan → events published to Kafka trigger Disbursement (bank integration) and Notification services. MySQL per service, Redis for caching, AWS EC2 + ALB + Auto Scaling, JWT auth, Swagger docs, GitHub Actions CI/CD. Achieved 30% latency improvement via Redis caching + connection pool tuning + parallel async calls with CompletableFuture.",
+    proTip: "Quantify impact: 30% latency drop, 20+ APIs, 100s of loans/day — interviewers remember numbers.",
+    tags: ["project", "banking"], resumeLink: "KUWY (Software Developer Java)" }),
+
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "KUWY", difficulty: "medium",
+    question: "How did you achieve 30% performance improvement at KUWY?",
+    answer: "Profiled hot endpoints with Micrometer + Grafana. Wins: (1) Redis cache-aside on hot KYC/loan-product reads (cut DB hits ~60%), (2) parallel third-party calls (Aadhar + PAN + RC) via `CompletableFuture.allOf` instead of sequential, (3) HikariCP pool sized correctly (was bottleneck under load), (4) JOIN FETCH / EntityGraph removed N+1 queries on listing endpoints, (5) Resilience4j circuit breakers prevented thread starvation when third-parties slowed down. Combined p95 of critical flow dropped ~30%.",
+    proTip: "Always say *how you measured* — 'before vs after p95 in Grafana' is much stronger than 'feels faster'.",
+    tags: ["project", "performance"], resumeLink: "KUWY 30% performance" }),
+
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "KUWY", difficulty: "hard",
+    question: "Explain your microservices architecture at KUWY.",
+    answer: "Bounded contexts as services: KYC, Loan Origination, Underwriting, Disbursement, Repayment, Notifications. Each owns its MySQL schema. Sync REST for queries; Kafka events (`LoanApproved`, `Disbursed`) for state changes — consumers update read models, send SMS/email, write accounting entries. API Gateway centralized JWT validation + rate limiting. Resilience4j around third-party. Redis caching. Deployed on AWS ECS behind ALB + Auto Scaling. Observability via Micrometer/Prometheus/Grafana + Sleuth/Zipkin tracing.",
+    proTip: "Be ready for 'why not monolith?' — independent deploy cycles per business capability and scaling KYC separately during peak hours.",
+    tags: ["project", "microservices"], resumeLink: "KUWY architecture" }),
+
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "KUWY", difficulty: "hard",
+    question: "How did you handle third-party API failures (Aadhar, PAN, RC)?",
+    answer: "Each external API was wrapped in a thin client with: explicit connect/read timeouts, retry with exponential backoff + jitter (max 3), Resilience4j Circuit Breaker (open after 50% failures over 20 calls, half-open probes after 30s), Redis cache for last-known-good responses, structured logging with traceId, and a typed exception hierarchy. On breaker-open we returned cached/last-known-good data and queued an async re-verification job. Bulkhead isolation prevented one slow provider from exhausting the shared thread pool.",
+    proTip: "Cite SLA-aware design: 'we treated third-party APIs as unreliable from day one — the system degrades, never crashes'.",
+    tags: ["resilience", "project"], resumeLink: "KUWY Aadhar/PAN integration" }),
+
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "BarathAI", difficulty: "hard",
+    question: "How does your WebSocket implementation handle 100+ concurrent users in BarathAI?",
+    answer: "Spring Boot WebSocket + STOMP endpoint authenticated via JWT in the CONNECT frame (`ChannelInterceptor`). Undertow IO threads tuned, OS file descriptors raised. Behind ALB with WebSocket support. Per-user destinations (`/user/queue/messages`) for direct messages, `/topic/room.{id}` for rooms. Messages persisted to MongoDB asynchronously (non-blocking write), then broadcast. Heartbeats every 25s + auto-reconnect with exponential backoff on the React client. Optimistic UI with client-side `tempId` for idempotent reconciliation. Successfully sustained 100+ concurrent connections in load tests.",
+    proTip: "For '500+ users?' answer: external broker (RabbitMQ STOMP) for fan-out across nodes + sticky sessions on ALB.",
+    tags: ["websocket", "project"], resumeLink: "BarathAI Chat 100+ users" }),
+
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "BarathAI", difficulty: "medium",
+    question: "Explain your JWT authentication flow in BarathAI.",
+    answer: "On login: validate credentials with bcrypt → issue short-lived access token (15 min, HS256) + long-lived refresh token (7 days) stored in httpOnly Secure SameSite cookie. Access token sent as `Authorization: Bearer …`. Custom `JwtAuthFilter` (registered before `UsernamePasswordAuthenticationFilter`) validates signature + expiry, extracts user, sets `SecurityContext`. On 401, the React client hits `/auth/refresh` to rotate, then retries the original request. Refresh tokens tracked server-side for revocation on logout / password change.",
+    proTip: "Mention rotation + reuse detection — if a refresh token is used twice, revoke the whole family (compromise indicator).",
+    tags: ["jwt", "project"], resumeLink: "BarathAI auth" }),
+
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "BarathAI", difficulty: "hard",
+    question: "How did you reduce database query time by 40% in BarathAI?",
+    answer: "EXPLAIN ANALYZE on slow endpoints. Wins: (1) composite index `(conversation_id, created_at DESC)` for message pagination, (2) projections instead of `SELECT *`, (3) **cursor-based pagination** instead of OFFSET (OFFSET gets slower the deeper you go), (4) batched user lookups via `IN (...)` to kill N+1, (5) Redis cache-aside for active conversation metadata, (6) HikariCP pool tuned. Combined p95 dropped ~40%.",
+    proTip: "Cursor pagination is the single biggest win for chat-style histories — cite it specifically.",
+    tags: ["sql", "project"], resumeLink: "BarathAI 40% query improvement" }),
+
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "AI English Tutor", difficulty: "medium",
+    question: "How does the Web Speech API work in your AI English Tutor app?",
+    answer: "Two browser APIs: **SpeechRecognition** (speech-to-text) — start a recognition session, receive interim + final transcripts via events; configure language, continuous mode. **SpeechSynthesis** (text-to-speech) — `speechSynthesis.speak(new SpeechSynthesisUtterance(text))` with chosen voice/rate/pitch. App flow: user speaks → STT transcript → backend evaluates pronunciation/grammar → response spoken back via TTS. Handle browser-support fallbacks (Chrome works best) and permission errors.",
+    proTip: "Mention privacy: speech is processed by the browser/cloud — call it out and offer a fully on-device fallback for sensitive deployments.",
+    codeSnippet: `const rec = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+rec.lang = 'en-US'; rec.interimResults = true;
+rec.onresult = e => {
+    const text = Array.from(e.results).map(r => r[0].transcript).join('');
+    setTranscript(text);
+};
+rec.start();`,
+    tags: ["web-speech", "project"], resumeLink: "AI English Tutor" }),
+
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "AI English Tutor", difficulty: "medium",
+    question: "How did you handle offline capabilities with IndexedDB?",
+    answer: "**IndexedDB** — async, transactional, browser-based DB for large structured data (lessons, audio blobs, user progress). Wrapped via `idb` library for promise-friendly API. Strategy: cache lessons + media on first load, queue user submissions while offline, sync to backend when `navigator.onLine` returns true (also listen to `online` event). Combined with a **Service Worker** (Workbox) that intercepts fetches: cache-first for static lessons, network-first with fallback for dynamic content.",
+    proTip: "Distinguish IndexedDB (large structured) from localStorage (5MB sync key-value) — interviewers test this.",
+    tags: ["indexeddb", "pwa"], resumeLink: "AI English Tutor offline" }),
+
+  Q({ id: next(), topic: "projects", topicLabel: "My Projects (Resume)", subtopic: "Behavioral", difficulty: "medium",
+    question: "Tell me about a difficult bug you fixed in production.",
+    answer: "At KUWY, we saw intermittent 504s on the loan submission endpoint during peak hours. Logs showed Hikari connection acquisition timeouts. Root cause: a third-party Aadhar API was responding slowly (~10s), and we held the DB connection open across that call inside a single `@Transactional` method — exhausting the pool under load. Fix: split the transaction (verify outside the DB tx), added a Resilience4j timeout + circuit breaker around the Aadhar call, and reduced HikariCP `connectionTimeout` so failures surfaced fast. 504s went to zero and p95 dropped 35%.",
+    proTip: "Use STAR (Situation, Task, Action, Result) and quantify the result. Bonus: mention what monitoring you added so it never recurs.",
+    tags: ["behavioral", "debugging"], resumeLink: "KUWY production debugging" }),
 ];
+
+export const totalQuestions = questions.length;
