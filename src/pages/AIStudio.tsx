@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   Sparkles, Loader2, Wand2, Trash2, MessageSquare, Send, Brain, FileText, Lightbulb,
+  Eye, EyeOff, Search, Filter, Clock, ChevronRight, Bot, User as UserIcon,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useApp } from "@/context/AppContext";
@@ -27,6 +28,7 @@ interface AiQuestion {
 }
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
+type DiffFilter = "all" | "easy" | "medium" | "hard";
 
 const FUNCTIONS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1`;
 const ANON = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -38,6 +40,9 @@ const AIStudio = () => {
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState<AiQuestion[]>([]);
   const [tab, setTab] = useState<"generate" | "chat">("generate");
+  const [search, setSearch] = useState("");
+  const [diff, setDiff] = useState<DiffFilter>("all");
+  const [topicFilter, setTopicFilter] = useState<string>("all");
 
   const topic = useMemo(() => topics.find((t) => t.id === topicId), [topics, topicId]);
 
@@ -53,6 +58,15 @@ const AIStudio = () => {
 
   useEffect(() => { load(); }, []);
 
+  const filtered = useMemo(() => {
+    return items.filter((q) => {
+      if (diff !== "all" && q.difficulty !== diff) return false;
+      if (topicFilter !== "all" && q.topic !== topicFilter) return false;
+      if (search && !q.question.toLowerCase().includes(search.toLowerCase())) return false;
+      return true;
+    });
+  }, [items, diff, topicFilter, search]);
+
   const generate = async () => {
     if (!topic) return;
     setLoading(true);
@@ -62,7 +76,7 @@ const AIStudio = () => {
       });
       if (error) throw error;
       const n = data?.count ?? 0;
-      toast.success(`Generated ${n} questions`);
+      toast.success(`Generated ${n} fresh questions`);
       await load();
     } catch (e: any) {
       const msg = e?.message ?? "Failed to generate";
@@ -75,100 +89,206 @@ const AIStudio = () => {
   };
 
   const remove = async (id: string) => {
-    // Optimistic local removal (RLS forbids client delete; this hides it locally)
     setItems((p) => p.filter((q) => q.id !== id));
   };
 
+  const stats = useMemo(() => ({
+    total: items.length,
+    easy: items.filter(i => i.difficulty === "easy").length,
+    medium: items.filter(i => i.difficulty === "medium").length,
+    hard: items.filter(i => i.difficulty === "hard").length,
+  }), [items]);
+
   return (
-    <div className="container py-8">
-      <div className="mb-6 flex items-center justify-between gap-4">
-        <div>
-          <h1 className="font-display text-3xl font-bold sm:text-4xl flex items-center gap-2">
-            <Sparkles className="h-7 w-7 text-primary" /> AI Studio
-          </h1>
-          <p className="mt-1 text-muted-foreground">
-            Generate fresh interview questions, get deep explanations, and practice with an AI mock interviewer.
-          </p>
-        </div>
-        <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">← Home</Link>
-      </div>
-
-      <div className="mb-6 inline-flex rounded-full border border-border bg-card p-1">
-        <button
-          onClick={() => setTab("generate")}
-          className={cn("rounded-full px-4 py-1.5 text-sm font-semibold",
-            tab === "generate" ? "bg-primary text-primary-foreground" : "text-muted-foreground")}
-        >
-          <Wand2 className="mr-1 inline h-4 w-4" /> Question Generator
-        </button>
-        <button
-          onClick={() => setTab("chat")}
-          className={cn("rounded-full px-4 py-1.5 text-sm font-semibold",
-            tab === "chat" ? "bg-primary text-primary-foreground" : "text-muted-foreground")}
-        >
-          <MessageSquare className="mr-1 inline h-4 w-4" /> Mock Interviewer
-        </button>
-      </div>
-
-      {tab === "generate" ? (
-        <>
-          <section className="rounded-2xl border border-border bg-gradient-card p-5 shadow-card">
-            <div className="grid gap-4 sm:grid-cols-[1fr_140px_auto]">
-              <div>
-                <label className="mb-1 block text-xs font-semibold uppercase text-muted-foreground">Topic</label>
-                <select
-                  value={topicId}
-                  onChange={(e) => setTopicId(e.target.value)}
-                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                >
-                  {topics.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
-                </select>
-              </div>
-              <div>
-                <label className="mb-1 block text-xs font-semibold uppercase text-muted-foreground">How many</label>
-                <input
-                  type="number" min={1} max={20} value={count}
-                  onChange={(e) => setCount(Math.min(20, Math.max(1, Number(e.target.value) || 1)))}
-                  className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm"
-                />
-              </div>
-              <button
-                onClick={generate}
-                disabled={loading}
-                className="inline-flex items-center justify-center gap-2 self-end rounded-md bg-primary px-5 py-2 text-sm font-semibold text-primary-foreground shadow-elegant transition-transform hover:-translate-y-0.5 disabled:opacity-60"
-              >
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                {loading ? "Generating…" : "Generate"}
-              </button>
+    <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
+      <div className="container py-8">
+        {/* Header */}
+        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+              <Sparkles className="h-3.5 w-3.5" /> AI-Powered Studio
             </div>
-            <p className="mt-3 text-xs text-muted-foreground">
-              Tip: 10–20 fresh questions per click. Tied to your resume — KUWY, BarathAI Chat, AI English Tutor.
+            <h1 className="font-display text-3xl font-bold leading-tight sm:text-4xl">
+              Interview Prep, supercharged.
+            </h1>
+            <p className="mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
+              Generate fresh interview questions, reveal in-depth answers on demand, and rehearse with an AI mock interviewer tuned to your resume.
             </p>
-          </section>
-
-          <div className="mt-6 mb-3 flex items-center justify-between">
-            <h2 className="font-display text-lg font-semibold">AI-generated bank ({items.length})</h2>
           </div>
+          <Link to="/" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
+            ← Back to Home
+          </Link>
+        </div>
 
-          <div className="space-y-3">
-            {items.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-border p-10 text-center text-muted-foreground">
-                Nothing yet — pick a topic and click Generate.
+        {/* Tab switch */}
+        <div className="mb-6 inline-flex rounded-full border border-border bg-card p-1 shadow-sm">
+          <button
+            onClick={() => setTab("generate")}
+            className={cn("rounded-full px-5 py-2 text-sm font-semibold transition-all",
+              tab === "generate" ? "bg-primary text-primary-foreground shadow-elegant" : "text-muted-foreground hover:text-foreground")}
+          >
+            <Wand2 className="mr-1.5 inline h-4 w-4" /> Question Generator
+          </button>
+          <button
+            onClick={() => setTab("chat")}
+            className={cn("rounded-full px-5 py-2 text-sm font-semibold transition-all",
+              tab === "chat" ? "bg-primary text-primary-foreground shadow-elegant" : "text-muted-foreground hover:text-foreground")}
+          >
+            <MessageSquare className="mr-1.5 inline h-4 w-4" /> Mock Interviewer
+          </button>
+        </div>
+
+        {tab === "generate" ? (
+          <>
+            {/* Generator panel */}
+            <section className="rounded-2xl border border-border bg-card p-6 shadow-card">
+              <div className="mb-4 flex items-center gap-2">
+                <div className="rounded-lg bg-primary/10 p-2">
+                  <Wand2 className="h-4 w-4 text-primary" />
+                </div>
+                <div>
+                  <h2 className="font-display text-base font-semibold">Generate new questions</h2>
+                  <p className="text-xs text-muted-foreground">Pick a topic and let AI craft fresh interview Qs with model answers.</p>
+                </div>
               </div>
-            ) : items.map((q) => (
-              <AiQuestionCard key={q.id} q={q} onHide={() => remove(q.id)} />
-            ))}
-          </div>
-        </>
-      ) : (
-        <MockInterviewer />
-      )}
+
+              <div className="grid gap-4 sm:grid-cols-[1fr_140px_auto]">
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Topic</label>
+                  <select
+                    value={topicId}
+                    onChange={(e) => setTopicId(e.target.value)}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none"
+                  >
+                    {topics.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Count</label>
+                  <input
+                    type="number" min={1} max={20} value={count}
+                    onChange={(e) => setCount(Math.min(20, Math.max(1, Number(e.target.value) || 1)))}
+                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none"
+                  />
+                </div>
+                <button
+                  onClick={generate}
+                  disabled={loading}
+                  className="inline-flex items-center justify-center gap-2 self-end rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-elegant transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:translate-y-0 disabled:opacity-60"
+                >
+                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
+                  {loading ? "Generating…" : "Generate"}
+                </button>
+              </div>
+            </section>
+
+            {/* Stats strip */}
+            {items.length > 0 && (
+              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <StatCard label="Total" value={stats.total} tone="primary" />
+                <StatCard label="Easy" value={stats.easy} tone="easy" />
+                <StatCard label="Medium" value={stats.medium} tone="medium" />
+                <StatCard label="Hard" value={stats.hard} tone="hard" />
+              </div>
+            )}
+
+            {/* Filter bar */}
+            {items.length > 0 && (
+              <div className="mt-6 flex flex-col gap-3 rounded-xl border border-border bg-card/60 p-3 sm:flex-row sm:items-center">
+                <div className="relative flex-1">
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <input
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                    placeholder="Search questions…"
+                    className="w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm focus:border-primary focus:outline-none"
+                  />
+                </div>
+                <div className="flex flex-wrap items-center gap-2">
+                  <Filter className="h-4 w-4 text-muted-foreground" />
+                  <select
+                    value={topicFilter}
+                    onChange={(e) => setTopicFilter(e.target.value)}
+                    className="rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium"
+                  >
+                    <option value="all">All topics</option>
+                    {topics.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
+                  </select>
+                  <div className="inline-flex rounded-lg border border-border bg-background p-0.5">
+                    {(["all", "easy", "medium", "hard"] as DiffFilter[]).map((d) => (
+                      <button
+                        key={d}
+                        onClick={() => setDiff(d)}
+                        className={cn(
+                          "rounded-md px-2.5 py-1 text-xs font-semibold capitalize transition-colors",
+                          diff === d ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
+                        )}
+                      >
+                        {d}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* List */}
+            <div className="mt-6 mb-3 flex items-center justify-between">
+              <h2 className="font-display text-lg font-semibold">
+                Question Bank <span className="text-muted-foreground">({filtered.length})</span>
+              </h2>
+            </div>
+
+            <div className="space-y-3">
+              {items.length === 0 ? (
+                <EmptyState />
+              ) : filtered.length === 0 ? (
+                <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
+                  No questions match your filters.
+                </div>
+              ) : filtered.map((q) => (
+                <AiQuestionCard key={q.id} q={q} onHide={() => remove(q.id)} />
+              ))}
+            </div>
+          </>
+        ) : (
+          <MockInterviewer />
+        )}
+      </div>
     </div>
   );
 };
 
+const StatCard = ({ label, value, tone }: { label: string; value: number; tone: "primary" | "easy" | "medium" | "hard" }) => {
+  const toneMap = {
+    primary: "border-primary/30 bg-primary/5 text-primary",
+    easy: "border-easy/30 bg-easy/5 text-easy",
+    medium: "border-medium/30 bg-medium/5 text-medium",
+    hard: "border-hard/30 bg-hard/5 text-hard",
+  } as const;
+  return (
+    <div className={cn("rounded-xl border bg-card p-4 shadow-sm transition-all hover:shadow-card", toneMap[tone])}>
+      <div className="text-xs font-semibold uppercase tracking-wider opacity-80">{label}</div>
+      <div className="mt-1 font-display text-2xl font-bold text-foreground">{value}</div>
+    </div>
+  );
+};
+
+const EmptyState = () => (
+  <div className="rounded-2xl border border-dashed border-border bg-gradient-to-br from-card to-muted/30 p-12 text-center">
+    <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+      <Sparkles className="h-6 w-6" />
+    </div>
+    <h3 className="font-display text-lg font-semibold">Your AI question bank is empty</h3>
+    <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
+      Pick a topic above and click <span className="font-semibold text-foreground">Generate</span> to create fresh, resume-aware interview questions.
+    </p>
+  </div>
+);
+
 const AiQuestionCard = ({ q, onHide }: { q: AiQuestion; onHide: () => void }) => {
   const [open, setOpen] = useState(false);
+  const [showAnswer, setShowAnswer] = useState(false);
   const [explain, setExplain] = useState<string>("");
   const [loadingExplain, setLoadingExplain] = useState(false);
 
@@ -192,69 +312,137 @@ const AiQuestionCard = ({ q, onHide }: { q: AiQuestion; onHide: () => void }) =>
     }
   };
 
+  const created = new Date(q.created_at);
+  const timeAgo = formatTimeAgo(created);
+
   return (
-    <article className="rounded-xl border border-border bg-card shadow-card transition-all hover:shadow-elegant">
+    <article className="group overflow-hidden rounded-xl border border-border bg-card shadow-card transition-all hover:border-primary/40 hover:shadow-elegant">
       <button onClick={() => setOpen((o) => !o)} className="flex w-full items-start gap-3 p-4 text-left sm:p-5">
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex flex-wrap items-center gap-2">
             <DifficultyBadge difficulty={q.difficulty} />
-            <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-medium">{q.topic_label}</span>
-            <span className="text-xs text-muted-foreground">AI · {q.model?.split("/")[0]}</span>
+            <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-medium text-secondary-foreground/80">{q.topic_label}</span>
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Sparkles className="h-3 w-3" /> AI · {q.model?.split("/")[0] ?? "ai"}
+            </span>
+            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+              <Clock className="h-3 w-3" /> {timeAgo}
+            </span>
           </div>
-          <h3 className="font-display text-base font-semibold sm:text-lg">{q.question}</h3>
+          <h3 className="font-display text-base font-semibold leading-snug sm:text-lg">{q.question}</h3>
         </div>
-        <button onClick={(e) => { e.stopPropagation(); onHide(); }} title="Hide" className="text-muted-foreground hover:text-destructive">
-          <Trash2 className="h-4 w-4" />
-        </button>
+        <div className="flex shrink-0 items-center gap-1.5">
+          <span
+            role="button"
+            onClick={(e) => { e.stopPropagation(); onHide(); }}
+            title="Hide"
+            className="rounded-md p-1.5 text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+          >
+            <Trash2 className="h-4 w-4" />
+          </span>
+          <ChevronRight className={cn("h-5 w-5 text-muted-foreground transition-transform", open && "rotate-90")} />
+        </div>
       </button>
 
       {open && (
-        <div className="border-t border-border px-4 pb-5 pt-4 sm:px-5">
-          <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90">{q.answer}</p>
-
-          {q.code_snippet && (
-            <div className="mt-4 overflow-hidden rounded-lg border border-border">
-              <SyntaxHighlighter language="java" style={vscDarkPlus}
-                customStyle={{ margin: 0, fontSize: 13, padding: "12px 16px", background: "#1e1e1e" }}>
-                {q.code_snippet}
-              </SyntaxHighlighter>
-            </div>
-          )}
-
-          {q.pro_tip && (
-            <div className="mt-4 flex gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
-              <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-              <div>
-                <div className="text-xs font-semibold uppercase text-primary">Pro Tip</div>
-                <p className="mt-1 text-sm">{q.pro_tip}</p>
+        <div className="border-t border-border bg-muted/20 px-4 pb-5 pt-4 sm:px-5">
+          {/* Show Answer toggle */}
+          {!showAnswer ? (
+            <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-start gap-3">
+                <div className="rounded-lg bg-primary/10 p-2 text-primary">
+                  <EyeOff className="h-4 w-4" />
+                </div>
+                <div>
+                  <div className="text-sm font-semibold">Answer is hidden</div>
+                  <p className="text-xs text-muted-foreground">Try answering it yourself first, then reveal the model answer.</p>
+                </div>
               </div>
+              <button
+                onClick={() => setShowAnswer(true)}
+                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-elegant transition-all hover:-translate-y-0.5"
+              >
+                <Eye className="h-3.5 w-3.5" /> Show Answer
+              </button>
             </div>
-          )}
-
-          {q.resume_link && (
-            <div className="mt-4 flex gap-3 rounded-lg border border-accent/30 bg-accent/5 p-3">
-              <FileText className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-              <div>
-                <div className="text-xs font-semibold uppercase text-accent">Resume Link</div>
-                <p className="mt-1 text-sm">{q.resume_link}</p>
+          ) : (
+            <div className="animate-accordion-down">
+              <div className="mb-2 flex items-center justify-between">
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+                  <Eye className="h-3.5 w-3.5" /> Model Answer
+                </div>
+                <button
+                  onClick={() => setShowAnswer(false)}
+                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                >
+                  <EyeOff className="h-3 w-3" /> Hide
+                </button>
               </div>
-            </div>
-          )}
 
-          <div className="mt-4 flex items-center gap-2">
-            <button
-              onClick={askDeeper} disabled={loadingExplain}
-              className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary disabled:opacity-60"
-            >
-              {loadingExplain ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Brain className="h-3.5 w-3.5" />}
-              Explain Deeper
-            </button>
-          </div>
+              <div className="rounded-lg border border-border bg-card p-4">
+                <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90">{q.answer}</p>
+              </div>
 
-          {explain && (
-            <div className="mt-3 rounded-lg border border-border bg-muted/30 p-3">
-              <div className="mb-1 text-xs font-semibold uppercase text-muted-foreground">AI Explanation</div>
-              <pre className="whitespace-pre-wrap break-words text-sm leading-relaxed">{explain}</pre>
+              {q.code_snippet && (
+                <div className="mt-3 overflow-hidden rounded-lg border border-border">
+                  <div className="flex items-center justify-between border-b border-border bg-muted/40 px-3 py-1.5">
+                    <span className="font-mono text-xs text-muted-foreground">Java</span>
+                  </div>
+                  <SyntaxHighlighter language="java" style={vscDarkPlus}
+                    customStyle={{ margin: 0, fontSize: 13, padding: "12px 16px", background: "#1e1e1e" }}>
+                    {q.code_snippet}
+                  </SyntaxHighlighter>
+                </div>
+              )}
+
+              {q.pro_tip && (
+                <div className="mt-3 flex gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
+                  <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                  <div>
+                    <div className="text-xs font-semibold uppercase tracking-wider text-primary">Pro Tip</div>
+                    <p className="mt-1 text-sm text-foreground/85">{q.pro_tip}</p>
+                  </div>
+                </div>
+              )}
+
+              {q.resume_link && (
+                <div className="mt-3 flex gap-3 rounded-lg border border-accent/30 bg-accent/5 p-3">
+                  <FileText className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
+                  <div>
+                    <div className="text-xs font-semibold uppercase tracking-wider text-accent">Resume Link</div>
+                    <p className="mt-1 text-sm text-foreground/85">{q.resume_link}</p>
+                  </div>
+                </div>
+              )}
+
+              {q.tags?.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {q.tags.map((t) => (
+                    <span key={t} className="rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">
+                      #{t}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="mt-4 flex items-center gap-2">
+                <button
+                  onClick={askDeeper} disabled={loadingExplain}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition-all hover:bg-primary/20 disabled:opacity-60"
+                >
+                  {loadingExplain ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Brain className="h-3.5 w-3.5" />}
+                  Explain Deeper
+                </button>
+              </div>
+
+              {explain && (
+                <div className="mt-3 rounded-lg border border-border bg-gradient-to-br from-primary/5 to-card p-4">
+                  <div className="mb-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+                    <Brain className="h-3.5 w-3.5" /> Deep Dive
+                  </div>
+                  <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed">{explain}</pre>
+                </div>
+              )}
             </div>
           )}
         </div>
@@ -320,53 +508,85 @@ const MockInterviewer = () => {
   };
 
   return (
-    <div className="rounded-2xl border border-border bg-card shadow-card">
-      <div className="flex items-center justify-between border-b border-border p-4">
-        <div className="flex items-center gap-2">
-          <MessageSquare className="h-5 w-5 text-primary" />
-          <h2 className="font-display font-semibold">AI Mock Interviewer</h2>
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
+      <div className="flex items-center justify-between border-b border-border bg-gradient-to-r from-primary/5 to-transparent p-4">
+        <div className="flex items-center gap-3">
+          <div className="rounded-lg bg-primary/10 p-2 text-primary">
+            <Bot className="h-5 w-5" />
+          </div>
+          <div>
+            <h2 className="font-display font-semibold">AI Mock Interviewer</h2>
+            <p className="text-xs text-muted-foreground">Real-time, resume-aware Q&A practice</p>
+          </div>
         </div>
         <button onClick={start} disabled={busy}
-          className="rounded-full bg-primary px-4 py-1.5 text-xs font-semibold text-primary-foreground disabled:opacity-60">
+          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-elegant transition-all hover:-translate-y-0.5 disabled:opacity-60">
+          {busy && messages.length <= 1 ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
           {messages.length === 0 ? "Start Interview" : "Restart"}
         </button>
       </div>
 
-      <div ref={scroller} className="h-[480px] space-y-3 overflow-y-auto p-4">
+      <div ref={scroller} className="h-[520px] space-y-4 overflow-y-auto bg-muted/20 p-5">
         {messages.length === 0 && (
-          <div className="flex h-full items-center justify-center text-center text-sm text-muted-foreground">
-            Click "Start Interview" — the AI interviewer will ask one question at a time based on your resume.
+          <div className="flex h-full flex-col items-center justify-center text-center">
+            <div className="mb-3 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
+              <MessageSquare className="h-6 w-6" />
+            </div>
+            <p className="font-display text-base font-semibold">Ready when you are.</p>
+            <p className="mt-1 max-w-xs text-xs text-muted-foreground">
+              Click <span className="font-semibold text-foreground">Start Interview</span> — the AI will ask one question at a time tailored to your resume.
+            </p>
           </div>
         )}
         {messages.map((m, i) => (
-          <div key={i} className={cn("flex", m.role === "user" ? "justify-end" : "justify-start")}>
+          <div key={i} className={cn("flex gap-2.5", m.role === "user" ? "justify-end" : "justify-start")}>
+            {m.role === "assistant" && (
+              <div className="mt-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
+                <Bot className="h-3.5 w-3.5" />
+              </div>
+            )}
             <div className={cn(
-              "max-w-[85%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed",
-              m.role === "user" ? "bg-primary text-primary-foreground" : "bg-muted text-foreground",
+              "max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm",
+              m.role === "user"
+                ? "rounded-br-sm bg-primary text-primary-foreground"
+                : "rounded-bl-sm border border-border bg-card text-foreground",
             )}>
               {m.content || (busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "")}
             </div>
+            {m.role === "user" && (
+              <div className="mt-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
+                <UserIcon className="h-3.5 w-3.5" />
+              </div>
+            )}
           </div>
         ))}
       </div>
 
-      <div className="flex gap-2 border-t border-border p-3">
+      <div className="flex gap-2 border-t border-border bg-card p-3">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-          placeholder="Type your answer…"
+          placeholder={messages.length === 0 ? "Start the interview to begin chatting…" : "Type your answer…"}
           disabled={busy || messages.length === 0}
-          className="flex-1 rounded-full border border-border bg-background px-4 py-2 text-sm outline-none focus:border-primary"
+          className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary disabled:opacity-60"
         />
         <button onClick={send} disabled={busy || !input.trim()}
-          className="inline-flex items-center justify-center rounded-full bg-primary px-4 py-2 text-primary-foreground disabled:opacity-60">
+          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-primary-foreground shadow-elegant transition-all hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-60">
           <Send className="h-4 w-4" />
         </button>
       </div>
     </div>
   );
 };
+
+function formatTimeAgo(d: Date) {
+  const s = Math.floor((Date.now() - d.getTime()) / 1000);
+  if (s < 60) return "just now";
+  if (s < 3600) return `${Math.floor(s / 60)}m ago`;
+  if (s < 86400) return `${Math.floor(s / 3600)}h ago`;
+  return `${Math.floor(s / 86400)}d ago`;
+}
 
 // SSE stream parser shared
 async function streamSSE(body: ReadableStream<Uint8Array>, onDelta: (s: string) => void) {
