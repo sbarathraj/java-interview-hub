@@ -3,6 +3,7 @@ import { Question } from "@/data/questions";
 import { DifficultyBadge } from "./DifficultyBadge";
 import { BookmarkButton } from "./BookmarkButton";
 import { useApp } from "@/context/AppContext";
+import { Markdown } from "./Markdown";
 import { ChevronDown, CheckCircle2, Circle, Lightbulb, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
@@ -74,9 +75,7 @@ export const QuestionCard = ({ question, defaultOpen = false, showTopic }: Props
       {open && (
         <div className="animate-accordion-down border-t border-border px-4 pb-5 pt-4 sm:px-5">
           <div className="prose prose-sm max-w-none dark:prose-invert">
-            <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90">
-              {question.answer}
-            </p>
+            <Markdown>{question.answer}</Markdown>
           </div>
 
           {question.codeSnippet && (
