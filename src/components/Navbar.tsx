@@ -104,6 +104,17 @@ export const Navbar = () => {
                 {t.label}
               </NavLink>
             ))}
+            {user && (
+              <>
+                <div className="my-2 border-t border-border" />
+                <button
+                  onClick={() => { setMobileOpen(false); handleSignOut(); }}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm font-medium text-foreground/80 hover:bg-muted hover:text-foreground"
+                >
+                  <LogOut className="h-4 w-4" /> Sign out
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
