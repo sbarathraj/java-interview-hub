@@ -11,6 +11,7 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { Markdown } from "@/components/Markdown";
 
 interface AiQuestion {
   id: string;
@@ -380,7 +381,7 @@ const AiQuestionCard = ({ q, onHide }: { q: AiQuestion; onHide: () => void }) =>
               </div>
 
               <div className="rounded-lg border border-border bg-card p-4">
-                <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90">{q.answer}</p>
+                <Markdown>{q.answer}</Markdown>
               </div>
 
               {q.code_snippet && (
@@ -437,10 +438,10 @@ const AiQuestionCard = ({ q, onHide }: { q: AiQuestion; onHide: () => void }) =>
 
               {explain && (
                 <div className="mt-3 rounded-lg border border-border bg-gradient-to-br from-primary/5 to-card p-4">
-                  <div className="mb-1 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
+                  <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
                     <Brain className="h-3.5 w-3.5" /> Deep Dive
                   </div>
-                  <pre className="whitespace-pre-wrap break-words font-sans text-sm leading-relaxed">{explain}</pre>
+                  <Markdown>{explain}</Markdown>
                 </div>
               )}
             </div>
@@ -546,12 +547,16 @@ const MockInterviewer = () => {
               </div>
             )}
             <div className={cn(
-              "max-w-[80%] whitespace-pre-wrap rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm",
+              "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm",
               m.role === "user"
-                ? "rounded-br-sm bg-primary text-primary-foreground"
+                ? "whitespace-pre-wrap rounded-br-sm bg-primary text-primary-foreground"
                 : "rounded-bl-sm border border-border bg-card text-foreground",
             )}>
-              {m.content || (busy ? <Loader2 className="h-4 w-4 animate-spin" /> : "")}
+              {m.role === "assistant"
+                ? (m.content
+                  ? <Markdown compact>{m.content}</Markdown>
+                  : (busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null))
+                : m.content}
             </div>
             {m.role === "user" && (
               <div className="mt-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">

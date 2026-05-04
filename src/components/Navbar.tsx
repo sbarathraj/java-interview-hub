@@ -1,9 +1,11 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Coffee, BookmarkCheck, BarChart3, Brain, Menu, X, ChevronDown, Sparkles } from "lucide-react";
+import { Coffee, BookmarkCheck, BarChart3, Brain, Menu, X, ChevronDown, Sparkles, LogOut } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useApp } from "@/context/AppContext";
+import { useAuth } from "@/context/AuthContext";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   cn(
@@ -13,9 +15,16 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 
 export const Navbar = () => {
   const { topics } = useApp();
+  const { user, signOut } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [topicsOpen, setTopicsOpen] = useState(false);
   const nav = useNavigate();
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success("Signed out");
+    nav("/auth", { replace: true });
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur-lg">
@@ -61,6 +70,15 @@ export const Navbar = () => {
 
         <div className="flex items-center gap-2">
           <ThemeToggle />
+          {user && (
+            <button
+              onClick={handleSignOut}
+              title={user.email ?? "Sign out"}
+              className="hidden h-9 items-center gap-1.5 rounded-md border border-border px-3 text-xs font-medium text-foreground/80 transition-colors hover:bg-muted hover:text-foreground md:inline-flex"
+            >
+              <LogOut className="h-3.5 w-3.5" /> Sign out
+            </button>
+          )}
           <button
             className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-border md:hidden"
             onClick={() => setMobileOpen((o) => !o)}
@@ -86,6 +104,17 @@ export const Navbar = () => {
                 {t.label}
               </NavLink>
             ))}
+            {user && (
+              <>
+                <div className="my-2 border-t border-border" />
+                <button
+                  onClick={() => { setMobileOpen(false); handleSignOut(); }}
+                  className="flex items-center gap-2 rounded-md px-3 py-2 text-left text-sm font-medium text-foreground/80 hover:bg-muted hover:text-foreground"
+                >
+                  <LogOut className="h-4 w-4" /> Sign out
+                </button>
+              </>
+            )}
           </div>
         </div>
       )}
