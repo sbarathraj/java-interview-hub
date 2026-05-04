@@ -5,6 +5,7 @@ import { Brain, RefreshCw, Check, X, Trophy } from "lucide-react";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { vscDarkPlus } from "react-syntax-highlighter/dist/esm/styles/prism";
 import { Question } from "@/data/questions";
+import { Markdown } from "@/components/Markdown";
 
 function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
@@ -94,7 +95,9 @@ const Quiz = () => {
           </button>
         ) : (
           <div className="mt-5 space-y-4 animate-fade-in">
-            <p className="whitespace-pre-line text-sm leading-relaxed">{q.answer}</p>
+            <div className="prose prose-sm max-w-none dark:prose-invert">
+              <Markdown>{q.answer}</Markdown>
+            </div>
             {q.codeSnippet && (
               <div className="overflow-hidden rounded-lg border border-border">
                 <SyntaxHighlighter
@@ -107,8 +110,15 @@ const Quiz = () => {
               </div>
             )}
             {q.proTip && (
-              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm">
-                <span className="font-semibold text-primary">💡 Pro Tip: </span>{q.proTip}
+              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm flex gap-2">
+                <span className="font-semibold text-primary shrink-0">💡 Pro Tip: </span>
+                <div className="flex-1"><Markdown compact>{q.proTip}</Markdown></div>
+              </div>
+            )}
+            {q.resumeLink && (
+              <div className="rounded-lg border border-accent/30 bg-accent/5 p-3 text-sm flex gap-2">
+                <span className="font-semibold text-accent shrink-0">📄 Resume Link: </span>
+                <div className="flex-1"><Markdown compact>{q.resumeLink}</Markdown></div>
               </div>
             )}
 

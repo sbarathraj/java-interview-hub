@@ -98,7 +98,7 @@ export const QuestionCard = ({ question, defaultOpen = false, showTopic }: Props
               <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <div>
                 <div className="text-xs font-semibold uppercase tracking-wider text-primary">Pro Tip</div>
-                <p className="mt-1 text-sm text-foreground/85">{question.proTip}</p>
+                <div className="mt-1 text-sm text-foreground/85"><Markdown compact>{question.proTip}</Markdown></div>
               </div>
             </div>
           )}
@@ -108,7 +108,7 @@ export const QuestionCard = ({ question, defaultOpen = false, showTopic }: Props
               <FileText className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
               <div>
                 <div className="text-xs font-semibold uppercase tracking-wider text-accent">Resume Link</div>
-                <p className="mt-1 text-sm text-foreground/85">{question.resumeLink}</p>
+                <div className="mt-1 text-sm text-foreground/85"><Markdown compact>{question.resumeLink}</Markdown></div>
               </div>
             </div>
           )}
