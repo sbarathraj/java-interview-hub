@@ -14,6 +14,11 @@ import Quiz from "./pages/Quiz";
 import ProgressDashboard from "./pages/ProgressDashboard";
 import AIStudio from "./pages/AIStudio";
 import Auth from "./pages/Auth";
+import LeetcodeDashboard from "./pages/LeetcodeDashboard";
+import LeetcodeAdd from "./pages/LeetcodeAdd";
+import LeetcodeCategory from "./pages/LeetcodeCategory";
+import LeetcodeProblem from "./pages/LeetcodeProblem";
+import LeetcodeRevisit from "./pages/LeetcodeRevisit";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -42,6 +47,11 @@ const App = () => (
                           <Route path="/quiz" element={<Quiz />} />
                           <Route path="/progress" element={<ProgressDashboard />} />
                           <Route path="/ai" element={<AIStudio />} />
+                          <Route path="/leetcode" element={<LeetcodeDashboard />} />
+                          <Route path="/leetcode/add" element={<LeetcodeAdd />} />
+                          <Route path="/leetcode/category/:categoryId" element={<LeetcodeCategory />} />
+                          <Route path="/leetcode/problem/:id" element={<LeetcodeProblem />} />
+                          <Route path="/leetcode/revisit" element={<LeetcodeRevisit />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </main>
