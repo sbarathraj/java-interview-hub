@@ -102,22 +102,22 @@ const AIStudio = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background via-background to-muted/30">
-      <div className="container py-8">
+      <div className="container py-6 sm:py-10 animate-fade-in">
         {/* Header */}
-        <div className="mb-8 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+        <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <div className="mb-2 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
-              <Sparkles className="h-3.5 w-3.5" /> AI-Powered Studio
+            <div className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-primary/30 bg-primary/10 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest text-primary">
+              <Sparkles className="h-3 w-3" /> AI Studio
             </div>
-            <h1 className="font-display text-3xl font-bold leading-tight sm:text-4xl">
-              Interview Prep, supercharged.
+            <h1 className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
+              Interview Prep, <span className="text-primary">Supercharged</span>.
             </h1>
-            <p className="mt-2 max-w-xl text-sm text-muted-foreground sm:text-base">
-              Generate fresh interview questions, reveal in-depth answers on demand, and rehearse with an AI mock interviewer tuned to your resume.
+            <p className="mt-2 max-w-xl text-xs text-muted-foreground leading-relaxed sm:text-sm">
+              Generate questions on demand and rehearse with a resume-tuned AI interviewer.
             </p>
           </div>
-          <Link to="/" className="text-sm font-medium text-muted-foreground transition-colors hover:text-foreground">
-            ← Back to Home
+          <Link to="/" className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground transition-colors hover:text-primary">
+            ← Dashboard
           </Link>
         </div>
 
@@ -125,94 +125,83 @@ const AIStudio = () => {
         <div className="mb-6 inline-flex rounded-full border border-border bg-card p-1 shadow-sm">
           <button
             onClick={() => setTab("generate")}
-            className={cn("rounded-full px-5 py-2 text-sm font-semibold transition-all",
-              tab === "generate" ? "bg-primary text-primary-foreground shadow-elegant" : "text-muted-foreground hover:text-foreground")}
+            className={cn("rounded-full px-4 py-1.5 text-xs font-bold transition-all",
+              tab === "generate" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
           >
-            <Wand2 className="mr-1.5 inline h-4 w-4" /> Question Generator
+            <Wand2 className="mr-1.5 inline h-3 w-3" /> Generator
           </button>
           <button
             onClick={() => setTab("chat")}
-            className={cn("rounded-full px-5 py-2 text-sm font-semibold transition-all",
-              tab === "chat" ? "bg-primary text-primary-foreground shadow-elegant" : "text-muted-foreground hover:text-foreground")}
+            className={cn("rounded-full px-4 py-1.5 text-xs font-bold transition-all",
+              tab === "chat" ? "bg-primary text-primary-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
           >
-            <MessageSquare className="mr-1.5 inline h-4 w-4" /> Mock Interviewer
+            <MessageSquare className="mr-1.5 inline h-3 w-3" /> Interviewer
           </button>
         </div>
 
         {tab === "generate" ? (
           <>
             {/* Generator panel */}
-            <section className="rounded-2xl border border-border bg-card p-6 shadow-card">
+            <section className="rounded-2xl glass-card p-5 shadow-sm">
               <div className="mb-4 flex items-center gap-2">
-                <div className="rounded-lg bg-primary/10 p-2">
-                  <Wand2 className="h-4 w-4 text-primary" />
+                <div className="rounded-lg bg-primary/10 p-1.5 text-primary">
+                  <Wand2 className="h-4 w-4" />
                 </div>
                 <div>
-                  <h2 className="font-display text-base font-semibold">Generate new questions</h2>
-                  <p className="text-xs text-muted-foreground">Pick a topic and let AI craft fresh interview Qs with model answers.</p>
+                  <h2 className="font-display text-sm font-bold">Question Forge</h2>
+                  <p className="text-[10px] text-muted-foreground">Select parameters to synthesize fresh technical questions.</p>
                 </div>
               </div>
 
-              <div className="grid gap-4 sm:grid-cols-[1fr_140px_auto]">
+              <div className="grid gap-3 sm:grid-cols-[1fr_100px_auto]">
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Topic</label>
+                  <label className="mb-1 block text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Topic</label>
                   <select
                     value={topicId}
                     onChange={(e) => setTopicId(e.target.value)}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none"
+                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-medium focus:border-primary outline-none"
                   >
                     {topics.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
                   </select>
                 </div>
                 <div>
-                  <label className="mb-1.5 block text-xs font-semibold uppercase tracking-wider text-muted-foreground">Count</label>
+                  <label className="mb-1 block text-[9px] font-bold uppercase tracking-widest text-muted-foreground">Count</label>
                   <input
                     type="number" min={1} max={20} value={count}
                     onChange={(e) => setCount(Math.min(20, Math.max(1, Number(e.target.value) || 1)))}
-                    className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm transition-colors focus:border-primary focus:outline-none"
+                    className="w-full rounded-xl border border-border bg-background px-3 py-2 text-xs font-medium focus:border-primary outline-none"
                   />
                 </div>
                 <button
                   onClick={generate}
                   disabled={loading}
-                  className="inline-flex items-center justify-center gap-2 self-end rounded-lg bg-primary px-6 py-2.5 text-sm font-semibold text-primary-foreground shadow-elegant transition-all hover:-translate-y-0.5 hover:shadow-lg disabled:translate-y-0 disabled:opacity-60"
+                  className="inline-flex items-center justify-center gap-2 self-end rounded-xl bg-primary px-5 py-2 text-xs font-bold text-primary-foreground shadow-sm transition-all hover:scale-[1.02] disabled:opacity-50"
                 >
-                  {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
-                  {loading ? "Generating…" : "Generate"}
+                  {loading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Sparkles className="h-3 w-3" />}
+                  {loading ? "Forging..." : "Synthesize"}
                 </button>
               </div>
             </section>
 
-            {/* Stats strip */}
-            {items.length > 0 && (
-              <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <StatCard label="Total" value={stats.total} tone="primary" />
-                <StatCard label="Easy" value={stats.easy} tone="easy" />
-                <StatCard label="Medium" value={stats.medium} tone="medium" />
-                <StatCard label="Hard" value={stats.hard} tone="hard" />
-              </div>
-            )}
-
             {/* Filter bar */}
             {items.length > 0 && (
-              <div className="mt-6 flex flex-col gap-3 rounded-xl border border-border bg-card/60 p-3 sm:flex-row sm:items-center">
+              <div className="mt-4 flex flex-col gap-2 rounded-2xl border border-border bg-card/60 p-2 sm:flex-row sm:items-center">
                 <div className="relative flex-1">
-                  <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                  <Search className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-muted-foreground/60" />
                   <input
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search questions…"
-                    className="w-full rounded-lg border border-border bg-background py-2 pl-9 pr-3 text-sm focus:border-primary focus:outline-none"
+                    placeholder="Search Q bank..."
+                    className="w-full rounded-xl border border-border bg-background py-1.5 pl-9 pr-3 text-[11px] font-medium outline-none"
                   />
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <Filter className="h-4 w-4 text-muted-foreground" />
                   <select
                     value={topicFilter}
                     onChange={(e) => setTopicFilter(e.target.value)}
-                    className="rounded-lg border border-border bg-background px-3 py-2 text-xs font-medium"
+                    className="rounded-lg border border-border bg-background px-2 py-1.5 text-[10px] font-bold"
                   >
-                    <option value="all">All topics</option>
+                    <option value="all">All Topics</option>
                     {topics.map((t) => <option key={t.id} value={t.id}>{t.label}</option>)}
                   </select>
                   <div className="inline-flex rounded-lg border border-border bg-background p-0.5">
@@ -221,7 +210,7 @@ const AIStudio = () => {
                         key={d}
                         onClick={() => setDiff(d)}
                         className={cn(
-                          "rounded-md px-2.5 py-1 text-xs font-semibold capitalize transition-colors",
+                          "rounded-md px-2 py-1 text-[10px] font-bold capitalize transition-colors",
                           diff === d ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
                         )}
                       >
@@ -233,10 +222,9 @@ const AIStudio = () => {
               </div>
             )}
 
-            {/* List */}
             <div className="mt-6 mb-3 flex items-center justify-between">
-              <h2 className="font-display text-lg font-semibold">
-                Question Bank <span className="text-muted-foreground">({filtered.length})</span>
+              <h2 className="font-display text-sm font-bold uppercase tracking-widest text-muted-foreground">
+                Question Bank <span className="text-primary">[{filtered.length}]</span>
               </h2>
             </div>
 
@@ -244,11 +232,13 @@ const AIStudio = () => {
               {items.length === 0 ? (
                 <EmptyState />
               ) : filtered.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-border p-10 text-center text-sm text-muted-foreground">
-                  No questions match your filters.
+                <div className="rounded-2xl border border-dashed border-border p-10 text-center text-xs text-muted-foreground">
+                  Empty result set.
                 </div>
-              ) : filtered.map((q) => (
-                <AiQuestionCard key={q.id} q={q} onHide={() => remove(q.id)} />
+              ) : filtered.map((q, idx) => (
+                <div key={q.id} className="animate-slide-up" style={{ animationDelay: `${idx * 20}ms` }}>
+                  <AiQuestionCard q={q} onHide={() => remove(q.id)} />
+                </div>
               ))}
             </div>
           </>
@@ -262,27 +252,25 @@ const AIStudio = () => {
 
 const StatCard = ({ label, value, tone }: { label: string; value: number; tone: "primary" | "easy" | "medium" | "hard" }) => {
   const toneMap = {
-    primary: "border-primary/30 bg-primary/5 text-primary",
-    easy: "border-easy/30 bg-easy/5 text-easy",
-    medium: "border-medium/30 bg-medium/5 text-medium",
-    hard: "border-hard/30 bg-hard/5 text-hard",
+    primary: "border-primary/20 bg-primary/5 text-primary",
+    easy: "border-easy/20 bg-easy/5 text-easy",
+    medium: "border-medium/20 bg-medium/5 text-medium",
+    hard: "border-hard/20 bg-hard/5 text-hard",
   } as const;
   return (
-    <div className={cn("rounded-xl border bg-card p-4 shadow-sm transition-all hover:shadow-card", toneMap[tone])}>
-      <div className="text-xs font-semibold uppercase tracking-wider opacity-80">{label}</div>
-      <div className="mt-1 font-display text-2xl font-bold text-foreground">{value}</div>
+    <div className={cn("rounded-xl border bg-card p-3 shadow-sm transition-all", toneMap[tone])}>
+      <div className="text-[9px] font-bold uppercase tracking-widest opacity-80">{label}</div>
+      <div className="mt-0.5 font-display text-xl font-bold text-foreground">{value}</div>
     </div>
   );
 };
 
 const EmptyState = () => (
-  <div className="rounded-2xl border border-dashed border-border bg-gradient-to-br from-card to-muted/30 p-12 text-center">
-    <div className="mx-auto mb-4 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-      <Sparkles className="h-6 w-6" />
-    </div>
-    <h3 className="font-display text-lg font-semibold">Your AI question bank is empty</h3>
-    <p className="mx-auto mt-1 max-w-sm text-sm text-muted-foreground">
-      Pick a topic above and click <span className="font-semibold text-foreground">Generate</span> to create fresh, resume-aware interview questions.
+  <div className="rounded-2xl border border-dashed border-border/60 bg-card/30 p-12 text-center">
+    <Sparkles className="mx-auto h-8 w-8 text-primary/30 mb-3" />
+    <h3 className="font-display text-base font-bold">Synthesis Engine Idle</h3>
+    <p className="mx-auto mt-1 max-w-sm text-[11px] text-muted-foreground leading-relaxed">
+      Initialize generation to populate your technical knowledge bank.
     </p>
   </div>
 );
@@ -317,130 +305,74 @@ const AiQuestionCard = ({ q, onHide }: { q: AiQuestion; onHide: () => void }) =>
   const timeAgo = formatTimeAgo(created);
 
   return (
-    <article className="group overflow-hidden rounded-xl border border-border bg-card shadow-card transition-all hover:border-primary/40 hover:shadow-elegant">
-      <button onClick={() => setOpen((o) => !o)} className="flex w-full items-start gap-3 p-4 text-left sm:p-5">
+    <article className="group overflow-hidden rounded-xl border border-border bg-card/50 transition-all hover:bg-card hover:-translate-y-0.5 shadow-sm">
+      <button onClick={() => setOpen((o) => !o)} className="flex w-full items-start gap-3 p-4 text-left">
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            <DifficultyBadge difficulty={q.difficulty} />
-            <span className="rounded-full bg-secondary/15 px-2 py-0.5 text-xs font-medium text-secondary-foreground/80">{q.topic_label}</span>
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Sparkles className="h-3 w-3" /> AI · {q.model?.split("/")[0] ?? "ai"}
-            </span>
-            <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-              <Clock className="h-3 w-3" /> {timeAgo}
+            <DifficultyBadge difficulty={q.difficulty} className="scale-90 origin-left" />
+            <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">{q.topic_label}</span>
+            <span className="inline-flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-primary/60">
+              <Sparkles className="h-2.5 w-2.5" /> AI
             </span>
           </div>
-          <h3 className="font-display text-base font-semibold leading-snug sm:text-lg">{q.question}</h3>
+          <h3 className="font-display text-sm font-bold leading-tight">{q.question}</h3>
         </div>
-        <div className="flex shrink-0 items-center gap-1.5">
+        <div className="flex shrink-0 items-center gap-1.5 self-center">
           <span
             role="button"
             onClick={(e) => { e.stopPropagation(); onHide(); }}
-            title="Hide"
-            className="rounded-md p-1.5 text-muted-foreground opacity-0 transition-all hover:bg-destructive/10 hover:text-destructive group-hover:opacity-100"
+            className="rounded-md p-1.5 text-muted-foreground/40 hover:bg-destructive/10 hover:text-destructive"
           >
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-3.5 w-3.5" />
           </span>
-          <ChevronRight className={cn("h-5 w-5 text-muted-foreground transition-transform", open && "rotate-90")} />
+          <ChevronRight className={cn("h-4 w-4 text-muted-foreground/60 transition-transform", open && "rotate-90")} />
         </div>
       </button>
 
       {open && (
-        <div className="border-t border-border bg-muted/20 px-4 pb-5 pt-4 sm:px-5">
-          {/* Show Answer toggle */}
+        <div className="border-t border-border/50 bg-muted/5 px-4 pb-5 pt-4">
           {!showAnswer ? (
-            <div className="flex flex-col items-start gap-3 rounded-lg border border-dashed border-border bg-card/60 p-4 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-start gap-3">
-                <div className="rounded-lg bg-primary/10 p-2 text-primary">
-                  <EyeOff className="h-4 w-4" />
-                </div>
-                <div>
-                  <div className="text-sm font-semibold">Answer is hidden</div>
-                  <p className="text-xs text-muted-foreground">Try answering it yourself first, then reveal the model answer.</p>
-                </div>
-              </div>
+            <div className="flex items-center justify-between rounded-xl border border-dashed border-border bg-card/40 p-3">
+              <div className="text-[10px] font-medium text-muted-foreground">Answer remains obscured...</div>
               <button
                 onClick={() => setShowAnswer(true)}
-                className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-elegant transition-all hover:-translate-y-0.5"
+                className="rounded-full bg-primary px-4 py-1.5 text-[10px] font-bold text-primary-foreground shadow-sm"
               >
-                <Eye className="h-3.5 w-3.5" /> Show Answer
+                Reveal
               </button>
             </div>
           ) : (
             <div className="animate-accordion-down">
-              <div className="mb-2 flex items-center justify-between">
-                <div className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
-                  <Eye className="h-3.5 w-3.5" /> Model Answer
-                </div>
-                <button
-                  onClick={() => setShowAnswer(false)}
-                  className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                >
-                  <EyeOff className="h-3 w-3" /> Hide
-                </button>
+              <div className="flex items-center justify-between mb-3">
+                <div className="text-[9px] font-bold uppercase tracking-widest text-primary">Synthesis Result</div>
+                <button onClick={() => setShowAnswer(false)} className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground">Hide</button>
               </div>
 
-              <div className="rounded-lg border border-border bg-card p-4">
+              <div className="prose prose-xs max-w-none dark:prose-invert">
                 <Markdown>{q.answer}</Markdown>
               </div>
 
               {q.code_snippet && (
-                <div className="mt-3 overflow-hidden rounded-lg border border-border">
-                  <div className="flex items-center justify-between border-b border-border bg-muted/40 px-3 py-1.5">
-                    <span className="font-mono text-xs text-muted-foreground">Java</span>
-                  </div>
+                <div className="mt-4 overflow-hidden rounded-xl border border-border/50">
                   <SyntaxHighlighter language="java" style={vscDarkPlus}
-                    customStyle={{ margin: 0, fontSize: 13, padding: "12px 16px", background: "#1e1e1e" }}>
+                    customStyle={{ margin: 0, fontSize: 11, padding: "10px", background: "#0f172a" }}>
                     {q.code_snippet}
                   </SyntaxHighlighter>
                 </div>
               )}
 
-              {q.pro_tip && (
-                <div className="mt-3 flex gap-3 rounded-lg border border-primary/30 bg-primary/5 p-3">
-                  <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
-                  <div>
-                    <div className="text-xs font-semibold uppercase tracking-wider text-primary">Pro Tip</div>
-                    <p className="mt-1 text-sm text-foreground/85">{q.pro_tip}</p>
-                  </div>
-                </div>
-              )}
-
-              {q.resume_link && (
-                <div className="mt-3 flex gap-3 rounded-lg border border-accent/30 bg-accent/5 p-3">
-                  <FileText className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
-                  <div>
-                    <div className="text-xs font-semibold uppercase tracking-wider text-accent">Resume Link</div>
-                    <p className="mt-1 text-sm text-foreground/85">{q.resume_link}</p>
-                  </div>
-                </div>
-              )}
-
-              {q.tags?.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {q.tags.map((t) => (
-                    <span key={t} className="rounded-md bg-muted px-2 py-0.5 font-mono text-xs text-muted-foreground">
-                      #{t}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              <div className="mt-4 flex items-center gap-2">
+              <div className="mt-4 flex flex-wrap gap-2">
                 <button
                   onClick={askDeeper} disabled={loadingExplain}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-primary/40 bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary transition-all hover:bg-primary/20 disabled:opacity-60"
+                  className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-[10px] font-bold text-primary border border-primary/20"
                 >
-                  {loadingExplain ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Brain className="h-3.5 w-3.5" />}
-                  Explain Deeper
+                  {loadingExplain ? <Loader2 className="h-2.5 w-2.5 animate-spin" /> : <Brain className="h-2.5 w-2.5" />}
+                  Deep Dive
                 </button>
               </div>
 
               {explain && (
-                <div className="mt-3 rounded-lg border border-border bg-gradient-to-br from-primary/5 to-card p-4">
-                  <div className="mb-2 inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-primary">
-                    <Brain className="h-3.5 w-3.5" /> Deep Dive
-                  </div>
+                <div className="mt-4 rounded-xl border border-border/50 bg-primary/5 p-4 prose prose-xs dark:prose-invert">
                   <Markdown>{explain}</Markdown>
                 </div>
               )}
@@ -509,81 +441,66 @@ const MockInterviewer = () => {
   };
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-card">
-      <div className="flex items-center justify-between border-b border-border bg-gradient-to-r from-primary/5 to-transparent p-4">
+    <div className="overflow-hidden rounded-2xl glass-card shadow-sm">
+      <div className="flex items-center justify-between border-b border-border/50 bg-primary/5 p-4">
         <div className="flex items-center gap-3">
-          <div className="rounded-lg bg-primary/10 p-2 text-primary">
-            <Bot className="h-5 w-5" />
+          <div className="rounded-lg bg-primary/10 p-1.5 text-primary">
+            <Bot className="h-4 w-4" />
           </div>
           <div>
-            <h2 className="font-display font-semibold">AI Mock Interviewer</h2>
-            <p className="text-xs text-muted-foreground">Real-time, resume-aware Q&A practice</p>
+            <h2 className="font-display text-sm font-bold">Mock Interview</h2>
+            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">Active Simulation</p>
           </div>
         </div>
         <button onClick={start} disabled={busy}
-          className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-xs font-semibold text-primary-foreground shadow-elegant transition-all hover:-translate-y-0.5 disabled:opacity-60">
-          {busy && messages.length <= 1 ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Sparkles className="h-3.5 w-3.5" />}
-          {messages.length === 0 ? "Start Interview" : "Restart"}
+          className="rounded-full bg-primary px-5 py-1.5 text-[10px] font-bold text-primary-foreground shadow-sm transition-all hover:scale-105 disabled:opacity-50">
+          {messages.length === 0 ? "Initiate" : "Reset"}
         </button>
       </div>
 
-      <div ref={scroller} className="h-[520px] space-y-4 overflow-y-auto bg-muted/20 p-5">
+      <div ref={scroller} className="h-[400px] space-y-3 overflow-y-auto bg-muted/5 p-4">
         {messages.length === 0 && (
-          <div className="flex h-full flex-col items-center justify-center text-center">
-            <div className="mb-3 inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary">
-              <MessageSquare className="h-6 w-6" />
-            </div>
-            <p className="font-display text-base font-semibold">Ready when you are.</p>
-            <p className="mt-1 max-w-xs text-xs text-muted-foreground">
-              Click <span className="font-semibold text-foreground">Start Interview</span> — the AI will ask one question at a time tailored to your resume.
-            </p>
+          <div className="flex h-full flex-col items-center justify-center text-center opacity-40">
+            <Bot className="h-10 w-10 mb-3" />
+            <p className="text-xs font-bold uppercase tracking-widest">Ready for Session</p>
           </div>
         )}
         {messages.map((m, i) => (
-          <div key={i} className={cn("flex gap-2.5", m.role === "user" ? "justify-end" : "justify-start")}>
-            {m.role === "assistant" && (
-              <div className="mt-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/15 text-primary">
-                <Bot className="h-3.5 w-3.5" />
-              </div>
-            )}
+          <div key={i} className={cn("flex gap-2", m.role === "user" ? "justify-end" : "justify-start")}>
             <div className={cn(
-              "max-w-[80%] rounded-2xl px-4 py-2.5 text-sm leading-relaxed shadow-sm",
+              "max-w-[85%] rounded-2xl px-3 py-2 text-[12px] leading-relaxed shadow-sm",
               m.role === "user"
-                ? "whitespace-pre-wrap rounded-br-sm bg-primary text-primary-foreground"
-                : "rounded-bl-sm border border-border bg-card text-foreground",
+                ? "bg-primary text-primary-foreground rounded-br-sm"
+                : "border border-border/50 bg-card text-foreground rounded-bl-sm",
             )}>
               {m.role === "assistant"
                 ? (m.content
                   ? <Markdown compact>{m.content}</Markdown>
-                  : (busy ? <Loader2 className="h-4 w-4 animate-spin" /> : null))
+                  : (busy ? <Loader2 className="h-3 w-3 animate-spin" /> : null))
                 : m.content}
             </div>
-            {m.role === "user" && (
-              <div className="mt-1 inline-flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-secondary text-secondary-foreground">
-                <UserIcon className="h-3.5 w-3.5" />
-              </div>
-            )}
           </div>
         ))}
       </div>
 
-      <div className="flex gap-2 border-t border-border bg-card p-3">
+      <div className="flex gap-2 border-t border-border/50 bg-card p-2">
         <input
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }}
-          placeholder={messages.length === 0 ? "Start the interview to begin chatting…" : "Type your answer…"}
+          placeholder="Type your response..."
           disabled={busy || messages.length === 0}
-          className="flex-1 rounded-full border border-border bg-background px-4 py-2.5 text-sm outline-none transition-colors focus:border-primary disabled:opacity-60"
+          className="flex-1 rounded-full border border-border bg-background px-4 py-2 text-xs outline-none focus:border-primary disabled:opacity-50"
         />
         <button onClick={send} disabled={busy || !input.trim()}
-          className="inline-flex items-center justify-center rounded-full bg-primary px-5 py-2.5 text-primary-foreground shadow-elegant transition-all hover:-translate-y-0.5 disabled:translate-y-0 disabled:opacity-60">
-          <Send className="h-4 w-4" />
+          className="inline-flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-sm disabled:opacity-50">
+          <Send className="h-3.5 w-3.5" />
         </button>
       </div>
     </div>
   );
 };
+
 
 function formatTimeAgo(d: Date) {
   const s = Math.floor((Date.now() - d.getTime()) / 1000);

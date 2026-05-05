@@ -17,12 +17,12 @@ const DIFF_COLORS: Record<string, string> = {
 };
 
 const Stat = ({ icon, label, value, accent }: any) => (
-  <div className="rounded-xl border border-border bg-gradient-card p-4 shadow-card">
+  <div className="rounded-2xl border border-slate-100 bg-white p-5 shadow-card transition-all hover:-translate-y-1 hover:shadow-elegant">
     <div className="flex items-center justify-between">
-      <span className="text-xs font-semibold uppercase text-muted-foreground">{label}</span>
-      <span className={`inline-flex h-8 w-8 items-center justify-center rounded-lg ${accent}`}>{icon}</span>
+      <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">{label}</span>
+      <span className={`inline-flex h-10 w-10 items-center justify-center rounded-xl ${accent}`}>{icon}</span>
     </div>
-    <div className="mt-2 font-display text-3xl font-bold">{value}</div>
+    <div className="mt-3 font-display text-3xl font-extrabold text-slate-800">{value}</div>
   </div>
 );
 
@@ -78,24 +78,24 @@ export default function LeetcodeDashboard() {
   const maxCat = Math.max(1, ...categoryProgress.map((c) => c.count));
 
   return (
-    <div className="container py-8">
-      <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
+    <div className="container py-8 animate-fade-in">
+      <header className="mb-10 flex flex-wrap items-end justify-between gap-4 glass-card p-8 shadow-elegant">
         <div>
-          <h1 className="font-display text-4xl font-bold">
-            <span className="bg-gradient-primary bg-clip-text text-transparent">LeetCode</span> Tracker
+          <h1 className="font-display text-4xl font-extrabold text-slate-800">
+            <span className="bg-gradient-to-r from-cyan-500 to-blue-600 bg-clip-text text-transparent">LeetCode</span> Tracker
           </h1>
-          <p className="mt-1 text-muted-foreground">Track, organize and revisit your DSA solutions.</p>
+          <p className="mt-2 text-sm font-medium text-slate-500">Track, organize and revisit your DSA solutions in a premium environment.</p>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap gap-3">
           <Link
             to="/leetcode/revisit"
-            className="inline-flex h-10 items-center gap-2 rounded-md border border-border bg-background px-4 text-sm font-medium hover:bg-muted"
+            className="inline-flex h-11 items-center gap-2 rounded-full border border-slate-200 bg-white px-5 text-sm font-bold text-slate-700 shadow-sm transition-all hover:bg-slate-50 hover:text-slate-900 hover:shadow"
           >
-            <RotateCcw className="h-4 w-4" /> Revisit Queue
+            <RotateCcw className="h-4 w-4 text-indigo-500" /> Revisit Queue
           </Link>
           <Link
             to="/leetcode/add"
-            className="inline-flex h-10 items-center gap-2 rounded-md bg-gradient-primary px-4 text-sm font-semibold text-primary-foreground shadow-elegant hover:opacity-90"
+            className="inline-flex h-11 items-center gap-2 rounded-full bg-gradient-to-r from-indigo-500 to-blue-600 px-5 text-sm font-bold text-white shadow-elegant transition-all hover:scale-105 hover:shadow-indigo-500/30"
           >
             <Plus className="h-4 w-4" /> Add Solution
           </Link>
@@ -103,47 +103,47 @@ export default function LeetcodeDashboard() {
       </header>
 
       <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-        <Stat icon={<Trophy className="h-4 w-4 text-primary" />} label="Total Solved" value={stats.total} accent="bg-primary/10" />
-        <Stat icon={<Code2 className="h-4 w-4 text-easy" />} label="Easy" value={stats.easy} accent="bg-easy/15" />
-        <Stat icon={<Code2 className="h-4 w-4 text-medium" />} label="Medium" value={stats.medium} accent="bg-medium/15" />
-        <Stat icon={<Code2 className="h-4 w-4 text-hard" />} label="Hard" value={stats.hard} accent="bg-hard/15" />
-        <Stat icon={<Flame className="h-4 w-4 text-primary" />} label="Streak (days)" value={stats.streak} accent="bg-primary/10" />
+        <Stat icon={<Trophy className="h-5 w-5 text-indigo-600" />} label="Total Solved" value={stats.total} accent="bg-indigo-50 border border-indigo-100" />
+        <Stat icon={<Code2 className="h-5 w-5 text-emerald-600" />} label="Easy" value={stats.easy} accent="bg-emerald-50 border border-emerald-100" />
+        <Stat icon={<Code2 className="h-5 w-5 text-amber-600" />} label="Medium" value={stats.medium} accent="bg-amber-50 border border-amber-100" />
+        <Stat icon={<Code2 className="h-5 w-5 text-rose-600" />} label="Hard" value={stats.hard} accent="bg-rose-50 border border-rose-100" />
+        <Stat icon={<Flame className="h-5 w-5 text-orange-500" />} label="Streak (days)" value={stats.streak} accent="bg-orange-50 border border-orange-100" />
       </section>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-3">
-        <div className="rounded-xl border border-border bg-card p-5 shadow-card lg:col-span-1">
-          <h3 className="font-display text-lg font-semibold">Difficulty Distribution</h3>
+        <div className="glass-card p-6 lg:col-span-1">
+          <h3 className="font-display text-lg font-bold text-slate-800">Difficulty Distribution</h3>
           <div className="mt-4 h-64">
             {pieData.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">No data yet</div>
+               <div className="flex h-full items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-sm font-medium text-slate-400">No data yet</div>
             ) : (
               <ResponsiveContainer>
                 <PieChart>
-                  <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={50} outerRadius={90} paddingAngle={3}>
+                  <Pie data={pieData} dataKey="value" nameKey="name" innerRadius={60} outerRadius={90} paddingAngle={4}>
                     {pieData.map((d) => (<Cell key={d.key} fill={DIFF_COLORS[d.key]} />))}
                   </Pie>
-                  <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
-                  <Legend />
+                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }} />
+                  <Legend wrapperStyle={{ fontSize: '12px', fontWeight: 600, color: '#475569' }} />
                 </PieChart>
               </ResponsiveContainer>
             )}
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-5 shadow-card lg:col-span-2">
-          <h3 className="font-display text-lg font-semibold">Solved Over Time</h3>
+        <div className="glass-card p-6 lg:col-span-2">
+          <h3 className="font-display text-lg font-bold text-slate-800">Solved Over Time</h3>
           <div className="mt-4 h-64">
             {lineData.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">No data yet</div>
+               <div className="flex h-full items-center justify-center rounded-xl bg-slate-50 border border-slate-100 text-sm font-medium text-slate-400">No data yet</div>
             ) : (
               <ResponsiveContainer>
                 <LineChart data={lineData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
-                  <XAxis dataKey="date" stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                  <YAxis stroke="hsl(var(--muted-foreground))" fontSize={11} />
-                  <Tooltip contentStyle={{ background: "hsl(var(--popover))", border: "1px solid hsl(var(--border))", borderRadius: 8 }} />
-                  <Line type="monotone" dataKey="count" name="Per Day" stroke="hsl(var(--accent))" strokeWidth={2} dot={false} />
-                  <Line type="monotone" dataKey="total" name="Cumulative" stroke="hsl(var(--primary))" strokeWidth={2} dot={false} />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
+                  <XAxis dataKey="date" stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} dy={10} />
+                  <YAxis stroke="#94a3b8" fontSize={11} tickLine={false} axisLine={false} dx={-10} />
+                  <Tooltip contentStyle={{ background: "#ffffff", border: "1px solid #e2e8f0", borderRadius: 12, boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }} />
+                  <Line type="monotone" dataKey="count" name="Per Day" stroke="#0ea5e9" strokeWidth={3} dot={{ fill: '#0ea5e9', strokeWidth: 2 }} activeDot={{ r: 6 }} />
+                  <Line type="monotone" dataKey="total" name="Cumulative" stroke="#6366f1" strokeWidth={3} dot={{ fill: '#6366f1', strokeWidth: 2 }} activeDot={{ r: 6 }} />
                 </LineChart>
               </ResponsiveContainer>
             )}
@@ -152,37 +152,39 @@ export default function LeetcodeDashboard() {
       </section>
 
       <section className="mt-8 grid gap-6 lg:grid-cols-3">
-        <div className="rounded-xl border border-border bg-card p-5 shadow-card lg:col-span-2">
-          <div className="flex items-center justify-between">
-            <h3 className="font-display text-lg font-semibold flex items-center gap-2">
-              <Target className="h-4 w-4 text-primary" /> Category Progress
+        <div className="glass-card p-6 lg:col-span-2">
+          <div className="flex items-center justify-between mb-6">
+            <h3 className="font-display text-lg font-bold text-slate-800 flex items-center gap-2">
+              <Target className="h-5 w-5 text-indigo-500" /> Category Progress
             </h3>
-            <span className="text-xs text-muted-foreground">{LEETCODE_CATEGORIES.length} categories</span>
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 bg-slate-100 px-3 py-1 rounded-full">{LEETCODE_CATEGORIES.length} categories</span>
           </div>
-          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             {categoryProgress.map((c) => (
               <Link
                 key={c.id}
                 to={`/leetcode/category/${c.id}`}
-                className="group rounded-lg border border-border p-3 transition-colors hover:border-primary/40"
+                className="group relative overflow-hidden rounded-2xl border border-slate-100 bg-slate-50/50 p-4 transition-all hover:bg-white hover:shadow-md hover:border-indigo-100"
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-semibold group-hover:text-primary">{c.emoji} {c.name}</span>
-                  <span className="font-mono text-xs text-muted-foreground">{c.count}</span>
+                <div className="flex items-center justify-between mb-3">
+                  <span className="font-bold text-slate-700 group-hover:text-indigo-600 transition-colors">{c.emoji} {c.name}</span>
+                  <span className="font-mono text-xs font-bold text-slate-400 bg-slate-200/50 px-2 py-0.5 rounded-md">{c.count}</span>
                 </div>
-                <ProgressBar value={(c.count / maxCat) * 100} className="mt-2" />
+                <ProgressBar value={(c.count / maxCat) * 100} className="h-1.5" />
               </Link>
             ))}
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-5 shadow-card">
-          <h3 className="font-display text-lg font-semibold">Recent Solutions</h3>
-          <div className="mt-4 flex flex-col gap-2">
+        <div className="glass-card p-6">
+          <h3 className="font-display text-lg font-bold text-slate-800 mb-6">Recent Solutions</h3>
+          <div className="flex flex-col gap-3">
             {loading ? (
-              <div className="text-sm text-muted-foreground">Loading…</div>
+              <div className="text-sm font-medium text-slate-400 animate-pulse">Loading…</div>
             ) : recent.length === 0 ? (
-              <div className="text-sm text-muted-foreground">No solutions yet — add your first!</div>
+              <div className="flex h-32 flex-col items-center justify-center rounded-2xl border border-dashed border-slate-200 bg-slate-50 text-sm font-medium text-slate-400">
+                No solutions yet
+              </div>
             ) : (
               recent.map((s) => <LeetSolutionRow key={s.id} s={s} />)
             )}

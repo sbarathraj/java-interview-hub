@@ -44,19 +44,18 @@ const Quiz = () => {
     const total = score.knew + score.missed;
     const pct = total ? Math.round((score.knew / total) * 100) : 0;
     return (
-      <div className="container max-w-2xl py-16 text-center animate-scale-in">
-        <span className="inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-primary text-primary-foreground shadow-elegant">
-          <Trophy className="h-8 w-8" />
+      <div className="container max-w-lg py-12 text-center animate-scale-in">
+        <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+          <Trophy className="h-6 w-6" />
         </span>
-        <h1 className="mt-6 font-display text-4xl font-bold">Quiz complete!</h1>
-        <p className="mt-2 text-muted-foreground">You scored</p>
-        <div className="mt-2 font-display text-6xl font-bold text-primary">{pct}%</div>
-        <p className="mt-2 text-muted-foreground">{score.knew} of {total} confidently known</p>
+        <h1 className="mt-4 font-display text-2xl font-bold tracking-tight">Session Complete</h1>
+        <div className="mt-2 font-display text-5xl font-bold text-primary">{pct}%</div>
+        <p className="mt-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{score.knew} of {total} Confidently Mastered</p>
         <button
           onClick={restart}
-          className="mt-8 inline-flex items-center gap-2 rounded-full bg-gradient-primary px-6 py-3 font-semibold text-primary-foreground shadow-elegant transition-transform hover:-translate-y-0.5"
+          className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-2 text-xs font-bold text-primary-foreground shadow-sm transition-all hover:scale-105"
         >
-          <RefreshCw className="h-4 w-4" /> New Quiz
+          <RefreshCw className="h-3.5 w-3.5" /> Start New Session
         </button>
       </div>
     );
@@ -65,75 +64,63 @@ const Quiz = () => {
   const q = set[idx];
 
   return (
-    <div className="container max-w-3xl py-8">
-      <div className="mb-4 flex items-center justify-between">
-        <span className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground">
-          <Brain className="h-4 w-4 text-primary" /> Question {idx + 1} of {set.length}
+    <div className="container max-w-2xl py-6 sm:py-10 animate-fade-in">
+      <div className="mb-3 flex items-center justify-between">
+        <span className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+          <Brain className="h-3.5 w-3.5 text-primary" /> Training: {idx + 1} / {set.length}
         </span>
-        <button onClick={restart} className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground">
-          <RefreshCw className="h-3.5 w-3.5" /> Restart
+        <button onClick={restart} className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground">
+          Restart
         </button>
       </div>
 
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-muted">
-        <div className="h-full bg-gradient-primary transition-all duration-500" style={{ width: `${((idx) / set.length) * 100}%` }} />
+      <div className="h-1 w-full overflow-hidden rounded-full bg-muted">
+        <div className="h-full bg-primary transition-all duration-500" style={{ width: `${((idx) / set.length) * 100}%` }} />
       </div>
 
-      <article className="mt-6 rounded-2xl border border-border bg-card p-6 shadow-card animate-fade-in">
-        <div className="mb-3 flex flex-wrap items-center gap-2">
-          <DifficultyBadge difficulty={q.difficulty} />
-          <span className="text-xs text-muted-foreground">{q.topicLabel}</span>
+      <article className="mt-4 rounded-2xl glass-card p-5 shadow-sm animate-fade-in">
+        <div className="mb-2 flex flex-wrap items-center gap-2">
+          <DifficultyBadge difficulty={q.difficulty} className="scale-90 origin-left" />
+          <span className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">{q.topicLabel}</span>
         </div>
-        <h2 className="font-display text-xl font-bold sm:text-2xl">{q.question}</h2>
+        <h2 className="font-display text-lg font-bold leading-tight tracking-tight sm:text-xl">{q.question}</h2>
 
         {!revealed ? (
           <button
             onClick={() => setRevealed(true)}
-            className="mt-6 w-full rounded-xl bg-gradient-primary py-3 font-semibold text-primary-foreground shadow-elegant transition-transform hover:-translate-y-0.5"
+            className="mt-6 w-full rounded-xl bg-primary py-2.5 text-xs font-bold text-primary-foreground shadow-sm transition-all hover:scale-[1.01]"
           >
-            Show Answer
+            Synthesize Answer
           </button>
         ) : (
-          <div className="mt-5 space-y-4 animate-fade-in">
-            <div className="prose prose-sm max-w-none dark:prose-invert">
+          <div className="mt-4 space-y-3 animate-fade-in">
+            <div className="prose prose-xs max-w-none dark:prose-invert">
               <Markdown>{q.answer}</Markdown>
             </div>
             {q.codeSnippet && (
-              <div className="overflow-hidden rounded-lg border border-border">
+              <div className="overflow-hidden rounded-xl border border-border/50">
                 <SyntaxHighlighter
                   language="java"
                   style={vscDarkPlus}
-                  customStyle={{ margin: 0, fontSize: 13, padding: "12px 16px" }}
+                  customStyle={{ margin: 0, fontSize: 11, padding: "10px" }}
                 >
                   {q.codeSnippet}
                 </SyntaxHighlighter>
               </div>
             )}
-            {q.proTip && (
-              <div className="rounded-lg border border-primary/30 bg-primary/5 p-3 text-sm flex gap-2">
-                <span className="font-semibold text-primary shrink-0">💡 Pro Tip: </span>
-                <div className="flex-1"><Markdown compact>{q.proTip}</Markdown></div>
-              </div>
-            )}
-            {q.resumeLink && (
-              <div className="rounded-lg border border-accent/30 bg-accent/5 p-3 text-sm flex gap-2">
-                <span className="font-semibold text-accent shrink-0">📄 Resume Link: </span>
-                <div className="flex-1"><Markdown compact>{q.resumeLink}</Markdown></div>
-              </div>
-            )}
-
-            <div className="grid gap-3 pt-2 sm:grid-cols-2">
+            
+            <div className="grid gap-2 pt-2 sm:grid-cols-2">
               <button
                 onClick={() => next(false)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-hard/30 bg-hard/10 py-3 font-semibold text-hard transition-colors hover:bg-hard/20"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-hard/30 bg-hard/5 py-2 text-[10px] font-bold uppercase tracking-widest text-hard transition-colors hover:bg-hard/10"
               >
-                <X className="h-4 w-4" /> Need to review
+                <X className="h-3.5 w-3.5" /> Revisit
               </button>
               <button
                 onClick={() => next(true)}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border border-easy/30 bg-easy/10 py-3 font-semibold text-easy transition-colors hover:bg-easy/20"
+                className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-easy/30 bg-easy/5 py-2 text-[10px] font-bold uppercase tracking-widest text-easy transition-colors hover:bg-easy/10"
               >
-                <Check className="h-4 w-4" /> I knew it
+                <Check className="h-3.5 w-3.5" /> Mastered
               </button>
             </div>
           </div>
@@ -142,5 +129,6 @@ const Quiz = () => {
     </div>
   );
 };
+
 
 export default Quiz;
