@@ -59,6 +59,66 @@ export type Database = {
         }
         Relationships: []
       }
+      leetcode_solutions: {
+        Row: {
+          approach: string | null
+          category: string
+          code: string
+          created_at: string
+          date_solved: string
+          difficulty: string
+          id: string
+          leetcode_url: string | null
+          notes: string | null
+          problem_number: number
+          space_complexity: string | null
+          status: string
+          tags: string[]
+          time_complexity: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          approach?: string | null
+          category: string
+          code?: string
+          created_at?: string
+          date_solved?: string
+          difficulty: string
+          id?: string
+          leetcode_url?: string | null
+          notes?: string | null
+          problem_number: number
+          space_complexity?: string | null
+          status?: string
+          tags?: string[]
+          time_complexity?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          approach?: string | null
+          category?: string
+          code?: string
+          created_at?: string
+          date_solved?: string
+          difficulty?: string
+          id?: string
+          leetcode_url?: string | null
+          notes?: string | null
+          problem_number?: number
+          space_complexity?: string | null
+          status?: string
+          tags?: string[]
+          time_complexity?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
