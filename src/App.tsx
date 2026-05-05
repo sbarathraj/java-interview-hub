@@ -19,6 +19,7 @@ import LeetcodeAdd from "./pages/LeetcodeAdd";
 import LeetcodeCategory from "./pages/LeetcodeCategory";
 import LeetcodeProblem from "./pages/LeetcodeProblem";
 import LeetcodeRevisit from "./pages/LeetcodeRevisit";
+import CodeHub from "./pages/CodeHub";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -52,6 +53,7 @@ const App = () => (
                           <Route path="/leetcode/category/:categoryId" element={<LeetcodeCategory />} />
                           <Route path="/leetcode/problem/:id" element={<LeetcodeProblem />} />
                           <Route path="/leetcode/revisit" element={<LeetcodeRevisit />} />
+                          <Route path="/code" element={<CodeHub />} />
                           <Route path="*" element={<NotFound />} />
                         </Routes>
                       </main>

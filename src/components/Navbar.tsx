@@ -1,5 +1,5 @@
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Coffee, BookmarkCheck, BarChart3, Brain, Menu, X, ChevronDown, Sparkles, LogOut, Code2 } from "lucide-react";
+import { Coffee, BookmarkCheck, BarChart3, Brain, Menu, X, ChevronDown, Sparkles, LogOut, Code2, FileCode2 } from "lucide-react";
 import { useState } from "react";
 import { ThemeToggle } from "./ThemeToggle";
 import { useApp } from "@/context/AppContext";
@@ -64,6 +64,7 @@ export const Navbar = () => {
 
           <NavLink to="/ai" className={linkClass}><span className="inline-flex items-center gap-1.5"><Sparkles className="h-4 w-4" />AI Studio</span></NavLink>
           <NavLink to="/leetcode" className={linkClass}><span className="inline-flex items-center gap-1.5"><Code2 className="h-4 w-4" />LeetCode</span></NavLink>
+          <NavLink to="/code" className={linkClass}><span className="inline-flex items-center gap-1.5"><FileCode2 className="h-4 w-4" />Code</span></NavLink>
           <NavLink to="/quiz" className={linkClass}><span className="inline-flex items-center gap-1.5"><Brain className="h-4 w-4" />Quiz</span></NavLink>
           <NavLink to="/bookmarks" className={linkClass}><span className="inline-flex items-center gap-1.5"><BookmarkCheck className="h-4 w-4" />Bookmarks</span></NavLink>
           <NavLink to="/progress" className={linkClass}><span className="inline-flex items-center gap-1.5"><BarChart3 className="h-4 w-4" />Progress</span></NavLink>
@@ -96,6 +97,7 @@ export const Navbar = () => {
             <NavLink to="/" end onClick={() => setMobileOpen(false)} className={linkClass}>Home</NavLink>
             <NavLink to="/ai" onClick={() => setMobileOpen(false)} className={linkClass}>AI Studio</NavLink>
             <NavLink to="/leetcode" onClick={() => setMobileOpen(false)} className={linkClass}>LeetCode</NavLink>
+            <NavLink to="/code" onClick={() => setMobileOpen(false)} className={linkClass}>Code</NavLink>
             <NavLink to="/quiz" onClick={() => setMobileOpen(false)} className={linkClass}>Quiz</NavLink>
             <NavLink to="/bookmarks" onClick={() => setMobileOpen(false)} className={linkClass}>Bookmarks</NavLink>
             <NavLink to="/progress" onClick={() => setMobileOpen(false)} className={linkClass}>Progress</NavLink>
