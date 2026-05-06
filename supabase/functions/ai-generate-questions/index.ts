@@ -7,7 +7,8 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
-const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const AI_URL = "https://openrouter.ai/api/v1/chat/completions";
+const DEFAULT_MODEL = "google/gemma-3-12b-it:free";
 
 const SYSTEM_PROMPT = `You are a senior Java/Spring Boot interviewer who has interviewed candidates at top product companies.
 You generate ORIGINAL, real-world interview questions for "Barath", a Java backend developer whose resume includes:
@@ -24,7 +25,7 @@ Rules:
 - codeSnippet = OPTIONAL Java or React code (only when it materially helps).
 - resumeLink = which part of Barath's resume this maps to (1 short sentence).
 - tags = 2-5 lowercase keywords.
-- Return ONLY valid JSON matching the requested tool schema. No prose.`;
+- Return ONLY valid JSON. No prose, no markdown fences.`;
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -32,10 +33,10 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
+    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+    if (!OPENROUTER_API_KEY) {
       return new Response(
-        JSON.stringify({ error: "LOVABLE_API_KEY not configured" }),
+        JSON.stringify({ error: "OPENROUTER_API_KEY not configured" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
@@ -44,48 +45,30 @@ Deno.serve(async (req: Request) => {
     const topic: string = body.topic ?? "core-java";
     const topicLabel: string = body.topicLabel ?? "Core Java";
     const count: number = Math.min(Math.max(Number(body.count) || 10, 1), 20);
-    const model: string = body.model || "google/gemini-2.5-flash";
+    const model: string = body.model || DEFAULT_MODEL;
 
     const userPrompt = `Generate ${count} fresh, NON-DUPLICATE interview questions for the topic: "${topicLabel}".
 Mix difficulties. Each question must be production-grade and tied (when relevant) to Barath's resume projects.
-Return JSON only.`;
 
-    const tools = [
-      {
-        type: "function",
-        function: {
-          name: "emit_questions",
-          description: "Emit a list of generated interview questions",
-          parameters: {
-            type: "object",
-            properties: {
-              questions: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    difficulty: { type: "string", enum: ["easy", "medium", "hard"] },
-                    question: { type: "string" },
-                    answer: { type: "string" },
-                    proTip: { type: "string" },
-                    codeSnippet: { type: "string" },
-                    resumeLink: { type: "string" },
-                    tags: { type: "array", items: { type: "string" } },
-                  },
-                  required: ["difficulty", "question", "answer", "proTip", "tags"],
-                },
-              },
-            },
-            required: ["questions"],
-          },
-        },
-      },
-    ];
+Return ONLY a JSON object with this exact shape (no markdown, no prose):
+{
+  "questions": [
+    {
+      "difficulty": "easy" | "medium" | "hard",
+      "question": "...",
+      "answer": "...",
+      "proTip": "...",
+      "codeSnippet": "optional",
+      "resumeLink": "optional",
+      "tags": ["tag1", "tag2"]
+    }
+  ]
+}`;
 
     const aiRes = await fetch(AI_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
@@ -94,15 +77,13 @@ Return JSON only.`;
           { role: "system", content: SYSTEM_PROMPT },
           { role: "user", content: userPrompt },
         ],
-        tools,
-        tool_choice: { type: "function", function: { name: "emit_questions" } },
         temperature: 0.9,
       }),
     });
 
     if (!aiRes.ok) {
       const t = await aiRes.text();
-      console.error("Lovable AI error", aiRes.status, t);
+      console.error("OpenRouter error", aiRes.status, t);
       return new Response(
         JSON.stringify({ error: `AI provider error (${aiRes.status})`, detail: t }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -110,25 +91,21 @@ Return JSON only.`;
     }
 
     const aiJson = await aiRes.json();
-    const choice = aiJson.choices?.[0];
-    let parsed: any = null;
+    const content: string = aiJson.choices?.[0]?.message?.content ?? "";
 
-    const toolCall = choice?.message?.tool_calls?.[0];
-    if (toolCall?.function?.arguments) {
-      try { parsed = JSON.parse(toolCall.function.arguments); } catch (_) {}
-    }
+    let parsed: any = null;
+    try { parsed = JSON.parse(content); } catch { /* try extract */ }
     if (!parsed) {
-      const content = choice?.message?.content ?? "";
-      try {
-        const match = content.match(/\{[\s\S]*\}/);
-        if (match) parsed = JSON.parse(match[0]);
-      } catch (_) {}
+      const match = content.match(/\{[\s\S]*\}/);
+      if (match) {
+        try { parsed = JSON.parse(match[0]); } catch { /* ignore */ }
+      }
     }
 
     const questions = Array.isArray(parsed?.questions) ? parsed.questions : [];
     if (questions.length === 0) {
       return new Response(
-        JSON.stringify({ error: "AI returned no questions", raw: aiJson }),
+        JSON.stringify({ error: "AI returned no questions", raw: content.slice(0, 500) }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
