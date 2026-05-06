@@ -28,3 +28,4 @@ dist-ssr
 
 # AI Agent Skills (optional - remove if you want AI assistance with Firebase)
 .agents/
+.env
