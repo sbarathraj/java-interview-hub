@@ -60,6 +60,7 @@ export default function CodeHub() {
           <Accordion type="multiple" className="w-full">
             {sortedItems.map((item, idx) => {
               const category = getCategory(item.category);
+              const isPinned = pinnedId === item.id;
               return (
                 <AccordionItem 
                   key={item.id} 
@@ -67,25 +68,40 @@ export default function CodeHub() {
                   className="border-b border-border/50 last:border-b-0 animate-slide-up"
                   style={{ animationDelay: `${idx * 40}ms` }}
                 >
-                  <AccordionTrigger className="px-8 py-6 hover:bg-primary/5 transition-all data-[state=open]:bg-primary/5 group">
-                    <div className="flex flex-1 flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between pr-6">
-                      <div className="flex flex-wrap items-center gap-4">
-                        <span className="font-display text-xl font-bold tracking-tight group-hover:text-primary transition-colors text-left">{item.title}</span>
-                        <DifficultyBadge difficulty={item.difficulty as Difficulty} className="shadow-sm" />
-                      </div>
-                      <div className="flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
-                        {category && (
-                          <span className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1 text-secondary-foreground/80 border border-secondary/20">
-                            {category.emoji} {category.name}
+                  <div className={`relative flex items-stretch ${isPinned ? "bg-primary/5" : ""}`}>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); setPinnedId(isPinned ? null : item.id); }}
+                      title={isPinned ? "Unpin from top" : "Pin to top"}
+                      className={`group/pin shrink-0 flex items-center justify-center w-12 transition-colors ${isPinned ? "text-primary" : "text-muted-foreground/40 hover:text-primary"}`}
+                    >
+                      {isPinned ? <Pin className="h-4 w-4 fill-current" /> : <PinOff className="h-4 w-4" />}
+                    </button>
+                    <AccordionTrigger className="flex-1 px-4 py-6 hover:bg-primary/5 transition-all data-[state=open]:bg-primary/5 group">
+                      <div className="flex flex-1 flex-col items-start gap-3 sm:flex-row sm:items-center sm:justify-between pr-6">
+                        <div className="flex flex-wrap items-center gap-4">
+                          {isPinned && (
+                            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 text-primary px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest">
+                              <Pin className="h-3 w-3" /> Pinned
+                            </span>
+                          )}
+                          <span className="font-display text-xl font-bold tracking-tight group-hover:text-primary transition-colors text-left">{item.title}</span>
+                          <DifficultyBadge difficulty={item.difficulty as Difficulty} className="shadow-sm" />
+                        </div>
+                        <div className="flex flex-wrap items-center gap-4 text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                          {category && (
+                            <span className="inline-flex items-center gap-2 rounded-full bg-secondary/10 px-3 py-1 text-secondary-foreground/80 border border-secondary/20">
+                              {category.emoji} {category.name}
+                            </span>
+                          )}
+                          <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/50 px-3 py-1">
+                            <Clock className="h-3.5 w-3.5" />
+                            {new Date(item.date_solved).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
                           </span>
-                        )}
-                        <span className="inline-flex items-center gap-1.5 rounded-full bg-muted/50 px-3 py-1">
-                          <Clock className="h-3.5 w-3.5" />
-                          {new Date(item.date_solved).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}
-                        </span>
+                        </div>
                       </div>
-                    </div>
-                  </AccordionTrigger>
+                    </AccordionTrigger>
+                  </div>
                   <AccordionContent className="px-8 pb-8 pt-4">
                     {item.notes && (
                       <div className="mb-6 glass rounded-2xl border-l-4 border-l-primary p-5 shadow-lg">
