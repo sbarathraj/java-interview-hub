@@ -3,17 +3,22 @@ import { getCategory } from "@/data/leetcodeCategories";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import { CodeBlock } from "@/components/CodeBlock";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { FileCode2, Clock, Inbox, Hash } from "lucide-react";
+import { FileCode2, Clock, Inbox, Hash, Pin, PinOff } from "lucide-react";
 import { useMemo } from "react";
 import { Difficulty } from "@/data/questions";
 
 export default function CodeHub() {
-  const { items, loading } = useLeetcode();
+  const { items, loading, pinnedId, setPinnedId } = useLeetcode();
 
-  // Sort by date_solved descending so newest are first
+  // Pinned item appears first; rest sorted by date_solved desc.
   const sortedItems = useMemo(() => {
-    return [...items].sort((a, b) => b.date_solved.localeCompare(a.date_solved));
-  }, [items]);
+    const rest = [...items].sort((a, b) => b.date_solved.localeCompare(a.date_solved));
+    if (!pinnedId) return rest;
+    const idx = rest.findIndex((i) => i.id === pinnedId);
+    if (idx === -1) return rest;
+    const [pinned] = rest.splice(idx, 1);
+    return [pinned, ...rest];
+  }, [items, pinnedId]);
 
   return (
     <div className="container max-w-6xl py-12 animate-fade-in">
