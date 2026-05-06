@@ -1,11 +1,12 @@
-// Edge function: stream a deeper explanation for any question via OpenRouter
+// Edge function: stream a deeper explanation via OpenRouter
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers":
     "authorization, x-client-info, apikey, content-type",
 };
 
-const AI_URL = "https://ai.gateway.lovable.dev/v1/chat/completions";
+const AI_URL = "https://openrouter.ai/api/v1/chat/completions";
+const DEFAULT_MODEL = "google/gemma-3-12b-it:free";
 
 Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") {
@@ -13,15 +14,14 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    if (!LOVABLE_API_KEY) {
-      return new Response(JSON.stringify({ error: "LOVABLE_API_KEY not configured" }), {
+    const OPENROUTER_API_KEY = Deno.env.get("OPENROUTER_API_KEY");
+    if (!OPENROUTER_API_KEY) {
+      return new Response(JSON.stringify({ error: "OPENROUTER_API_KEY not configured" }), {
         status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    const { question, mode = "explain", model = "google/gemini-2.5-flash" } =
-      await req.json();
+    const { question, mode = "explain", model = DEFAULT_MODEL } = await req.json();
 
     if (!question || typeof question !== "string") {
       return new Response(JSON.stringify({ error: "question required" }), {
@@ -38,7 +38,7 @@ Deno.serve(async (req: Request) => {
     const aiRes = await fetch(AI_URL, {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        Authorization: `Bearer ${OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
