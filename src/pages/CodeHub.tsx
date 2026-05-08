@@ -15,6 +15,9 @@ import {
   SortableContext, sortableKeyboardCoordinates, useSortable, verticalListSortingStrategy, arrayMove,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { Badge } from "@/components/ui/badge";
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 import type { LeetSolution } from "@/hooks/useLeetcode";
 
 type SortKey = "custom" | "newest" | "oldest" | "difficulty" | "title";
@@ -128,10 +131,17 @@ export default function CodeHub() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
-  const availableTopics = useMemo(() => {
-    const ids = new Set(items.map((i) => i.category));
-    return LEETCODE_CATEGORIES.filter((c) => ids.has(c.id));
+  const topicStats = useMemo(() => {
+    const stats: Record<string, number> = {};
+    items.forEach((i) => {
+      stats[i.category] = (stats[i.category] || 0) + 1;
+    });
+    return stats;
   }, [items]);
+
+  const availableTopics = useMemo(() => {
+    return LEETCODE_CATEGORIES.filter((c) => topicStats[c.id] > 0);
+  }, [topicStats]);
 
   const filtered = useMemo(() => {
     return items.filter((i) => topic === "all" || i.category === topic)
@@ -208,6 +218,65 @@ export default function CodeHub() {
           </p>
         </div>
       </header>
+
+      {availableTopics.length > 0 && (
+        <div className="mb-8 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+          <div className="flex items-center justify-between mb-3 px-2">
+            <h3 className="text-xs font-bold uppercase tracking-[0.2em] text-muted-foreground/60">Active Study Topics</h3>
+            {topic !== "all" && (
+              <button 
+                onClick={() => setTopic("all")}
+                className="text-[10px] font-bold uppercase tracking-widest text-primary hover:underline transition-all"
+              >
+                Reset Filter
+              </button>
+            )}
+          </div>
+          <ScrollArea className="w-full whitespace-nowrap pb-4">
+            <div className="flex w-max gap-3 px-1">
+              <button
+                onClick={() => setTopic("all")}
+                className={cn(
+                  "flex items-center gap-2 px-6 py-3 rounded-2xl border transition-all duration-300",
+                  topic === "all"
+                    ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105"
+                    : "bg-card hover:bg-muted/50 border-border/50 text-muted-foreground"
+                )}
+              >
+                <span className="text-sm font-bold tracking-wide">All Topics</span>
+                <Badge variant={topic === "all" ? "secondary" : "outline"} className="ml-1 rounded-lg px-1.5 py-0 text-[10px]">
+                  {items.length}
+                </Badge>
+              </button>
+              {availableTopics.map((c) => (
+                <button
+                  key={c.id}
+                  onClick={() => setTopic(c.id)}
+                  className={cn(
+                    "flex items-center gap-2 px-6 py-3 rounded-2xl border transition-all duration-300 group",
+                    topic === c.id
+                      ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-105"
+                      : "bg-card hover:bg-muted/50 border-border/50 text-muted-foreground hover:border-primary/30"
+                  )}
+                >
+                  <span className="text-lg group-hover:scale-125 transition-transform">{c.emoji}</span>
+                  <span className="text-sm font-bold tracking-wide">{c.name}</span>
+                  <Badge 
+                    variant={topic === c.id ? "secondary" : "outline"} 
+                    className={cn(
+                      "ml-1 rounded-lg px-1.5 py-0 text-[10px] transition-colors",
+                      topic === c.id ? "bg-primary-foreground/20 text-primary-foreground" : "bg-muted/30"
+                    )}
+                  >
+                    {topicStats[c.id]}
+                  </Badge>
+                </button>
+              ))}
+            </div>
+            <ScrollBar orientation="horizontal" className="h-2" />
+          </ScrollArea>
+        </div>
+      )}
 
       <div className="mb-6 flex flex-wrap items-center gap-2">
         <div className="relative flex-1 min-w-[220px]">
