@@ -111,8 +111,6 @@ function SortableRow({
             filename={`${item.title.replace(/\s+/g, "")}.java`}
           />
         </div>
-        {/* keep handle props referenced to satisfy render signature */}
-        <span className="hidden">{children({}).toString?.()}</span>
       </AccordionContent>
     </AccordionItem>
   );
