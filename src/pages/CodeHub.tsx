@@ -165,3 +165,32 @@ export default function CodeHub() {
   );
 }
 
+      {/* Filter & sort toolbar */}
+      <div className="mb-6 flex flex-wrap items-center gap-2">
+        <div className="relative flex-1 min-w-[220px]">
+          <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+          <Input className="pl-9" placeholder="Search title, number or tag…" value={q} onChange={(e) => setQ(e.target.value)} />
+        </div>
+        <select value={topic} onChange={(e) => setTopic(e.target.value)}
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+          <option value="all">All topics</option>
+          {availableTopics.map((c) => (
+            <option key={c.id} value={c.id}>{c.emoji} {c.name}</option>
+          ))}
+        </select>
+        <select value={diff} onChange={(e) => setDiff(e.target.value)}
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+          <option value="all">All difficulty</option>
+          <option value="easy">🟢 Easy</option>
+          <option value="medium">🟡 Medium</option>
+          <option value="hard">🔴 Hard</option>
+        </select>
+        <select value={sortBy} onChange={(e) => setSortBy(e.target.value as SortKey)}
+          className="h-10 rounded-md border border-input bg-background px-3 text-sm">
+          <option value="pinned">Sort: Pinned first</option>
+          <option value="newest">Sort: Newest</option>
+          <option value="oldest">Sort: Oldest</option>
+          <option value="difficulty">Sort: Difficulty</option>
+          <option value="title">Sort: Title (A–Z)</option>
+        </select>
+      </div>
