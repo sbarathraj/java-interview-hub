@@ -1,24 +1,59 @@
 import { useLeetcode } from "@/hooks/useLeetcode";
-import { getCategory } from "@/data/leetcodeCategories";
+import { getCategory, LEETCODE_CATEGORIES } from "@/data/leetcodeCategories";
 import { DifficultyBadge } from "@/components/DifficultyBadge";
 import { CodeBlock } from "@/components/CodeBlock";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { FileCode2, Clock, Inbox, Hash, Pin, PinOff } from "lucide-react";
-import { useMemo } from "react";
+import { Input } from "@/components/ui/input";
+import { FileCode2, Clock, Inbox, Hash, Pin, PinOff, Search } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Difficulty } from "@/data/questions";
+
+type SortKey = "pinned" | "newest" | "oldest" | "difficulty" | "title";
 
 export default function CodeHub() {
   const { items, loading, pinnedId, setPinnedId } = useLeetcode();
+  const [topic, setTopic] = useState<string>("all");
+  const [diff, setDiff] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<SortKey>("pinned");
+  const [q, setQ] = useState("");
 
-  // Pinned item appears first; rest sorted by date_solved desc.
+  // Distinct topics actually present in the user's items.
+  const availableTopics = useMemo(() => {
+    const ids = new Set(items.map((i) => i.category));
+    return LEETCODE_CATEGORIES.filter((c) => ids.has(c.id));
+  }, [items]);
+
   const sortedItems = useMemo(() => {
-    const rest = [...items].sort((a, b) => b.date_solved.localeCompare(a.date_solved));
-    if (!pinnedId) return rest;
-    const idx = rest.findIndex((i) => i.id === pinnedId);
-    if (idx === -1) return rest;
-    const [pinned] = rest.splice(idx, 1);
-    return [pinned, ...rest];
-  }, [items, pinnedId]);
+    const diffRank: Record<string, number> = { easy: 0, medium: 1, hard: 2 };
+    let list = items.filter((i) => topic === "all" || i.category === topic)
+      .filter((i) => diff === "all" || i.difficulty === diff)
+      .filter((i) => {
+        if (!q.trim()) return true;
+        const t = q.toLowerCase();
+        return i.title.toLowerCase().includes(t)
+          || String(i.problem_number).includes(t)
+          || i.tags.some((tag) => tag.toLowerCase().includes(t));
+      });
+
+    list = [...list].sort((a, b) => {
+      switch (sortBy) {
+        case "newest": return b.date_solved.localeCompare(a.date_solved);
+        case "oldest": return a.date_solved.localeCompare(b.date_solved);
+        case "difficulty": return (diffRank[a.difficulty] ?? 9) - (diffRank[b.difficulty] ?? 9);
+        case "title": return a.title.localeCompare(b.title);
+        default: return b.date_solved.localeCompare(a.date_solved);
+      }
+    });
+
+    if (sortBy === "pinned" && pinnedId) {
+      const idx = list.findIndex((i) => i.id === pinnedId);
+      if (idx !== -1) {
+        const [pinned] = list.splice(idx, 1);
+        list = [pinned, ...list];
+      }
+    }
+    return list;
+  }, [items, pinnedId, topic, diff, sortBy, q]);
 
   return (
     <div className="container max-w-6xl py-12 animate-fade-in">
