@@ -20,13 +20,12 @@ import type { LeetSolution } from "@/hooks/useLeetcode";
 type SortKey = "custom" | "newest" | "oldest" | "difficulty" | "title";
 
 function SortableRow({
-  item, idx, total, onMove, children,
+  item, idx, total, onMove,
 }: {
   item: LeetSolution;
   idx: number;
   total: number;
   onMove: (dir: "up" | "down") => void;
-  children: (handleProps: React.HTMLAttributes<HTMLButtonElement>) => React.ReactNode;
 }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const style: React.CSSProperties = {
