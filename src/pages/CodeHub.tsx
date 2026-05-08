@@ -266,9 +266,7 @@ export default function CodeHub() {
                     idx={idx}
                     total={sortedItems.length}
                     onMove={(dir) => moveById(item.id, dir)}
-                  >
-                    {() => null}
-                  </SortableRow>
+                  />
                 ))}
               </Accordion>
             </SortableContext>
