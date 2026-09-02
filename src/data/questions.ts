@@ -155,6 +155,168 @@ Supplier<List<String>> mk = ArrayList::new;`,
     proTip: "Java 11 is the LTS most enterprise teams (including KUWY-style stacks) standardize on after Java 8.",
     tags: ["java11"] }),
 
+  // ============ CORE JAVA DEEP DIVE (18) ============
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Collections", difficulty: "medium",
+    question: "How does HashMap work internally in Java 8 and what happens during a collision?",
+    answer: "HashMap computes a spread hash and uses the low bits to select a bucket. A bucket normally contains a linked list; when collisions in one bucket reach the treeification threshold and the table is large enough, Java 8 converts it to a red-black tree, improving lookup from O(n) to O(log n). The map resizes when `size > capacity * loadFactor` (0.75 by default), which re-buckets entries. Keys must have stable `equals` and `hashCode` values while stored.",
+    proTip: "Mention that mutable keys are dangerous: changing a field used by `hashCode` after insertion can make the entry unreachable.",
+    codeSnippet: `Map<String, Integer> counts = new HashMap<>();
+counts.merge("java", 1, Integer::sum);
+// Use an initial capacity when the expected size is known.
+Map<String, User> users = new HashMap<>(256);`,
+    tags: ["collections", "hashmap"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Collections", difficulty: "easy",
+    question: "ArrayList vs LinkedList vs ArrayDeque: which collection should you choose?",
+    answer: "ArrayList stores elements contiguously, gives O(1) indexed reads, and is usually the best general-purpose List because of cache locality. LinkedList gives O(1) insertion only when you already have the node or iterator, but poor locality and O(n) indexed access make it uncommon in application code. ArrayDeque is the preferred stack or queue because it avoids the synchronization overhead of legacy `Stack` and has efficient operations at both ends. Choose from the access pattern, not from the theoretical insertion complexity alone.",
+    proTip: "For a queue interview answer, prefer `Deque<T> queue = new ArrayDeque<>()` rather than `LinkedList` unless a specific linked-list operation is required.",
+    tags: ["collections", "arraylist", "deque"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Generics", difficulty: "medium",
+    question: "Explain Java generics, type erasure, and the PECS rule.",
+    answer: "Generics provide compile-time type safety and reduce casts, but Java implements them mostly through type erasure, so `List<String>` and `List<Integer>` have the same runtime class. You cannot create `new T[]`, use a type parameter in `instanceof`, or overload methods whose erased signatures collide. PECS means **Producer Extends, Consumer Super**: read from `List<? extends Number>` and write into `List<? super Integer>`. Invariant `List<Integer>` is not a subtype of `List<Number>` even though Integer extends Number.",
+    proTip: "A method accepting a collection it only reads should usually use `? extends T`; a method that adds T values should use `? super T`.",
+    codeSnippet: `static double sum(List<? extends Number> values) {
+    return values.stream().mapToDouble(Number::doubleValue).sum();
+}
+static void addDefaults(List<? super Integer> out) {
+    out.add(0);
+}`,
+    tags: ["generics", "type-erasure"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Immutability", difficulty: "medium",
+    question: "How do you design an immutable Java class?",
+    answer: "Make the class final, keep fields private and final, initialize every field in the constructor, expose no mutators, and defensively copy mutable inputs and outputs. Validate invariants before publishing the object. Immutable objects are naturally thread-safe and safe as map keys because their state cannot change after hashing. `String`, wrapper types, and `BigDecimal` are common examples, although `BigDecimal` equality has scale-sensitive behavior that should be understood.",
+    proTip: "Defensive-copying only the list container is not enough if its elements are mutable; copy the elements or document the ownership model.",
+    codeSnippet: `public final class LoanId {
+    private final String value;
+    public LoanId(String value) {
+        this.value = Objects.requireNonNull(value);
+    }
+    public String value() { return value; }
+}`,
+    tags: ["immutability", "thread-safety"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Concurrency", difficulty: "hard",
+    question: "What is a deadlock and how do you prevent or diagnose it?",
+    answer: "A deadlock occurs when threads hold resources while waiting for resources held by one another, creating a circular wait. The four Coffman conditions are mutual exclusion, hold-and-wait, no preemption, and circular wait. Prevent it by acquiring locks in a globally consistent order, reducing lock scope, using timed `tryLock`, or replacing shared state with higher-level concurrent structures. Diagnose production incidents with thread dumps (`jstack` or `jcmd`), where blocked threads reveal the lock cycle.",
+    proTip: "Do not claim that synchronized automatically prevents deadlocks; it provides mutual exclusion but lock ordering is still the developer's responsibility.",
+    codeSnippet: `if (first.tryLock(200, TimeUnit.MILLISECONDS)) {
+    try {
+        // acquire locks in a documented order
+    } finally {
+        first.unlock();
+    }
+}`,
+    tags: ["concurrency", "deadlock"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Concurrency", difficulty: "hard",
+    question: "How is ConcurrentHashMap different from Collections.synchronizedMap?",
+    answer: "`Collections.synchronizedMap` serializes every operation behind one monitor, so callers must also synchronize during iteration and compound actions. `ConcurrentHashMap` is designed for concurrent access: reads are highly concurrent, updates use fine-grained coordination, and iterators are weakly consistent rather than fail-fast. It does not allow null keys or values because null would be ambiguous during concurrent absence checks. Compound logic should use atomic methods such as `compute`, `merge`, and `putIfAbsent`.",
+    proTip: "`if (!map.containsKey(k)) map.put(k, v)` is still a race; use `putIfAbsent` or `computeIfAbsent`.",
+    codeSnippet: `ConcurrentMap<String, Long> counters = new ConcurrentHashMap<>();
+counters.merge("loan-approved", 1L, Long::sum);
+User user = cache.computeIfAbsent(id, this::loadUser);`,
+    tags: ["concurrency", "concurrenthashmap"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Concurrency", difficulty: "medium",
+    question: "When should you use AtomicInteger, LongAdder, or synchronized?",
+    answer: "Atomic types use compare-and-set loops and are a good fit for a single variable that needs lock-free atomic updates. `LongAdder` spreads contention across cells and usually outperforms `AtomicLong` for highly contended counters, but its `sum()` is not an instantaneous transaction-wide snapshot. `synchronized` is clearer when several fields must change as one invariant or when the critical section is more complex. Choose based on contention, atomicity requirements, and readability rather than using lock-free code by default.",
+    proTip: "A counter can use LongAdder, but a balance transfer needs a transaction or coordinated lock because two related values must remain consistent.",
+    tags: ["atomics", "concurrency"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "ThreadLocal", difficulty: "medium",
+    question: "What is ThreadLocal, and what leak does it create in server applications?",
+    answer: "ThreadLocal gives each thread its own isolated value, which can be useful for request correlation IDs or legacy context that cannot be passed through every method. Application-server worker threads are reused, so a value remains attached to the thread after a request unless it is removed. That can leak user context across requests or retain large objects and class loaders. Set the value at request start and call `remove()` in a `finally` block, or prefer explicit context propagation where practical.",
+    proTip: "ThreadLocal is not automatically propagated to CompletableFuture worker threads; use a context-aware executor or pass the context explicitly.",
+    codeSnippet: `try {
+    requestId.set(id);
+    return handler.handle(request);
+} finally {
+    requestId.remove();
+}`,
+    tags: ["threadlocal", "memory-leak"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "JVM", difficulty: "hard",
+    question: "How would you investigate a Java memory leak or repeated OutOfMemoryError?",
+    answer: "First distinguish a true leak from a legitimately undersized heap by checking heap usage after full collections, GC pause logs, allocation rate, and live-set growth. Capture a heap dump near failure with `jcmd` or a configured dump-on-OOM option, then inspect dominator trees and retained sizes in a profiler. Common causes include unbounded caches, static collections, listeners never deregistered, ThreadLocals, and class-loader retention. Fix the ownership/lifecycle issue, add bounded eviction, and verify the result with a load test rather than simply increasing `-Xmx`.",
+    proTip: "A heap dump is sensitive operational data; mention access controls and never enable indiscriminate production dump collection without a storage plan.",
+    tags: ["jvm", "memory", "diagnostics"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "JVM", difficulty: "medium",
+    question: "What happens during Java class loading?",
+    answer: "A class loader loads bytecode, links it by verification, preparation, and resolution, then initializes static fields and blocks when the class is first actively used. Java follows parent delegation: a loader asks its parent first, preventing application code from replacing core platform classes. Class identity is the pair of class name and defining class loader, so identical names from different loaders can be incompatible. This model supports isolation in containers, plugins, and application servers.",
+    proTip: "`ClassNotFoundException` usually means an explicit load failed, while `NoClassDefFoundError` often means a class was present at compile time but unavailable or failed during runtime initialization.",
+    tags: ["jvm", "classloader"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Exceptions", difficulty: "medium",
+    question: "How should exceptions be designed across a Java service boundary?",
+    answer: "Use domain-specific exceptions at the service boundary and preserve the original cause when translating lower-level failures. Separate expected business outcomes, such as an unavailable loan, from infrastructure failures, such as a database timeout. Handle exceptions once at the API boundary to produce a stable error code, safe message, correlation ID, and appropriate HTTP status. Do not expose stack traces, SQL details, or provider credentials to clients, and do not catch `Exception` merely to log and rethrow without context.",
+    proTip: "Logging the same exception in every layer creates noisy duplicate events; the layer with enough context to act should own the error log.",
+    codeSnippet: `throw new LoanUnavailableException(
+    "LOAN_NOT_READY", "Loan cannot be disbursed", cause);`,
+    tags: ["exceptions", "error-handling"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "I/O", difficulty: "easy",
+    question: "What is try-with-resources and how are suppressed exceptions handled?",
+    answer: "Try-with-resources closes every declared `AutoCloseable` when the block exits, even when the body throws. Resources close in reverse declaration order, and the first exception remains the primary exception. If closing also throws, Java attaches that failure as a suppressed exception, available through `getSuppressed()`. This is safer and clearer than a manually nested `finally` block that can accidentally hide the original failure.",
+    proTip: "Declare resources in dependency order: the last resource declared closes first, which matters when one resource depends on another.",
+    codeSnippet: `try (BufferedReader reader = Files.newBufferedReader(path)) {
+    return reader.lines().toList();
+} // reader is closed automatically`,
+    tags: ["io", "exceptions"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Object Model", difficulty: "easy",
+    question: "Is Java pass-by-reference or pass-by-value?",
+    answer: "Java is always pass-by-value. For primitives, the value itself is copied; for objects, the value copied is the reference, so a method can mutate the referenced object but cannot replace the caller's reference. Reassigning the parameter affects only the local copy. Explaining this distinction resolves most interview examples involving strings, lists, and mutable objects.",
+    proTip: "String appears confusing because it is immutable: a method that concatenates it creates a new object and cannot change the caller's string.",
+    codeSnippet: `void update(List<String> values) {
+    values.add("inside"); // caller sees mutation
+    values = new ArrayList<>(); // caller reference unchanged
+}`,
+    tags: ["java-basics", "references"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Object Model", difficulty: "easy",
+    question: "What is the difference between final, finally, and finalize?",
+    answer: "`final` prevents reassignment of a variable, overriding of a method, or extension of a class; it does not make a referenced object immutable. `finally` is a control-flow block that normally runs after try/catch and is used for cleanup, although JVM termination can bypass it. `finalize()` was an unreliable, deprecated mechanism for cleanup and should not be used; use try-with-resources, `Cleaner` only for specialized safety nets, or explicit lifecycle methods instead.",
+    proTip: "A `final List` cannot be assigned to a different list, but its contents can still change unless the list itself is unmodifiable.",
+    tags: ["java-basics", "cleanup"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Reflection", difficulty: "medium",
+    question: "What are reflection and annotations used for in Java applications?",
+    answer: "Reflection lets code inspect classes, methods, fields, and annotations at runtime, which enables frameworks such as Spring, JPA, and test libraries. Annotations provide metadata that a compiler, annotation processor, or runtime framework can interpret. The trade-offs are weaker compile-time guarantees, access restrictions, startup overhead, and harder refactoring. Keep reflection at framework boundaries and favor typed APIs for business logic.",
+    proTip: "If a framework uses reflection in a hot path, cache the resolved metadata rather than repeatedly scanning classes and methods.",
+    tags: ["reflection", "annotations"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Date & Time", difficulty: "easy",
+    question: "Why prefer java.time over Date and Calendar?",
+    answer: "The Java 8 `java.time` API is immutable, thread-safe, and explicit about concepts such as a date, local time, offset, and time zone. Use `Instant` for a point on the UTC timeline, `LocalDate` for a business date without a time zone, and `ZonedDateTime` when a zone is part of the meaning. Legacy `Date` and `Calendar` are mutable and ambiguous, so convert at integration boundaries. Persist instants in UTC and apply the user's zone only for presentation unless the business rule says otherwise.",
+    proTip: "Do not use `LocalDateTime` for an event timestamp in a distributed system because it carries no offset or zone information.",
+    codeSnippet: `Instant createdAt = Instant.now();
+ZonedDateTime local = createdAt.atZone(ZoneId.of("Asia/Kolkata"));`,
+    tags: ["java-time", "utc"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Numerics", difficulty: "medium",
+    question: "Why should financial applications use BigDecimal instead of double?",
+    answer: "Binary floating-point cannot represent many decimal fractions exactly, so repeated double operations can produce values such as 0.30000000000000004. `BigDecimal` represents decimal values with explicit precision and scale, making rounding rules visible and repeatable. Construct it from a string or an integer minor-unit value, never from an already-rounded double. Define a `RoundingMode` at business boundaries and store monetary values according to the database's precision and scale.",
+    proTip: "Money also needs a currency and a rounding policy; BigDecimal alone does not prevent mixing INR and USD or applying the wrong scale.",
+    codeSnippet: `BigDecimal total = new BigDecimal("10.25")
+    .multiply(new BigDecimal("1.18"))
+    .setScale(2, RoundingMode.HALF_UP);`,
+    tags: ["bigdecimal", "finance"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Performance", difficulty: "hard",
+    question: "How do you improve Java performance without making unsafe assumptions?",
+    answer: "Start with a measurable symptom and a baseline: latency percentiles, throughput, CPU, allocation rate, GC pauses, lock contention, and database time. Profile representative traffic with tools such as JFR, async-profiler, or application metrics, then change one bottleneck at a time. Common wins include avoiding accidental O(n²) work, batching I/O, sizing pools, reducing allocations on hot paths, and fixing N+1 database access. Validate with repeatable load tests and watch p95/p99 rather than only average latency.",
+    proTip: "Do not optimize by blindly replacing every loop with a parallel stream; coordination overhead and blocking work can make it slower or exhaust shared pools.",
+    tags: ["performance", "jfr", "profiling"] }),
+
+  Q({ id: next(), topic: "core-java", topicLabel: "Core Java 8/11", subtopic: "Interfaces", difficulty: "medium",
+    question: "How do default and static interface methods affect API design?",
+    answer: "Default methods let an interface add behavior without breaking existing implementations, which is why Java 8 could evolve collection APIs with `stream()` and `forEach`. Static interface methods belong to the interface itself and are called through the interface name, not an implementation. If two parent interfaces provide the same default method, the implementing class must resolve the conflict explicitly. Default methods are useful for compatibility but should not turn interfaces into stateful base classes.",
+    proTip: "A class method wins over an interface default, and a more specific parent interface wins over a less specific one before the class is required to override.",
+    tags: ["interfaces", "java8"] }),
+
   // ============ SPRING (10) ============
   Q({ id: next(), topic: "spring", topicLabel: "Spring Boot & Spring Core", subtopic: "Auto-Config", difficulty: "easy",
     question: "How does Spring Boot auto-configuration work?",
